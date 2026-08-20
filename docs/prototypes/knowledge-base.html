@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>知识库 - IntelliSHop Pro</title>
+    <link rel="stylesheet" href="../assets/global-styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4640DE',
+                        secondary: '#4ECDC4',
+                        success: '#45B7D1',
+                        warning: '#FFA726',
+                        danger: '#EF5350'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen bg-gray-50">
+        <!-- 顶部导航 -->
+        <div class="bg-white shadow-sm border-b">
+            <div class="px-4 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="p-2 rounded-lg">
+                            <i class="fas fa-arrow-left text-gray-600"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold text-gray-900">知识库</h1>
+                            <p class="text-sm text-gray-500">产品资料与销售知识</p>
+                        </div>
+                    </div>
+                    <div class="p-2 rounded-lg">
+                        <i class="fas fa-search text-gray-600"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI智能推荐区域 -->
+        <div class="px-4 py-4">
+            <div class="bg-gradient-to-r from-primary/10 to-purple-100 rounded-xl p-4 mb-4">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-primary text-white rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3 class="font-semibold text-gray-900">AI智能推荐</h3>
+                        <span class="ml-2 px-2 py-1 bg-primary/20 text-primary text-xs rounded-full font-medium">实时</span>
+                    </div>
+                    <button onclick="refreshKnowledgeAI()" class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+                <div id="knowledge-ai-recommendations" class="text-sm text-gray-700">
+                    <div class="flex items-center">
+                        <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
+                        正在分析您的需求，生成个性化推荐...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 搜索栏 -->
+        <div class="px-4 py-4">
+            <div class="relative">
+                <input type="text" id="knowledgeSearchInput" placeholder="搜索知识库内容..." 
+                       class="w-full pl-10 pr-16 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <button onclick="enableKnowledgeSmartSearch()" class="absolute right-2 top-1.5 px-3 py-1.5 bg-primary text-white text-xs rounded-lg hover:bg-primary/90 transition-colors">
+                    AI搜索
+                </button>
+            </div>
+            <div class="flex items-center justify-between mt-3">
+                <div class="flex space-x-2">
+                    <button onclick="showKnowledgeInsights()" class="flex items-center px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-100 transition-colors">
+                        <i class="fas fa-chart-line mr-1"></i>
+                        知识洞察
+                    </button>
+                    <button onclick="showRecommendedContent()" class="flex items-center px-3 py-1.5 bg-green-50 text-green-600 rounded-lg text-xs font-medium hover:bg-green-100 transition-colors">
+                        <i class="fas fa-star mr-1"></i>
+                        推荐内容
+                    </button>
+                </div>
+                <button onclick="showKnowledgeMap()" class="flex items-center px-3 py-1.5 bg-purple-50 text-purple-600 rounded-lg text-xs font-medium hover:bg-purple-100 transition-colors">
+                    <i class="fas fa-project-diagram mr-1"></i>
+                    知识图谱
+                </button>
+            </div>
+        </div>
+
+        <!-- 知识分类 -->
+        <div class="px-4 mb-6">
+            <div class="flex space-x-2 overflow-x-auto scrollbar-hide">
+                <style>
+                    
+                </style>
+                <div class="category-btn bg-primary text-white px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap" data-category="all">
+                    全部
+                </div>
+                <div class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap" data-category="vehicles">
+                    车型介绍
+                </div>
+                <div class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap" data-category="product">
+                    产品资料
+                </div>
+                <div class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap" data-category="sales">
+                    销售技巧
+                </div>
+                <div class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap" data-category="faq">
+                    常见问题
+                </div>
+                <div class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap" data-category="policy">
+                    政策法规
+                </div>
+            </div>
+        </div>
+
+        <!-- 热门知识 -->
+        <div class="px-4 mb-6">
+            <div class="bg-gradient-to-r from-primary to-purple-600 rounded-xl p-4 text-white">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="font-semibold flex items-center">
+                        <i class="fas fa-fire mr-2"></i>
+                        热门知识
+                    </h2>
+                    <span class="text-xs bg-white/20 px-2 py-1 rounded-full">实时更新</span>
+                </div>
+                <p class="text-sm text-white/90 mb-3">新能源汽车补贴政策解读</p>
+                <a href="knowledge-detail.html" class="block w-full py-2 bg-white/20 text-white rounded-lg text-sm font-medium hover:bg-white/30 transition-colors text-center">
+                    立即查看
+                </a>
+            </div>
+        </div>
+
+        <!-- 知识内容 -->
+        <div class="px-4 space-y-4">
+            <!-- 车型介绍 -->
+            <div class="knowledge-section" data-category="vehicles">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-car text-primary mr-2"></i>
+                    车型介绍
+                </h3>
+                <div class="grid grid-cols-1 gap-4">
+                    <!-- 宝马X5 -->
+                    <div class="bg-white rounded-xl p-4 shadow-sm border hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center mb-2">
+                                    <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?w=40&h=40&fit=crop" 
+                                         alt="BMW X5" class="w-8 h-8 rounded-lg mr-3">
+                                    <a href="knowledge-detail.html" class="font-medium text-gray-900 hover:text-primary transition-colors">
+                                        <h4>宝马X5 豪华SUV</h4>
+                                    </a>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-3">
+                                    宝马X5是一款中大型豪华SUV，搭载3.0T涡轮增压发动机，配备xDrive四驱系统，提供卓越的驾驶体验和豪华配置。
+                                </p>
+                                <div class="flex items-center text-xs text-gray-500">
+                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full mr-2">豪华SUV</span>
+                                    <span class="bg-green-100 text-green-600 px-2 py-1 rounded-full mr-2">四驱</span>
+                                    <span class="bg-purple-100 text-purple-600 px-2 py-1 rounded-full">3.0T</span>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs text-gray-500 mb-1">起售价</div>
+                                <div class="text-lg font-bold text-primary">¥69.99万</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 奔驰GLC -->
+                    <div class="bg-white rounded-xl p-4 shadow-sm border hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center mb-2">
+                                    <img src="https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=40&h=40&fit=crop" 
+                                         alt="Mercedes GLC" class="w-8 h-8 rounded-lg mr-3">
+                                    <a href="knowledge-detail.html" class="font-medium text-gray-900 hover:text-primary transition-colors">
+                                        <h4>奔驰GLC 中型SUV</h4>
+                                    </a>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-3">
+                                    奔驰GLC是一款中型豪华SUV，采用2.0T涡轮增压发动机，配备4MATIC全时四驱，兼顾舒适性与运动性能。
+                                </p>
+                                <div class="flex items-center text-xs text-gray-500">
+                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full mr-2">中型SUV</span>
+                                    <span class="bg-green-100 text-green-600 px-2 py-1 rounded-full mr-2">四驱</span>
+                                    <span class="bg-purple-100 text-purple-600 px-2 py-1 rounded-full">2.0T</span>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs text-gray-500 mb-1">起售价</div>
+                                <div class="text-lg font-bold text-primary">¥42.98万</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 奥迪Q7 -->
+                    <div class="bg-white rounded-xl p-4 shadow-sm border hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center mb-2">
+                                    <img src="https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=40&h=40&fit=crop" 
+                                         alt="Audi Q7" class="w-8 h-8 rounded-lg mr-3">
+                                    <a href="knowledge-detail.html" class="font-medium text-gray-900 hover:text-primary transition-colors">
+                                        <h4>奥迪Q7 大型SUV</h4>
+                                    </a>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-3">
+                                    奥迪Q7是一款大型豪华SUV，搭载3.0T V6发动机，配备quattro全时四驱系统，提供7座布局和丰富的科技配置。
+                                </p>
+                                <div class="flex items-center text-xs text-gray-500">
+                                    <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full mr-2">大型SUV</span>
+                                    <span class="bg-green-100 text-green-600 px-2 py-1 rounded-full mr-2">7座</span>
+                                    <span class="bg-purple-100 text-purple-600 px-2 py-1 rounded-full">3.0T V6</span>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs text-gray-500 mb-1">起售价</div>
+                                <div class="text-lg font-bold text-primary">¥75.38万</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 产品资料 -->
+            <div class="knowledge-section" data-category="product">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-car text-primary mr-2"></i>
+                    产品资料
+                </h3>
+                <div class="grid grid-cols-1 gap-4">
+                    <!-- 宝马系列 -->
+                    <div class="bg-white rounded-xl p-4 shadow-sm border hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center mb-2">
+                                    <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?w=40&h=40&fit=crop" 
+                                         alt="BMW" class="w-8 h-8 rounded-lg mr-3">
+                                    <a href="knowledge-detail.html" class="font-medium text-gray-900 hover:text-primary transition-colors">
+                                        <h4>宝马X5产品手册</h4>
+                                    </a>
+                                    <span class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">热门</span>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-3">详细介绍宝马X5的配置、性能参数、价格体系等</p>
+                                <div class="flex items-center text-xs text-gray-500">
+                                    <i class="fas fa-eye mr-1"></i>
+                                    <span class="mr-4">1.2k 浏览</span>
+                                    <i class="fas fa-clock mr-1"></i>
+                                    <span>2024-01-20 更新</span>
+                                </div>
+                            </div>
+                            <a href="knowledge-detail.html" class="ml-4 p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- 奔驰系列 -->
+                    <div class="bg-white rounded-xl p-4 shadow-sm border hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center mb-2">
+                                    <img src="https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=40&h=40&fit=crop" 
+                                         alt="Mercedes" class="w-8 h-8 rounded-lg mr-3">
+                                    <a href="knowledge-detail.html" class="font-medium text-gray-900 hover:text-primary transition-colors">
+                                        <h4>奔驰C级技术规格</h4>
+                                    </a>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-3">奔驰C级轿车的技术参数、安全配置详解</p>
+                                <div class="flex items-center text-xs text-gray-500">
+                                    <i class="fas fa-eye mr-1"></i>
+                                    <span class="mr-4">856 浏览</span>
+                                    <i class="fas fa-clock mr-1"></i>
+                                    <span>2024-01-18 更新</span>
+                                </div>
+                            </div>
+                            <a href="knowledge-detail.html" class="ml-4 p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- 奥迪系列 -->
+                    <div class="bg-white rounded-xl p-4 shadow-sm border hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center mb-2">
+                                    <img src="https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=40&h=40&fit=crop" 
+                                         alt="Audi" class="w-8 h-8 rounded-lg mr-3">
+                                    <a href="knowledge-detail.html" class="font-medium text-gray-900 hover:text-primary transition-colors">
+                                        <h4>奥迪A6L配置对比</h4>
+                                    </a>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-3">奥迪A6L各版本配置差异及价格对比分析</p>
+                                <div class="flex items-center text-xs text-gray-500">
+                                    <i class="fas fa-eye mr-1"></i>
+                                    <span class="mr-4">743 浏览</span>
+                                    <i class="fas fa-clock mr-1"></i>
+                                    <span>2024-01-15 更新</span>
+                                </div>
+                            </div>
+                            <a href="knowledge-detail.html" class="ml-4 p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 销售技巧 -->
+            <div class="knowledge-section" data-category="sales">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-lightbulb text-warning mr-2"></i>
+                    销售技巧
+                </h3>
+                <div class="grid grid-cols-1 gap-4">
+                    <div class="bg-white rounded-xl p-4 shadow-sm border hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <a href="knowledge-detail.html" class="font-medium text-gray-900 hover:text-primary transition-colors mb-2 block">
+                                    <h4>客户异议处理技巧</h4>
+                                </a>
+                                <p class="text-sm text-gray-600 mb-3">如何有效应对客户的价格、配置、服务等方面的异议</p>
+                                <div class="flex items-center text-xs text-gray-500">
+                                    <i class="fas fa-star text-warning mr-1"></i>
+                                    <span class="mr-4">4.8 评分</span>
+                                    <i class="fas fa-users mr-1"></i>
+                                    <span>328 人学习</span>
+                                </div>
+                            </div>
+                            <button class="ml-4 p-2 text-warning hover:bg-warning/10 rounded-lg transition-colors">
+                                <i class="fas fa-play"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl p-4 shadow-sm border hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <a href="knowledge-detail.html" class="font-medium text-gray-900 hover:text-primary transition-colors mb-2 block">
+                                    <h4>成交话术模板</h4>
+                                </a>
+                                <p class="text-sm text-gray-600 mb-3">经过验证的高转化率成交话术和沟通技巧</p>
+                                <div class="flex items-center text-xs text-gray-500">
+                                    <i class="fas fa-star text-warning mr-1"></i>
+                                    <span class="mr-4">4.9 评分</span>
+                                    <i class="fas fa-users mr-1"></i>
+                                    <span>456 人学习</span>
+                                </div>
+                            </div>
+                            <button class="ml-4 p-2 text-warning hover:bg-warning/10 rounded-lg transition-colors">
+                                <i class="fas fa-play"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 常见问题 -->
+            <div class="knowledge-section" data-category="faq">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-question-circle text-secondary mr-2"></i>
+                    常见问题
+                </h3>
+                <div class="bg-white rounded-xl shadow-sm border">
+                    <div class="faq-item border-b border-gray-100 last:border-b-0">
+                        <button class="w-full px-4 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
+                            <span class="font-medium text-gray-900">新能源汽车的保养周期是多久？</span>
+                            <i class="fas fa-chevron-down text-gray-400 transform transition-transform"></i>
+                        </button>
+                        <div class="px-4 pb-4 text-sm text-gray-600 hidden">
+                            新能源汽车的保养周期通常为每6个月或1万公里，主要检查电池系统、电机、电控系统等关键部件。
+                        </div>
+                    </div>
+                    <div class="faq-item border-b border-gray-100 last:border-b-0">
+                        <button class="w-full px-4 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
+                            <span class="font-medium text-gray-900">购车贷款需要什么条件？</span>
+                            <i class="fas fa-chevron-down text-gray-400 transform transition-transform"></i>
+                        </button>
+                        <div class="px-4 pb-4 text-sm text-gray-600 hidden">
+                            购车贷款需要提供身份证、收入证明、银行流水、征信报告等材料，具体条件因银行而异。
+                        </div>
+                    </div>
+                    <div class="faq-item border-b border-gray-100 last:border-b-0">
+                        <button class="w-full px-4 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
+                            <span class="font-medium text-gray-900">车辆保险如何选择？</span>
+                            <i class="fas fa-chevron-down text-gray-400 transform transition-transform"></i>
+                        </button>
+                        <div class="px-4 pb-4 text-sm text-gray-600 hidden">
+                            建议购买交强险、车损险、第三者责任险、车上人员责任险等基础险种，根据需要添加其他险种。
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 政策法规 -->
+            <div class="knowledge-section" data-category="policy">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-gavel text-success mr-2"></i>
+                    政策法规
+                </h3>
+                <div class="grid grid-cols-1 gap-4">
+                    <div class="bg-white rounded-xl p-4 shadow-sm border hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center mb-2">
+                                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full mr-2">最新</span>
+                                    <a href="knowledge-detail.html" class="font-medium text-gray-900 hover:text-primary transition-colors">
+                                        <h4>2024年新能源汽车补贴政策</h4>
+                                    </a>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-3">最新的新能源汽车购置补贴标准和申请流程</p>
+                                <div class="flex items-center text-xs text-gray-500">
+                                    <i class="fas fa-calendar mr-1"></i>
+                                    <span>2024-01-01 生效</span>
+                                </div>
+                            </div>
+                            <button class="ml-4 p-2 text-success hover:bg-success/10 rounded-lg transition-colors">
+                                <i class="fas fa-external-link-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl p-4 shadow-sm border hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <a href="knowledge-detail.html" class="font-medium text-gray-900 hover:text-primary transition-colors mb-2 block">
+                                    <h4>汽车消费者权益保护法</h4>
+                                </a>
+                                <p class="text-sm text-gray-600 mb-3">汽车销售过程中消费者权益保护的相关法律法规</p>
+                                <div class="flex items-center text-xs text-gray-500">
+                                    <i class="fas fa-shield-alt mr-1"></i>
+                                    <span>消费者保护</span>
+                                </div>
+                            </div>
+                            <button class="ml-4 p-2 text-success hover:bg-success/10 rounded-lg transition-colors">
+                                <i class="fas fa-external-link-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部间距 -->
+        <div class="h-20"></div>
+    </div>
+
+    <script>
+        // 处理URL参数，自动切换到指定分类
+        function initializeFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const category = urlParams.get('category');
+            
+            if (category) {
+                // 查找对应的分类按钮
+                const targetBtn = document.querySelector(`[data-category="${category}"]`);
+                if (targetBtn) {
+                    // 重置所有按钮状态
+                    document.querySelectorAll('.category-btn').forEach(b => {
+                        b.classList.remove('bg-primary', 'text-white');
+                        b.classList.add('bg-gray-100', 'text-gray-700');
+                    });
+                    
+                    // 激活目标按钮
+                    targetBtn.classList.remove('bg-gray-100', 'text-gray-700');
+                    targetBtn.classList.add('bg-primary', 'text-white');
+                    
+                    // 显示/隐藏对应内容
+                    document.querySelectorAll('.knowledge-section').forEach(section => {
+                        if (section.dataset.category === category) {
+                            section.style.display = 'block';
+                        } else {
+                            section.style.display = 'none';
+                        }
+                    });
+                }
+            }
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeFromURL();
+            // 自动加载AI推荐
+            setTimeout(refreshKnowledgeAI, 1000);
+        });
+
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // 更新按钮状态
+                document.querySelectorAll('.category-btn').forEach(b => {
+                    b.classList.remove('bg-primary', 'text-white');
+                    b.classList.add('bg-gray-100', 'text-gray-700');
+                });
+                this.classList.remove('bg-gray-100', 'text-gray-700');
+                this.classList.add('bg-primary', 'text-white');
+
+                // 显示/隐藏对应内容
+                const category = this.dataset.category;
+                document.querySelectorAll('.knowledge-section').forEach(section => {
+                    if (category === 'all' || section.dataset.category === category) {
+                        section.style.display = 'block';
+                    } else {
+                        section.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // FAQ 展开/收起功能
+        document.querySelectorAll('.faq-item button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const content = this.nextElementSibling;
+                const icon = this.querySelector('i');
+                
+                if (content.classList.contains('hidden')) {
+                    content.classList.remove('hidden');
+                    icon.classList.add('rotate-180');
+                } else {
+                    content.classList.add('hidden');
+                    icon.classList.remove('rotate-180');
+                }
+            });
+        });
+
+        // AI功能：刷新知识库AI推荐
+        async function refreshKnowledgeAI() {
+            const contentEl = document.getElementById('knowledge-ai-recommendations');
+            contentEl.innerHTML = '<div class="flex items-center"><div class="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>正在分析您的需求...</div>';
+            
+            try {
+                // 模拟AI分析知识需求
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // 生成个性化推荐
+                const recommendations = [
+                    '📈 热门内容：“2024新能源补贴政策”被查看156次，建议优先学习',
+                    '✨ 智能匹配：基于您的角色，推荐“销售技巧”相关内容',
+                    '🔥 实时更新：3篇新的产品资料已添加，建议及时查看',
+                    '🎯 学习建议：您还未阅读“客户沟通技巧”，建议优先学习'
+                ];
+                
+                contentEl.innerHTML = `
+                    <div class="space-y-2">
+                        ${recommendations.map((rec, index) => `
+                            <div class="flex items-start cursor-pointer hover:bg-white/50 rounded-lg p-2 -mx-2 transition-colors" onclick="handleRecommendation(${index})">
+                                <div class="w-1 h-1 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                                <span class="text-sm">${rec}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="flex justify-end mt-3">
+                        <button onclick="showAllRecommendations()" class="text-xs text-primary hover:text-primary/80 font-medium">
+                            查看全部建议 >
+                        </button>
+                    </div>
+                `;
+                
+            } catch (error) {
+                contentEl.innerHTML = '<span class="text-red-600 text-sm">AI服务暂时不可用，请稍后重试</span>';
+            }
+        }
+        
+        // 处理AI推荐点击
+        function handleRecommendation(index) {
+            const actions = [
+                () => showHotContent(),
+                () => showPersonalizedContent(),
+                () => showLatestContent(),
+                () => showUnreadContent()
+            ];
+            
+            if (actions[index]) {
+                actions[index]();
+            }
+        }
+        
+        // 显示所有推荐
+        function showAllRecommendations() {
+            const modal = document.createElement('div');
+            modal.innerHTML = `
+                <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onclick="this.remove()">
+                    <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4" onclick="event.stopPropagation()">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold">AI全部建议</h3>
+                            <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="border rounded-lg p-3">
+                                <div class="font-medium text-gray-900 mb-1">学习进度提醒</div>
+                                <div class="text-sm text-gray-600">您本周的学习目标完成了65%，还差2篇文章需要学习</div>
+                            </div>
+                            <div class="border rounded-lg p-3">
+                                <div class="font-medium text-gray-900 mb-1">知识点强化</div>
+                                <div class="text-sm text-gray-600">在“销售技巧”方面表现较弱，建议重点学习</div>
+                            </div>
+                            <div class="border rounded-lg p-3">
+                                <div class="font-medium text-gray-900 mb-1">新内容提醒</div>
+                                <div class="text-sm text-gray-600">有5篇新的知识内容待您查看，包括政策更新和产品资料</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        
+        // 启用知识库智能搜索
+        async function enableKnowledgeSmartSearch() {
+            const query = document.getElementById('knowledgeSearchInput').value;
+            if (!query.trim()) {
+                alert('请输入搜索关键词');
+                return;
+            }
+            
+            try {
+                // 显示加载状态
+                const searchBtn = event.target;
+                const originalText = searchBtn.textContent;
+                searchBtn.textContent = '搜索中...';
+                searchBtn.disabled = true;
+                
+                // 模拟智能搜索
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // 显示搜索结果
+                const resultModal = document.createElement('div');
+                resultModal.innerHTML = `
+                    <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onclick="this.remove()">
+                        <div class="bg-white rounded-xl p-6 max-w-2xl w-full mx-4" onclick="event.stopPropagation()">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold">AI智能搜索结果</h3>
+                                <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-gray-600">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="mb-4 p-3 bg-blue-50 rounded-lg">
+                                <div class="text-sm text-blue-800">🤖 AI分析：找到5个相关结果，并为您推荐了相关内容</div>
+                            </div>
+                            <div class="space-y-3 max-h-96 overflow-y-auto">
+                                <div class="border rounded-lg p-3 hover:bg-gray-50">
+                                    <div class="font-medium text-gray-900">宝马X5 豪华SUV</div>
+                                    <div class="text-sm text-gray-600 mt-1">宝马X5是一款中大型豪华SUV，搭载3.0T涡轮增压发动机...</div>
+                                    <div class="text-xs text-primary mt-2">匹配度：95%</div>
+                                </div>
+                                <div class="border rounded-lg p-3 hover:bg-gray-50">
+                                    <div class="font-medium text-gray-900">豪华SUV销售技巧</div>
+                                    <div class="text-sm text-gray-600 mt-1">如何有效销售豪华SUV产品，包括客户定位和产品介绍技巧...</div>
+                                    <div class="text-xs text-green-600 mt-2">匹配度：88%</div>
+                                </div>
+                                <div class="border rounded-lg p-3 hover:bg-gray-50">
+                                    <div class="font-medium text-gray-900">SUV产品对比分析</div>
+                                    <div class="text-sm text-gray-600 mt-1">主流SUV产品的性能、配置和价格对比分析...</div>
+                                    <div class="text-xs text-orange-600 mt-2">匹配度：82%</div>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex justify-end">
+                                <button onclick="this.closest('.fixed').remove()" class="px-4 py-2 bg-primary text-white rounded-lg">关闭</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(resultModal);
+                
+                // 恢复按钮状态
+                searchBtn.textContent = originalText;
+                searchBtn.disabled = false;
+                
+            } catch (error) {
+                alert('搜索失败: ' + error.message);
+            }
+        }
+        
+        // 显示知识洞察
+        function showKnowledgeInsights() {
+            const modal = document.createElement('div');
+            modal.innerHTML = `
+                <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onclick="this.remove()">
+                    <div class="bg-white rounded-xl p-6 max-w-4xl w-full mx-4" onclick="event.stopPropagation()">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold">知识库AI洞察</h3>
+                            <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div class="bg-blue-50 rounded-lg p-4 text-center">
+                                <div class="text-2xl font-bold text-blue-600">1,247</div>
+                                <div class="text-sm text-gray-600">总知识条数</div>
+                            </div>
+                            <div class="bg-green-50 rounded-lg p-4 text-center">
+                                <div class="text-2xl font-bold text-green-600">89%</div>
+                                <div class="text-sm text-gray-600">内容更新率</div>
+                            </div>
+                            <div class="bg-purple-50 rounded-lg p-4 text-center">
+                                <div class="text-2xl font-bold text-purple-600">4.8</div>
+                                <div class="text-sm text-gray-600">用户满意度</div>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="border rounded-lg p-4">
+                                <h4 class="font-medium mb-3">热门知识排行</h4>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between">
+                                        <span class="text-sm">1. 2024新能源补贴政策</span>
+                                        <span class="text-sm text-green-600">浏览 2,456 次</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm">2. 宝马X5 产品介绍</span>
+                                        <span class="text-sm text-green-600">浏览 1,893 次</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm">3. 销售沟通技巧</span>
+                                        <span class="text-sm text-green-600">浏览 1,234 次</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="border rounded-lg p-4">
+                                <h4 class="font-medium mb-3">学习趋势分析</h4>
+                                <div class="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <div class="text-gray-600">最活跃分类</div>
+                                        <div class="font-medium">产品资料 (35%)</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-gray-600">增长最快分类</div>
+                                        <div class="font-medium">政策法规 (+28%)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        
+        // 显示推荐内容
+        function showRecommendedContent() {
+            const modal = document.createElement('div');
+            modal.innerHTML = `
+                <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onclick="this.remove()">
+                    <div class="bg-white rounded-xl p-6 max-w-3xl w-full mx-4" onclick="event.stopPropagation()">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold">AI个性化推荐</h3>
+                            <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-star text-yellow-500 mr-2"></i>
+                                    <span class="font-medium">为您定制</span>
+                                </div>
+                                <p class="text-sm text-gray-700">基于您的角色和学习偏好，为您精选以下内容</p>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="border rounded-lg p-4 hover:bg-gray-50 cursor-pointer">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex-1">
+                                            <h4 class="font-medium text-gray-900">高端客户沟通策略</h4>
+                                            <p class="text-sm text-gray-600 mt-1">针对高端客户的沟通技巧和服务标准</p>
+                                            <div class="text-xs text-blue-600 mt-2">推荐理由：与您的销售角色匹配</div>
+                                        </div>
+                                        <span class="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">新</span>
+                                    </div>
+                                </div>
+                                <div class="border rounded-lg p-4 hover:bg-gray-50 cursor-pointer">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex-1">
+                                            <h4 class="font-medium text-gray-900">电动车市场分析报告</h4>
+                                            <p class="text-sm text-gray-600 mt-1">2024年电动车市场现状和发展趋势分析</p>
+                                            <div class="text-xs text-blue-600 mt-2">推荐理由：您经常关注行业趋势</div>
+                                        </div>
+                                        <span class="text-xs text-orange-600 bg-orange-50 px-2 py-1 rounded">热门</span>
+                                    </div>
+                                </div>
+                                <div class="border rounded-lg p-4 hover:bg-gray-50 cursor-pointer">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex-1">
+                                            <h4 class="font-medium text-gray-900">金融产品销售指南</h4>
+                                            <p class="text-sm text-gray-600 mt-1">汽车金融产品的销售技巧和注意事项</p>
+                                            <div class="text-xs text-blue-600 mt-2">推荐理由：与您的学习记录相关</div>
+                                        </div>
+                                        <span class="text-xs text-purple-600 bg-purple-50 px-2 py-1 rounded">推荐</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        
+        // 显示知识图谱
+        function showKnowledgeMap() {
+            const modal = document.createElement('div');
+            modal.innerHTML = `
+                <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onclick="this.remove()">
+                    <div class="bg-white rounded-xl p-6 max-w-4xl w-full mx-4" onclick="event.stopPropagation()">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold">知识图谱</h3>
+                            <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-6 text-center">
+                            <i class="fas fa-project-diagram text-6xl text-primary mb-4"></i>
+                            <h4 class="text-xl font-semibold text-gray-900 mb-2">知识图谱功能</h4>
+                            <p class="text-gray-600 mb-4">智能分析知识之间的关联，帮助您构建知识体系</p>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                                <div class="bg-white rounded-lg p-4 border">
+                                    <div class="text-lg font-bold text-blue-600">156</div>
+                                    <div class="text-sm text-gray-600">知识节点</div>
+                                </div>
+                                <div class="bg-white rounded-lg p-4 border">
+                                    <div class="text-lg font-bold text-green-600">342</div>
+                                    <div class="text-sm text-gray-600">关联关系</div>
+                                </div>
+                                <div class="bg-white rounded-lg p-4 border">
+                                    <div class="text-lg font-bold text-purple-600">23</div>
+                                    <div class="text-sm text-gray-600">核心主题</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        
+        // 显示热门内容
+        function showHotContent() {
+            filterByCategory('policy');
+        }
+        
+        // 显示个性化内容
+        function showPersonalizedContent() {
+            filterByCategory('sales');
+        }
+        
+        // 显示最新内容
+        function showLatestContent() {
+            filterByCategory('product');
+        }
+        
+        // 显示未阅读内容
+        function showUnreadContent() {
+            alert('展示未阅读内容功能（待实现）');
+        }
+        
+        // 按分类筛选
+        function filterByCategory(category) {
+            const targetBtn = document.querySelector(`[data-category="${category}"]`);
+            if (targetBtn) {
+                targetBtn.click();
+            }
+        }
+
+        // 搜索功能
+        document.querySelector('#knowledgeSearchInput').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            // 这里可以添加搜索逻辑
+            console.log('搜索:', searchTerm);
+        });
+        
+        // Enter键触发搜索
+        document.querySelector('#knowledgeSearchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                enableKnowledgeSmartSearch();
+            }
+        });
+    </script>
+</body>
+</html>

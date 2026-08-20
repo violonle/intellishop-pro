@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>产品图册 - IntelliSHop Pro</title>
+    <link rel="stylesheet" href="../assets/global-styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4640DE',
+                        secondary: '#4ECDC4',
+                        success: '#45B7D1',
+                        warning: '#FFA726',
+                        danger: '#EF5350'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen bg-gray-50">
+        <!-- 顶部导航 -->
+        <div class="bg-white shadow-sm border-b">
+            <div class="px-4 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <button onclick="history.back()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                            <i class="fas fa-arrow-left text-gray-600"></i>
+                        </button>
+                        <div>
+                            <h1 class="text-xl font-bold text-gray-900">产品图册</h1>
+                            <p class="text-sm text-gray-500">车型展示与配置对比</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                            <i class="fas fa-filter text-gray-600"></i>
+                        </button>
+                        <button class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                            <i class="fas fa-search text-gray-600"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 品牌筛选 -->
+        <div class="px-4 py-4">
+            <div class="flex space-x-2 overflow-x-auto scrollbar-hide">
+                <style>
+                    
+                </style>
+                <button class="brand-btn bg-primary text-white px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap" data-brand="all">
+                    全部品牌
+                </button>
+                <button class="brand-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap hover:bg-gray-200 transition-colors" data-brand="bmw">
+                    宝马
+                </button>
+                <button class="brand-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap hover:bg-gray-200 transition-colors" data-brand="mercedes">
+                    奔驰
+                </button>
+                <button class="brand-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap hover:bg-gray-200 transition-colors" data-brand="audi">
+                    奥迪
+                </button>
+                <button class="brand-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap hover:bg-gray-200 transition-colors" data-brand="lexus">
+                    雷克萨斯
+                </button>
+            </div>
+        </div>
+
+        <!-- 热门推荐 -->
+        <div class="px-4 mb-6">
+            <div class="bg-gradient-to-r from-primary to-purple-600 rounded-xl p-4 text-white">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="font-semibold flex items-center">
+                        <i class="fas fa-star mr-2"></i>
+                        本月热销
+                    </h2>
+                    <span class="text-xs bg-white/20 px-2 py-1 rounded-full">TOP 3</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?w=60&h=40&fit=crop" 
+                         alt="BMW X5" class="w-15 h-10 rounded-lg object-cover">
+                    <div class="flex-1">
+                        <p class="font-medium">宝马X5</p>
+                        <p class="text-sm text-white/80">本月销量 +32%</p>
+                    </div>
+                    <button class="px-3 py-1 bg-white/20 text-white rounded-lg text-sm hover:bg-white/30 transition-colors">
+                        查看
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 产品列表 -->
+        <div class="px-4 space-y-4">
+            <!-- 宝马系列 -->
+            <div class="product-section" data-brand="bmw">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?w=24&h=24&fit=crop" 
+                         alt="BMW" class="w-6 h-6 rounded mr-2">
+                    宝马系列
+                </h3>
+                
+                <!-- BMW X5 -->
+                <div class="bg-white rounded-xl shadow-sm border overflow-hidden mb-4">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?w=400&h=200&fit=crop" 
+                             alt="BMW X5" class="w-full h-48 object-cover">
+                        <div class="absolute top-3 left-3">
+                            <span class="px-2 py-1 bg-red-500 text-white text-xs rounded-full">热销</span>
+                        </div>
+                        <div class="absolute top-3 right-3">
+                            <button class="p-2 bg-white/80 rounded-full hover:bg-white transition-colors">
+                                <i class="fas fa-heart text-gray-600"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex items-start justify-between mb-3">
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-900">宝马X5</h4>
+                                <p class="text-sm text-gray-600">中大型SUV • 2024款</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-lg font-bold text-primary">69.99万起</p>
+                                <p class="text-xs text-gray-500">厂商指导价</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 配置亮点 -->
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">3.0T发动机</span>
+                            <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">四驱系统</span>
+                            <span class="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full">空气悬挂</span>
+                            <span class="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full">全景天窗</span>
+                        </div>
+                        
+                        <!-- 操作按钮 -->
+                        <div class="flex space-x-2">
+                            <a href="product-image-detail.html" class="flex-1 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors text-center">
+                                <i class="fas fa-images mr-1"></i>
+                                查看图片
+                            </a>
+                            <a href="product-config-detail.html" class="flex-1 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors text-center">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                详细配置
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BMW 3系 -->
+                <div class="bg-white rounded-xl shadow-sm border overflow-hidden mb-4">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1617788138017-80ad40651399?w=400&h=200&fit=crop" 
+                             alt="BMW 3系" class="w-full h-48 object-cover">
+                        <div class="absolute top-3 right-3">
+                            <button class="p-2 bg-white/80 rounded-full hover:bg-white transition-colors">
+                                <i class="fas fa-heart text-gray-600"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex items-start justify-between mb-3">
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-900">宝马3系</h4>
+                                <p class="text-sm text-gray-600">中型轿车 • 2024款</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-lg font-bold text-primary">29.39万起</p>
+                                <p class="text-xs text-gray-500">厂商指导价</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">2.0T发动机</span>
+                            <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">8AT变速箱</span>
+                            <span class="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full">运动套装</span>
+                        </div>
+                        
+                        <div class="flex space-x-2">
+                            <a href="product-image-detail.html" class="flex-1 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors text-center">
+                                <i class="fas fa-images mr-1"></i>
+                                查看图片
+                            </a>
+                            <a href="product-config-detail.html" class="flex-1 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors text-center">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                详细配置
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 奔驰系列 -->
+            <div class="product-section" data-brand="mercedes">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <img src="https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=24&h=24&fit=crop" 
+                         alt="Mercedes" class="w-6 h-6 rounded mr-2">
+                    奔驰系列
+                </h3>
+                
+                <!-- Mercedes C级 -->
+                <div class="bg-white rounded-xl shadow-sm border overflow-hidden mb-4">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=400&h=200&fit=crop" 
+                             alt="Mercedes C级" class="w-full h-48 object-cover">
+                        <div class="absolute top-3 left-3">
+                            <span class="px-2 py-1 bg-green-500 text-white text-xs rounded-full">新款</span>
+                        </div>
+                        <div class="absolute top-3 right-3">
+                            <button class="p-2 bg-white/80 rounded-full hover:bg-white transition-colors">
+                                <i class="fas fa-heart text-gray-600"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex items-start justify-between mb-3">
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-900">奔驰C级</h4>
+                                <p class="text-sm text-gray-600">中型轿车 • 2024款</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-lg font-bold text-primary">32.52万起</p>
+                                <p class="text-xs text-gray-500">厂商指导价</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">1.5T发动机</span>
+                            <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">9AT变速箱</span>
+                            <span class="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full">MBUX系统</span>
+                            <span class="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full">64色氛围灯</span>
+                        </div>
+                        
+                        <div class="flex space-x-2">
+                            <a href="product-image-detail.html" class="flex-1 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors text-center">
+                                <i class="fas fa-images mr-1"></i>
+                                查看图片
+                            </a>
+                            <a href="product-config-detail.html" class="flex-1 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors text-center">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                详细配置
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 奥迪系列 -->
+            <div class="product-section" data-brand="audi">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <img src="https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=24&h=24&fit=crop" 
+                         alt="Audi" class="w-6 h-6 rounded mr-2">
+                    奥迪系列
+                </h3>
+                
+                <!-- Audi A6L -->
+                <div class="bg-white rounded-xl shadow-sm border overflow-hidden mb-4">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=400&h=200&fit=crop" 
+                             alt="Audi A6L" class="w-full h-48 object-cover">
+                        <div class="absolute top-3 right-3">
+                            <button class="p-2 bg-white/80 rounded-full hover:bg-white transition-colors">
+                                <i class="fas fa-heart text-gray-600"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex items-start justify-between mb-3">
+                            <div>
+                                <h4 class="text-lg font-semibold text-gray-900">奥迪A6L</h4>
+                                <p class="text-sm text-gray-600">中大型轿车 • 2024款</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-lg font-bold text-primary">41.98万起</p>
+                                <p class="text-xs text-gray-500">厂商指导价</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">2.0T发动机</span>
+                            <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">7速双离合</span>
+                            <span class="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full">quattro四驱</span>
+                            <span class="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full">Matrix LED</span>
+                        </div>
+                        
+                        <div class="flex space-x-2">
+                            <a href="product-image-detail.html" class="flex-1 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors text-center">
+                                <i class="fas fa-images mr-1"></i>
+                                查看图片
+                            </a>
+                            <a href="product-config-detail.html" class="flex-1 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors text-center">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                详细配置
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 配置对比浮动按钮 -->
+        <div class="fixed bottom-6 right-4">
+            <button class="bg-primary text-white p-4 rounded-full shadow-lg hover:bg-primary/90 transition-colors">
+                <i class="fas fa-balance-scale"></i>
+            </button>
+        </div>
+
+        <!-- 底部间距 -->
+        <div class="h-20"></div>
+    </div>
+
+    <script>
+        // 品牌筛选功能
+        document.querySelectorAll('.brand-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // 更新按钮状态
+                document.querySelectorAll('.brand-btn').forEach(b => {
+                    b.classList.remove('bg-primary', 'text-white');
+                    b.classList.add('bg-gray-100', 'text-gray-700');
+                });
+                this.classList.remove('bg-gray-100', 'text-gray-700');
+                this.classList.add('bg-primary', 'text-white');
+
+                // 显示/隐藏对应产品
+                const brand = this.dataset.brand;
+                document.querySelectorAll('.product-section').forEach(section => {
+                    if (brand === 'all' || section.dataset.brand === brand) {
+                        section.style.display = 'block';
+                    } else {
+                        section.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // 收藏功能
+        document.querySelectorAll('.fa-heart').forEach(heart => {
+            heart.parentElement.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (heart.classList.contains('text-gray-600')) {
+                    heart.classList.remove('text-gray-600');
+                    heart.classList.add('text-red-500');
+                } else {
+                    heart.classList.remove('text-red-500');
+                    heart.classList.add('text-gray-600');
+                }
+            });
+        });
+
+        // 注意：查看图片和详细配置功能已改为链接跳转，无需JavaScript处理
+
+        // 配置对比功能
+        document.querySelector('.fixed button').addEventListener('click', function() {
+            // 这里可以添加配置对比逻辑
+            console.log('打开配置对比');
+        });
+    </script>
+</body>
+</html>

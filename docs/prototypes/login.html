@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - ShopPro AI智能SCRM</title>
+    <link rel="stylesheet" href="../assets/global-styles.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 配置后端 API 地址（开发环境） -->
+    <script>
+        window.API_BASE_URL = 'http://localhost:8080';
+        window.API_URL = 'http://localhost:8080/api';
+        window.AI_API_URL = window.AI_API_URL || 'http://localhost:5000/api';
+    </script>
+    <!-- 引入UI组件与API客户端（延迟执行，等待DOM解析完成） -->
+    <script src="../assets/js/ui-components.js?v=2" defer></script>
+    <script src="../assets/js/api-client.js?v=2" defer></script>
+    <script src="../assets/js/utils.js?v=2" defer></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4640DE',
+                        secondary: '#7C3AED',
+                        grayscale: {
+                            1: '#1A1A1A',
+                            4: '#9CA3AF',
+                            white: '#FFFFFF'
+                        },
+                        lightMode: {
+                            black: '#000000',
+                            lightGrey: '#E5E7EB'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif']
+                    },
+                    borderRadius: {
+                        '30': '30px'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .password-dots {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .password-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #9CA3AF;
+        }
+        .shadow-s {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-white font-sans">
+
+
+    <!-- Main Content -->
+    <div class="px-6 py-4">
+        <!-- Back Button -->
+        <div class="mb-8">
+            <button class="w-12 h-12 border border-lightMode-lightGrey rounded-30 flex items-center justify-center">
+                <svg class="w-6 h-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Title Section -->
+        <div class="mb-8">
+            <h1 class="text-2xl font-semibold text-lightMode-black mb-2">输入密码</h1>
+            <p class="text-grayscale-4 text-base">请输入您的密码</p>
+        </div>
+
+        <!-- Username Input -->
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-grayscale-1 mb-3">用户名/邮箱/手机</label>
+            <input type="text" id="username" placeholder="请输入用户名、邮箱或手机号" 
+                   class="w-full border border-lightMode-lightGrey rounded-30 bg-white px-4 py-4 focus:outline-none focus:border-primary transition-colors" required>
+        </div>
+
+        <!-- Password Input Section -->
+        <div class="mb-6">
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-grayscale-1 mb-3">密码</label>
+                <div class="relative">
+                    <input type="password" id="password" placeholder="请输入密码" 
+                           class="w-full border border-lightMode-lightGrey rounded-30 bg-white px-4 py-4 focus:outline-none focus:border-primary transition-colors" required>
+                </div>
+            </div>
+            <!-- Forgot Password -->
+            <div class="text-right">
+                <a href="#" class="text-grayscale-4 text-sm">忘记密码</a>
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <div id="errorMessage" class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 hidden" role="alert"></div>
+
+        <!-- Login Button -->
+        <button id="loginBtn" class="w-full bg-primary text-white py-4 rounded-30 font-semibold text-lg mb-6 hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            <span id="loginBtnText">登录</span>
+        </button>
+
+        <!-- Divider -->
+        <div class="flex items-center mb-6">
+            <div class="flex-1 h-px bg-lightMode-lightGrey"></div>
+            <span class="px-4 text-grayscale-4 text-sm">或登录方式</span>
+            <div class="flex-1 h-px bg-lightMode-lightGrey"></div>
+        </div>
+
+        <!-- WeChat Work Login Button -->
+        <button class="w-full bg-white border border-lightMode-lightGrey py-4 rounded-30 flex items-center justify-center gap-3 shadow-s hover:shadow-md transition-shadow mb-4">
+            <!-- WeChat Work Icon -->
+            <img src="../assets/comwechat.png" alt="企业微信" class="w-5 h-5">
+            <span class="text-grayscale-1 font-medium">使用企业微信登录</span>
+        </button>
+
+        <!-- Phone Login Button -->
+        <button id="phoneLoginBtn" class="w-full bg-white border border-lightMode-lightGrey py-4 rounded-30 flex items-center justify-center gap-3 shadow-s hover:shadow-md transition-shadow">
+            <!-- Phone Icon -->
+            <svg class="w-5 h-5 text-grayscale-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+            </svg>
+            <span class="text-grayscale-1 font-medium">使用手机号码登录</span>
+        </button>
+    </div>
+
+
+    <script>
+        // 处理登录流程
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginBtn = document.getElementById('loginBtn');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const errorMessage = document.getElementById('errorMessage');
+            const loginBtnText = document.getElementById('loginBtnText');
+            const phoneLoginBtn = document.getElementById('phoneLoginBtn');
+            const backButton = document.querySelector('.border-lightMode-lightGrey');
+
+            // 隐藏错误信息
+            function hideError() {
+                errorMessage.classList.add('hidden');
+                errorMessage.textContent = '';
+            }
+
+            // 显示错误信息
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.classList.remove('hidden');
+            }
+
+            // 登录按钮点击事件
+            loginBtn.addEventListener('click', async function(e) {
+                e.preventDefault();
+                hideError();
+
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value.trim();
+
+                // 验证输入
+                if (!username) {
+                    showError('请输入用户名、邮箱或手机号');
+                    return;
+                }
+                if (!password) {
+                    showError('请输入密码');
+                    return;
+                }
+
+                // 禁用按钮并显示加载状态
+                loginBtn.disabled = true;
+                loginBtnText.textContent = '登录中...';
+
+                try {
+                    // 调用后端认证API
+                    const response = await api.auth.login({
+                        username: username,
+                        password: password
+                    });
+
+                    // 保存token和用户信息
+                    api.setAuthToken(response.token);
+                    localStorage.setItem('user_id', response.id);
+                    localStorage.setItem('user_name', response.username);
+                    localStorage.setItem('user_role', response.role);
+                    localStorage.setItem('user_email', response.email);
+                    localStorage.setItem('user_avatar', response.avatarUrl || '');
+
+                    // 登录成功，跳转到首页
+                    showError('登录成功，正在跳转...');
+                    errorMessage.classList.remove('hidden');
+                    errorMessage.classList.remove('bg-red-50');
+                    errorMessage.classList.add('bg-green-50', 'border-green-200', 'text-green-700');
+                    
+                    setTimeout(() => {
+                        window.location.href = '../pages/main-app.html';
+                    }, 1000);
+
+                } catch (error) {
+                    let errorMsg = '登录失败';
+                    
+                    if (error instanceof APIError) {
+                        if (error.status === 401) {
+                            errorMsg = '用户名或密码错误';
+                        } else if (error.status === 403) {
+                            errorMsg = '账户已被禁用，请联系管理员';
+                        } else if (error.status === 429) {
+                            errorMsg = '尝试次数过多，请稍后再试';
+                        } else if (error.isNetworkError()) {
+                            errorMsg = '网络连接失败，请检查网络后重试';
+                        } else {
+                            errorMsg = error.message || '登录失败，请重试';
+                        }
+                    } else {
+                        errorMsg = error.message || '发生未知错误';
+                    }
+                    
+                    showError(errorMsg);
+                } finally {
+                    // 恢复按钮状态
+                    loginBtn.disabled = false;
+                    loginBtnText.textContent = '登录';
+                }
+            });
+
+            // 回车键快速登录
+            [usernameInput, passwordInput].forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        loginBtn.click();
+                    }
+                });
+            });
+
+            // 手机号码登录按钮
+            if (phoneLoginBtn) {
+                phoneLoginBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.location.href = '../pages/login-phone.html';
+                });
+            }
+
+            // 企业微信登录按钮
+            const wechatLoginBtn = document.querySelector('.bg-white.border');
+            if (wechatLoginBtn) {
+                wechatLoginBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('WeChat Work login clicked');
+                    showError('企业微信登录功能开发中...');
+                });
+            }
+
+            // 返回按钮
+            if (backButton) {
+                backButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.history.back();
+                });
+            }
+        });
+    </script>
+
+    <style>
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    </style>
+</body>
+</html>

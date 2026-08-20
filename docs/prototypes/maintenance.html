@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统维护中 - IntelliShop Pro</title>
+    <link rel="stylesheet" href="../assets/global-styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4640DE',
+                        secondary: '#8B5CF6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .maintenance-animation {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .gear-animation {
+            animation: rotate 4s linear infinite;
+        }
+        
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .progress-bar {
+            animation: progress 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes progress {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+        
+        .countdown-number {
+            transition: all 0.3s ease-out;
+        }
+        
+        .status-indicator {
+            animation: blink 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-white to-purple-50 min-h-screen flex items-center justify-center px-4">
+    
+    <!-- 主要内容区域 -->
+    <div class="max-w-lg w-full text-center">
+        
+        <!-- 维护图标和动画 -->
+        <div class="mb-8">
+            <div class="relative inline-block">
+                <!-- 背景圆圈 -->
+                <div class="w-32 h-32 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-full flex items-center justify-center maintenance-animation">
+                    <!-- 齿轮图标 -->
+                    <div class="gear-animation">
+                        <i class="fas fa-cog text-5xl text-primary"></i>
+                    </div>
+                </div>
+                
+                <!-- 状态指示器 -->
+                <div class="absolute -top-2 -right-2 w-6 h-6 bg-warning rounded-full flex items-center justify-center status-indicator">
+                    <i class="fas fa-exclamation text-white text-xs"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主标题 -->
+        <h1 class="text-3xl font-bold text-gray-900 mb-4">系统维护中</h1>
+        
+        <!-- 副标题 -->
+        <p class="text-lg text-gray-600 mb-6">
+            我们正在进行系统升级，为您带来更好的体验
+        </p>
+
+        <!-- 维护信息卡片 -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+            <!-- 进度条 -->
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-medium text-gray-700">维护进度</span>
+                    <span id="progressPercent" class="text-sm text-primary font-semibold">75%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="progress-bar bg-gradient-to-r from-primary to-secondary h-2 rounded-full"></div>
+                </div>
+            </div>
+
+            <!-- 维护详情 -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-database text-primary"></i>
+                        <span class="text-sm text-gray-700">数据库优化</span>
+                    </div>
+                    <span class="text-xs text-success font-medium">已完成</span>
+                </div>
+                
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-server text-warning"></i>
+                        <span class="text-sm text-gray-700">服务器升级</span>
+                    </div>
+                    <span class="text-xs text-warning font-medium">进行中</span>
+                </div>
+                
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-shield-alt text-gray-400"></i>
+                        <span class="text-sm text-gray-700">安全更新</span>
+                    </div>
+                    <span class="text-xs text-gray-400 font-medium">等待中</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 预计完成时间 -->
+        <div class="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-xl p-6 mb-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">预计完成时间</h3>
+            
+            <!-- 倒计时 -->
+            <div class="flex flex-nowrap gap-3 mb-4 overflow-x-auto">
+                <div class="text-center flex-shrink-0 min-w-[60px]">
+                    <div id="hours" class="countdown-number text-2xl font-bold text-primary">02</div>
+                    <div class="text-xs text-gray-500">小时</div>
+                </div>
+                <div class="text-center flex-shrink-0 min-w-[60px]">
+                    <div id="minutes" class="countdown-number text-2xl font-bold text-primary">30</div>
+                    <div class="text-xs text-gray-500">分钟</div>
+                </div>
+                <div class="text-center flex-shrink-0 min-w-[60px]">
+                    <div id="seconds" class="countdown-number text-2xl font-bold text-primary">45</div>
+                    <div class="text-xs text-gray-500">秒</div>
+                </div>
+                <div class="text-center flex-shrink-0 min-w-[60px]">
+                    <div class="text-2xl font-bold text-gray-400">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="text-xs text-gray-500">剩余</div>
+                </div>
+            </div>
+            
+            <p class="text-sm text-gray-600">
+                预计于 <span id="estimatedTime" class="font-semibold text-primary"></span> 完成维护
+            </p>
+        </div>
+
+        <!-- 联系信息 -->
+        <div class="bg-white rounded-xl p-6 mb-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">需要帮助？</h3>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="showContact('email')" class="flex flex-col items-center p-4 rounded-lg border border-gray-200 hover:border-primary hover:bg-primary/5 transition-all duration-200">
+                    <i class="fas fa-envelope text-primary text-xl mb-2"></i>
+                    <span class="text-sm font-medium text-gray-700">邮件支持</span>
+                    <span class="text-xs text-gray-500">24小时内回复</span>
+                </button>
+                
+                <button onclick="showContact('phone')" class="flex flex-col items-center p-4 rounded-lg border border-gray-200 hover:border-secondary hover:bg-secondary/5 transition-all duration-200">
+                    <i class="fas fa-phone text-secondary text-xl mb-2"></i>
+                    <span class="text-sm font-medium text-gray-700">电话支持</span>
+                    <span class="text-xs text-gray-500">工作时间</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="space-y-3">
+            <button onclick="refreshStatus()" class="w-full bg-gradient-to-r from-primary to-secondary text-white py-3 px-6 rounded-xl font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200">
+                <i class="fas fa-sync-alt mr-2"></i>
+                刷新状态
+            </button>
+            
+            <button onclick="subscribeNotification()" class="w-full bg-white border border-gray-200 text-gray-700 py-3 px-6 rounded-xl font-medium hover:bg-gray-50 transition-colors">
+                <i class="fas fa-bell mr-2"></i>
+                订阅完成通知
+            </button>
+        </div>
+
+        <!-- 底部信息 -->
+        <div class="mt-8 text-center">
+            <p class="text-xs text-gray-500 mb-2">
+                感谢您的耐心等待，我们会尽快完成维护
+            </p>
+            <div class="flex items-center justify-center space-x-4 text-xs text-gray-400">
+                <span>维护ID: #MT2024-001</span>
+                <span>•</span>
+                <span id="currentTime"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 提示 -->
+    <div id="toast" class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg shadow-lg p-4 translate-y-[-100px] opacity-0 transition-all duration-300 z-50">
+        <div class="flex items-center space-x-3">
+            <div id="toastIcon" class="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center">
+                <i class="fas fa-info text-primary text-xs"></i>
+            </div>
+            <span id="toastMessage" class="text-sm text-gray-700"></span>
+        </div>
+    </div>
+
+    <!-- 联系方式模态框 -->
+    <div id="contactModal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300 z-50">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full transform scale-95 transition-all duration-300">
+            <div class="text-center mb-4">
+                <div id="contactIcon" class="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-3">
+                    <i class="fas fa-envelope text-primary text-2xl"></i>
+                </div>
+                <h3 id="contactTitle" class="text-lg font-semibold text-gray-900">邮件支持</h3>
+            </div>
+            
+            <div id="contactContent" class="space-y-3 mb-6">
+                <div class="text-center">
+                    <p class="text-sm text-gray-600 mb-2">发送邮件至：</p>
+                    <p class="font-mono text-primary bg-primary/5 px-3 py-2 rounded-lg">support@intellishop.com</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-xs text-gray-500">我们会在24小时内回复您的邮件</p>
+                </div>
+            </div>
+            
+            <button onclick="closeContact()" class="w-full bg-gray-100 text-gray-700 py-3 px-6 rounded-xl font-medium hover:bg-gray-200 transition-colors">
+                关闭
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 倒计时变量
+        let countdownTime = 2 * 60 * 60 + 30 * 60 + 45; // 2小时30分45秒
+
+        // 显示提示信息
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            const toastIcon = document.getElementById('toastIcon');
+            
+            toastMessage.textContent = message;
+            
+            // 设置图标和颜色
+            const iconClass = type === 'success' ? 'fa-check' : type === 'warning' ? 'fa-exclamation' : 'fa-info';
+            const colorClass = type === 'success' ? 'text-success bg-success/10' : type === 'warning' ? 'text-warning bg-warning/10' : 'text-primary bg-primary/10';
+            
+            toastIcon.className = `w-6 h-6 rounded-full flex items-center justify-center ${colorClass}`;
+            toastIcon.innerHTML = `<i class="fas ${iconClass} text-xs"></i>`;
+            
+            toast.classList.remove('translate-y-[-100px]', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-[-100px]', 'opacity-0');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 3000);
+        }
+
+        // 更新倒计时
+        function updateCountdown() {
+            if (countdownTime <= 0) {
+                // 维护完成
+                showMaintenanceComplete();
+                return;
+            }
+
+            const hours = Math.floor(countdownTime / 3600);
+            const minutes = Math.floor((countdownTime % 3600) / 60);
+            const seconds = countdownTime % 60;
+
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+
+            countdownTime--;
+        }
+
+        // 显示维护完成
+        function showMaintenanceComplete() {
+            document.body.innerHTML = `
+                <div class="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-green-50 via-white to-blue-50">
+                    <div class="max-w-md w-full text-center">
+                        <div class="w-24 h-24 mx-auto bg-success/10 rounded-full flex items-center justify-center mb-6">
+                            <i class="fas fa-check text-4xl text-success"></i>
+                        </div>
+                        <h1 class="text-3xl font-bold text-gray-900 mb-4">维护完成！</h1>
+                        <p class="text-gray-600 mb-8">系统已恢复正常，感谢您的耐心等待</p>
+                        <button onclick="window.location.href='./dashboard.html'" class="w-full bg-gradient-to-r from-success to-primary text-white py-3 px-6 rounded-xl font-medium hover:shadow-lg transition-all duration-200">
+                            <i class="fas fa-home mr-2"></i>
+                            返回首页
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 更新当前时间
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('currentTime').textContent = timeString;
+        }
+
+        // 更新预计完成时间
+        function updateEstimatedTime() {
+            const now = new Date();
+            const estimated = new Date(now.getTime() + countdownTime * 1000);
+            const timeString = estimated.toLocaleString('zh-CN', {
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('estimatedTime').textContent = timeString;
+        }
+
+        // 刷新状态
+        function refreshStatus() {
+            showToast('正在刷新维护状态...', 'info');
+            
+            // 模拟刷新延迟
+            setTimeout(() => {
+                const progress = Math.min(75 + Math.random() * 10, 95);
+                document.getElementById('progressPercent').textContent = Math.round(progress) + '%';
+                showToast('状态已更新', 'success');
+            }, 1500);
+        }
+
+        // 订阅通知
+        function subscribeNotification() {
+            showToast('正在设置通知...', 'info');
+            
+            setTimeout(() => {
+                showToast('已订阅完成通知，我们会及时通知您', 'success');
+            }, 1000);
+        }
+
+        // 显示联系方式
+        function showContact(type) {
+            const modal = document.getElementById('contactModal');
+            const icon = document.getElementById('contactIcon');
+            const title = document.getElementById('contactTitle');
+            const content = document.getElementById('contactContent');
+
+            if (type === 'email') {
+                icon.innerHTML = '<i class="fas fa-envelope text-primary text-2xl"></i>';
+                title.textContent = '邮件支持';
+                content.innerHTML = `
+                    <div class="text-center">
+                        <p class="text-sm text-gray-600 mb-2">发送邮件至：</p>
+                        <p class="font-mono text-primary bg-primary/5 px-3 py-2 rounded-lg">support@intellishop.com</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-xs text-gray-500">我们会在24小时内回复您的邮件</p>
+                    </div>
+                `;
+            } else {
+                icon.innerHTML = '<i class="fas fa-phone text-secondary text-2xl"></i>';
+                title.textContent = '电话支持';
+                content.innerHTML = `
+                    <div class="text-center">
+                        <p class="text-sm text-gray-600 mb-2">客服热线：</p>
+                        <p class="font-mono text-secondary bg-secondary/5 px-3 py-2 rounded-lg">400-888-9999</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-xs text-gray-500">工作时间：周一至周五 9:00-18:00</p>
+                    </div>
+                `;
+            }
+
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.classList.add('opacity-100');
+            modal.querySelector('.bg-white').classList.remove('scale-95');
+            modal.querySelector('.bg-white').classList.add('scale-100');
+        }
+
+        // 关闭联系方式
+        function closeContact() {
+            const modal = document.getElementById('contactModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modal.classList.remove('opacity-100');
+            modal.querySelector('.bg-white').classList.add('scale-95');
+            modal.querySelector('.bg-white').classList.remove('scale-100');
+        }
+
+        // 页面加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化时间
+            updateCurrentTime();
+            updateEstimatedTime();
+            
+            // 启动倒计时
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+            
+            // 更新当前时间
+            setInterval(updateCurrentTime, 1000);
+            
+            // 页面加载动画
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 0.5s ease-out';
+                document.body.style.opacity = '1';
+            }, 100);
+
+            // 显示欢迎提示
+            setTimeout(() => {
+                showToast('系统正在维护中，请耐心等待', 'warning');
+            }, 1000);
+
+            // 模拟进度更新
+            setInterval(() => {
+                const currentProgress = parseInt(document.getElementById('progressPercent').textContent);
+                if (currentProgress < 95) {
+                    const newProgress = Math.min(currentProgress + Math.random() * 2, 95);
+                    document.getElementById('progressPercent').textContent = Math.round(newProgress) + '%';
+                }
+            }, 30000); // 每30秒更新一次进度
+        });
+
+        // 点击模态框背景关闭
+        document.getElementById('contactModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeContact();
+            }
+        });
+
+        // ESC键关闭模态框
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeContact();
+            }
+        });
+    </script>
+</body>
+</html>

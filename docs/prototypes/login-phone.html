@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 输入手机号码 - Rapidly</title>
+    <link rel="stylesheet" href="../assets/global-styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#4640DE',
+                'primary-dark': '#4640DE',
+                        'light-gray': '#F8F9FA',
+                        'dark-gray': '#6B7280',
+                        'light-ink': '#1F2937'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .input-focus:focus {
+            border-color: #6366F1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        .button-active:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body class="bg-white min-h-screen flex flex-col">
+
+
+    <!-- Back Button -->
+    <div class="px-6 py-4">
+        <button onclick="window.location.href='login.html'" class="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors">
+            <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 px-6 py-8">
+        <!-- Title Section -->
+        <div class="slide-in mb-12">
+            <h1 class="text-3xl font-bold text-light-ink mb-3">登录账户</h1>
+            <p class="text-dark-gray text-base leading-relaxed">
+                请输入您的手机号码<br>
+                我们将发送验证码进行身份验证
+            </p>
+        </div>
+
+        <!-- Phone Input Section -->
+        <div class="slide-in mb-8" style="animation-delay: 0.1s">
+            <!-- Country Code Selector -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-light-ink mb-2">国家/地区</label>
+                <div class="relative">
+                    <button class="w-full p-4 border border-gray-200 rounded-3xl flex items-center justify-between bg-white hover:border-gray-300 transition-colors">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-2xl">🇨🇳</span>
+                            <span class="text-light-ink font-medium">中国</span>
+                            <span class="text-dark-gray">+86</span>
+                        </div>
+                        <svg class="w-5 h-5 text-dark-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Phone Number Input -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-light-ink mb-2">手机号码</label>
+                <div class="relative">
+                    <input 
+                        type="tel" 
+                        id="phoneNumber"
+                        placeholder="请输入您的手机号码"
+                        class="w-full p-4 border border-gray-200 rounded-3xl text-light-ink placeholder-dark-gray input-focus transition-all duration-200"
+                        maxlength="11"
+                        oninput="validatePhone(this)"
+                    >
+                    <div class="absolute right-4 top-1/2 transform -translate-y-1/2">
+                        <div id="phoneCheck" class="w-6 h-6 rounded-full bg-green-500 items-center justify-center hidden">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-sm text-dark-gray mt-2">
+                    请输入11位手机号码
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Section -->
+    <div class="px-6 pb-8">
+        <!-- Continue Button -->
+        <button 
+            id="continueBtn"
+            onclick="handleContinue()"
+            class="w-full bg-gray-200 text-gray-400 py-4 rounded-3xl font-semibold text-lg transition-all duration-200 button-active"
+            disabled
+        >
+            获取验证码
+        </button>
+
+        <!-- Alternative Login -->
+        <div class="mt-6 text-center">
+            <p class="text-dark-gray text-sm mb-4">或者使用其他方式登录</p>
+            <button class="w-full border border-gray-200 py-4 rounded-3xl flex items-center justify-center space-x-3 hover:bg-gray-50 transition-colors">
+                <img src="../assets/comwechat.png" alt="企业微信" class="w-5 h-5">
+                <span class="text-light-ink font-medium">使用企业微信登录</span>
+            </button>
+        </div>
+
+        <!-- Register Link -->
+        <div class="mt-6 text-center">
+            <p class="text-dark-gray text-sm">
+                还没有账户？ <a href="splash.html" class="text-primary font-medium">立即注册</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function validatePhone(input) {
+            const phoneNumber = input.value.replace(/\D/g, '');
+            const phoneCheck = document.getElementById('phoneCheck');
+            const continueBtn = document.getElementById('continueBtn');
+            
+            // Only allow numbers
+            input.value = phoneNumber;
+            
+            // Check if phone number is valid (11 digits)
+            const isValidPhone = phoneNumber.length === 11;
+            
+            if (isValidPhone) {
+                phoneCheck.classList.remove('hidden');
+                phoneCheck.classList.add('flex');
+            } else {
+                phoneCheck.classList.add('hidden');
+                phoneCheck.classList.remove('flex');
+            }
+            
+            // Enable/disable continue button
+            if (isValidPhone) {
+                continueBtn.disabled = false;
+                continueBtn.classList.remove('bg-gray-200', 'text-gray-400');
+                continueBtn.classList.add('bg-primary', 'text-white');
+            } else {
+                continueBtn.disabled = true;
+                continueBtn.classList.add('bg-gray-200', 'text-gray-400');
+                continueBtn.classList.remove('bg-primary', 'text-white');
+            }
+        }
+        
+        function handleContinue() {
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            if (phoneNumber.length === 11) {
+                // Store phone number for verification
+                localStorage.setItem('loginPhoneNumber', phoneNumber);
+                localStorage.setItem('loginFlow', 'true'); // 标记为登录流程
+                // 跳转到登录页面而不是验证码页面
+                window.location.href = 'login.html';
+            }
+        }
+        
+        // Auto-focus on phone input
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('phoneNumber').focus();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shoppro.repository">
+
+    <!-- ===================== Role 相关SQL ===================== -->
+    <sql id="roleColumns">
+        id, name, code, description, sort_order, status, created_at, updated_at
+    </sql>
+
+    <select id="roleFindByPage" resultType="com.shoppro.entity.Role">
+        SELECT <include refid="roleColumns" />
+        FROM roles
+        WHERE status = COALESCE(#{status}, status)
+        <if test="name != null and name != ''">
+            AND name LIKE CONCAT('%', #{name}, '%')
+        </if>
+        ORDER BY sort_order ASC, id ASC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <update id="roleSoftDelete">
+        UPDATE roles SET status = 0, updated_at = NOW() WHERE id = #{id}
+    </update>
+
+    <update id="roleRestore">
+        UPDATE roles SET status = 1, updated_at = NOW() WHERE id = #{id}
+    </update>
+
+    <!-- ===================== Permission 相关SQL ===================== -->
+    <sql id="permissionColumns">
+        id, name, code, resource, action, description, sort_order, status, created_at, updated_at
+    </sql>
+
+    <select id="permissionFindByPage" resultType="com.shoppro.entity.Permission">
+        SELECT <include refid="permissionColumns" />
+        FROM permissions
+        WHERE status = COALESCE(#{status}, status)
+        <if test="name != null and name != ''">
+            AND name LIKE CONCAT('%', #{name}, '%')
+        </if>
+        <if test="resource != null and resource != ''">
+            AND resource = #{resource}
+        </if>
+        ORDER BY sort_order ASC, id ASC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <update id="permissionSoftDelete">
+        UPDATE permissions SET status = 0, updated_at = NOW() WHERE id = #{id}
+    </update>
+
+    <update id="permissionRestore">
+        UPDATE permissions SET status = 1, updated_at = NOW() WHERE id = #{id}
+    </update>
+
+    <!-- ===================== UserRole 相关SQL ===================== -->
+    <delete id="userRoleDeleteByUserIds">
+        DELETE FROM user_roles WHERE user_id IN
+        <foreach item="userId" collection="userIds" open="(" close=")" separator=",">
+            #{userId}
+        </foreach>
+    </delete>
+
+    <insert id="userRoleInsertBatch">
+        INSERT INTO user_roles (user_id, role_id) VALUES
+        <foreach item="ur" collection="userRoles" separator=",">
+            (#{ur.userId}, #{ur.roleId})
+        </foreach>
+    </insert>
+
+    <!-- ===================== RolePermission 相关SQL ===================== -->
+    <delete id="rolePermissionDeleteByRoleIds">
+        DELETE FROM role_permissions WHERE role_id IN
+        <foreach item="roleId" collection="roleIds" open="(" close=")" separator=",">
+            #{roleId}
+        </foreach>
+    </delete>
+
+    <insert id="rolePermissionInsertBatch">
+        INSERT INTO role_permissions (role_id, permission_id) VALUES
+        <foreach item="rp" collection="rolePermissions" separator=",">
+            (#{rp.roleId}, #{rp.permissionId})
+        </foreach>
+    </insert>
+
+    <!-- ===================== Department 相关SQL ===================== -->
+    <sql id="departmentColumns">
+        id, parent_id, name, description, manager_id, sort_order, status, created_at, updated_at
+    </sql>
+
+    <select id="departmentFindByPage" resultType="com.shoppro.entity.Department">
+        SELECT <include refid="departmentColumns" />
+        FROM departments
+        WHERE status = COALESCE(#{status}, status)
+        <if test="name != null and name != ''">
+            AND name LIKE CONCAT('%', #{name}, '%')
+        </if>
+        ORDER BY sort_order ASC, id ASC
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+    <update id="departmentSoftDelete">
+        UPDATE departments SET status = 0, updated_at = NOW() WHERE id = #{id}
+    </update>
+
+    <update id="departmentRestore">
+        UPDATE departments SET status = 1, updated_at = NOW() WHERE id = #{id}
+    </update>
+
+    <update id="departmentSoftDeleteBatch">
+        UPDATE departments SET status = 0, updated_at = NOW() WHERE id IN
+        <foreach item="id" collection="ids" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </update>
+
+</mapper>

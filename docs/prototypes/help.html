@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>帮助中心 - IntelliShop Pro</title>
+    <link rel="stylesheet" href="../assets/global-styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4640DE',
+                        secondary: '#8B5CF6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- 顶部导航 -->
+    <div class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="flex items-center justify-between px-4 py-3">
+            <div class="flex items-center space-x-3">
+                <button onclick="history.back()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                    <i class="fas fa-arrow-left text-gray-600"></i>
+                </button>
+                <h1 class="text-lg font-semibold text-gray-900">帮助中心</h1>
+            </div>
+            <button id="searchBtn" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                <i class="fas fa-search text-gray-600"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- 搜索框 -->
+    <div id="searchBox" class="bg-white border-b border-gray-200 px-4 py-3 hidden">
+        <div class="relative">
+            <input type="text" id="searchInput" placeholder="搜索帮助内容..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors">
+            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+        </div>
+    </div>
+
+    <!-- 欢迎卡片 -->
+    <div class="p-4">
+        <div class="bg-gradient-to-r from-primary to-secondary rounded-xl p-6 text-white mb-6">
+            <div class="flex items-center space-x-4">
+                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+                    <i class="fas fa-question-circle text-2xl text-white"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold mb-2">👋 需要帮助？</h2>
+                    <p class="text-white/80 text-sm">我们为您准备了详细的使用指南和常见问题解答</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 快速入口 -->
+    <div class="px-4 mb-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">快速入口</h3>
+        <div class="grid grid-cols-2 gap-3">
+            <button class="quick-entry bg-white rounded-xl p-4 shadow-sm border border-gray-200 hover:shadow-md transition-shadow" data-section="getting-started">
+                <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-play text-primary text-xl"></i>
+                </div>
+                <div class="text-sm font-medium text-gray-900">快速开始</div>
+                <div class="text-xs text-gray-500 mt-1">新手入门指南</div>
+            </button>
+            
+            <button class="quick-entry bg-white rounded-xl p-4 shadow-sm border border-gray-200 hover:shadow-md transition-shadow" data-section="features">
+                <div class="w-12 h-12 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-star text-success text-xl"></i>
+                </div>
+                <div class="text-sm font-medium text-gray-900">功能介绍</div>
+                <div class="text-xs text-gray-500 mt-1">了解所有功能</div>
+            </button>
+            
+            <button class="quick-entry bg-white rounded-xl p-4 shadow-sm border border-gray-200 hover:shadow-md transition-shadow" data-section="faq">
+                <div class="w-12 h-12 bg-warning/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-question text-warning text-xl"></i>
+                </div>
+                <div class="text-sm font-medium text-gray-900">常见问题</div>
+                <div class="text-xs text-gray-500 mt-1">FAQ解答</div>
+            </button>
+            
+            <button class="quick-entry bg-white rounded-xl p-4 shadow-sm border border-gray-200 hover:shadow-md transition-shadow" data-section="contact">
+                <div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-headset text-secondary text-xl"></i>
+                </div>
+                <div class="text-sm font-medium text-gray-900">联系客服</div>
+                <div class="text-xs text-gray-500 mt-1">在线支持</div>
+            </button>
+        </div>
+    </div>
+
+    <!-- 帮助内容 -->
+    <div class="px-4 pb-20">
+        <!-- 快速开始 -->
+        <div id="getting-started" class="help-section">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-4">
+                <div class="p-4 border-b border-gray-200">
+                    <h3 class="font-semibold text-gray-900 flex items-center">
+                        <i class="fas fa-play text-primary mr-2"></i>
+                        快速开始
+                    </h3>
+                </div>
+                <div class="p-4">
+                    <div class="space-y-4">
+                        <div class="step-item">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">1</div>
+                                <div>
+                                    <h4 class="font-medium text-gray-900 mb-1">登录系统</h4>
+                                    <p class="text-gray-600 text-sm">使用您的工号和密码登录IntelliShop Pro系统</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">2</div>
+                                <div>
+                                    <h4 class="font-medium text-gray-900 mb-1">完善个人信息</h4>
+                                    <p class="text-gray-600 text-sm">在设置页面完善您的个人信息和偏好设置</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">3</div>
+                                <div>
+                                    <h4 class="font-medium text-gray-900 mb-1">添加客户</h4>
+                                    <p class="text-gray-600 text-sm">点击"+"按钮开始添加您的第一个客户信息</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="step-item">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">4</div>
+                                <div>
+                                    <h4 class="font-medium text-gray-900 mb-1">开始销售</h4>
+                                    <p class="text-gray-600 text-sm">使用AI助手和智能话术提升销售效率</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 功能介绍 -->
+        <div id="features" class="help-section">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-4">
+                <div class="p-4 border-b border-gray-200">
+                    <h3 class="font-semibold text-gray-900 flex items-center">
+                        <i class="fas fa-star text-success mr-2"></i>
+                        功能介绍
+                    </h3>
+                </div>
+                <div class="p-4">
+                    <div class="space-y-4">
+                        <!-- 仪表盘 -->
+                        <div class="feature-item border border-gray-200 rounded-lg p-4">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-chart-line text-primary"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-900 mb-1">智能仪表盘</h4>
+                                    <p class="text-gray-600 text-sm mb-2">实时查看销售数据、客户统计和业绩分析</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">数据可视化</span>
+                                        <span class="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">实时更新</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 客户管理 -->
+                        <div class="feature-item border border-gray-200 rounded-lg p-4">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-users text-success"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-900 mb-1">客户管理</h4>
+                                    <p class="text-gray-600 text-sm mb-2">全方位管理客户信息、跟进记录和购买历史</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">客户档案</span>
+                                        <span class="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">跟进提醒</span>
+                                        <span class="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">标签分类</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AI助手 -->
+                        <div class="feature-item border border-gray-200 rounded-lg p-4">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-robot text-secondary"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-900 mb-1">AI智能助手</h4>
+                                    <p class="text-gray-600 text-sm mb-2">基于客户画像提供个性化销售建议和话术推荐</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">智能分析</span>
+                                        <span class="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">话术推荐</span>
+                                        <span class="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">数据分析</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 数据统计 -->
+                        <div class="feature-item border border-gray-200 rounded-lg p-4">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-10 h-10 bg-warning/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-chart-bar text-warning"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-900 mb-1">数据统计</h4>
+                                    <p class="text-gray-600 text-sm mb-2">详细的销售报表和业绩分析，助力业务决策</p>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">销售报表</span>
+                                        <span class="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">趋势分析</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 常见问题 -->
+        <div id="faq" class="help-section">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-4">
+                <div class="p-4 border-b border-gray-200">
+                    <h3 class="font-semibold text-gray-900 flex items-center">
+                        <i class="fas fa-question text-warning mr-2"></i>
+                        常见问题
+                    </h3>
+                </div>
+                <div class="p-4">
+                    <div class="space-y-3">
+                        <!-- FAQ项目 -->
+                        <div class="faq-item border border-gray-200 rounded-lg">
+                            <button class="faq-question w-full p-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
+                                <span class="font-medium text-gray-900">如何添加新客户？</span>
+                                <i class="fas fa-chevron-down text-gray-400 transform transition-transform"></i>
+                            </button>
+                            <div class="faq-answer hidden p-4 pt-0 text-gray-600 text-sm">
+                                <p>在客户管理页面点击右下角的"+"按钮，填写客户基本信息、购车意向等详细资料，保存后即可成功添加新客户。</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item border border-gray-200 rounded-lg">
+                            <button class="faq-question w-full p-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
+                                <span class="font-medium text-gray-900">AI助手如何使用？</span>
+                                <i class="fas fa-chevron-down text-gray-400 transform transition-transform"></i>
+                            </button>
+                            <div class="faq-answer hidden p-4 pt-0 text-gray-600 text-sm">
+                                <p>AI助手会根据客户的基本信息、购车预算、偏好等数据，自动分析客户画像并提供个性化的销售建议和话术推荐。您可以在客户详情页面查看AI分析结果。</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item border border-gray-200 rounded-lg">
+                            <button class="faq-question w-full p-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
+                                <span class="font-medium text-gray-900">如何设置跟进提醒？</span>
+                                <i class="fas fa-chevron-down text-gray-400 transform transition-transform"></i>
+                            </button>
+                            <div class="faq-answer hidden p-4 pt-0 text-gray-600 text-sm">
+                                <p>在客户详情页面点击"设置提醒"按钮，选择提醒时间和内容，系统会在指定时间通过推送通知提醒您跟进客户。</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item border border-gray-200 rounded-lg">
+                            <button class="faq-question w-full p-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
+                                <span class="font-medium text-gray-900">数据如何同步？</span>
+                                <i class="fas fa-chevron-down text-gray-400 transform transition-transform"></i>
+                            </button>
+                            <div class="faq-answer hidden p-4 pt-0 text-gray-600 text-sm">
+                                <p>系统支持云端自动同步，您的所有数据都会实时保存到云端。在设置页面可以查看同步状态和手动触发同步。</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item border border-gray-200 rounded-lg">
+                            <button class="faq-question w-full p-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
+                                <span class="font-medium text-gray-900">忘记密码怎么办？</span>
+                                <i class="fas fa-chevron-down text-gray-400 transform transition-transform"></i>
+                            </button>
+                            <div class="faq-answer hidden p-4 pt-0 text-gray-600 text-sm">
+                                <p>在登录页面点击"忘记密码"，输入您的手机号或邮箱，系统会发送重置密码的验证码，按提示操作即可重置密码。</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item border border-gray-200 rounded-lg">
+                            <button class="faq-question w-full p-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors">
+                                <span class="font-medium text-gray-900">如何导出客户数据？</span>
+                                <i class="fas fa-chevron-down text-gray-400 transform transition-transform"></i>
+                            </button>
+                            <div class="faq-answer hidden p-4 pt-0 text-gray-600 text-sm">
+                                <p>在客户管理页面点击右上角的菜单按钮，选择"导出数据"，可以选择导出格式（Excel、CSV等）和导出范围，系统会生成文件供您下载。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 联系客服 -->
+        <div id="contact" class="help-section">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-4">
+                <div class="p-4 border-b border-gray-200">
+                    <h3 class="font-semibold text-gray-900 flex items-center">
+                        <i class="fas fa-headset text-secondary mr-2"></i>
+                        联系客服
+                    </h3>
+                </div>
+                <div class="p-4">
+                    <div class="space-y-4">
+                        <!-- 在线客服 -->
+                        <div class="contact-item bg-gradient-to-r from-primary/5 to-secondary/5 rounded-lg p-4 border border-primary/20">
+                            <div class="flex items-center space-x-3 mb-3">
+                                <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-comments text-primary"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-900">在线客服</h4>
+                                    <p class="text-gray-600 text-sm">7×24小时在线支持</p>
+                                </div>
+                            </div>
+                            <button class="w-full bg-primary text-white py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors">
+                                <i class="fas fa-comment-dots mr-2"></i>
+                                开始对话
+                            </button>
+                        </div>
+
+                        <!-- 电话客服 -->
+                        <div class="contact-item border border-gray-200 rounded-lg p-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-phone text-success"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-gray-900">电话客服</h4>
+                                        <p class="text-gray-600 text-sm">400-888-9999</p>
+                                    </div>
+                                </div>
+                                <button class="text-success text-sm font-medium hover:text-success/80 transition-colors">
+                                    拨打电话
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 邮件支持 -->
+                        <div class="contact-item border border-gray-200 rounded-lg p-4">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-warning/10 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-envelope text-warning"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-gray-900">邮件支持</h4>
+                                        <p class="text-gray-600 text-sm">support@intellishop.com</p>
+                                    </div>
+                                </div>
+                                <button class="text-warning text-sm font-medium hover:text-warning/80 transition-colors">
+                                    发送邮件
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 工作时间 -->
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h4 class="font-medium text-gray-900 mb-2 flex items-center">
+                                <i class="fas fa-clock text-gray-600 mr-2"></i>
+                                服务时间
+                            </h4>
+                            <div class="space-y-1 text-sm text-gray-600">
+                                <div class="flex justify-between">
+                                    <span>在线客服：</span>
+                                    <span>7×24小时</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>电话客服：</span>
+                                    <span>周一至周日 9:00-21:00</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>邮件回复：</span>
+                                    <span>24小时内回复</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 版本信息 -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+            <div class="p-4 text-center">
+                <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-info-circle text-primary text-2xl"></i>
+                </div>
+                <h4 class="font-semibold text-gray-900 mb-1">IntelliShop Pro</h4>
+                <p class="text-gray-600 text-sm mb-2">版本 v2.1.0</p>
+                <p class="text-gray-500 text-xs">© 2024 IntelliShop. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 成功提示 -->
+    <div id="successToast" class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-success text-white px-6 py-3 rounded-lg shadow-lg z-50 opacity-0 transition-opacity duration-300">
+        <i class="fas fa-check-circle mr-2"></i>
+        <span id="toastMessage">操作成功！</span>
+    </div>
+
+    <script>
+        // 搜索功能
+        document.getElementById('searchBtn').addEventListener('click', function() {
+            const searchBox = document.getElementById('searchBox');
+            const searchInput = document.getElementById('searchInput');
+            
+            if (searchBox.classList.contains('hidden')) {
+                searchBox.classList.remove('hidden');
+                searchInput.focus();
+            } else {
+                searchBox.classList.add('hidden');
+                searchInput.value = '';
+                // 清除搜索结果
+                clearSearchResults();
+            }
+        });
+
+        // 搜索输入
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const query = this.value.toLowerCase().trim();
+            if (query) {
+                performSearch(query);
+            } else {
+                clearSearchResults();
+            }
+        });
+
+        // 执行搜索
+        function performSearch(query) {
+            const allSections = document.querySelectorAll('.help-section');
+            const allItems = document.querySelectorAll('.step-item, .feature-item, .faq-item, .contact-item');
+            
+            // 隐藏所有内容
+            allSections.forEach(section => section.style.display = 'none');
+            
+            let hasResults = false;
+            
+            // 搜索匹配项
+            allItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                const parentSection = item.closest('.help-section');
+                
+                if (text.includes(query)) {
+                    parentSection.style.display = 'block';
+                    item.style.display = 'block';
+                    // 高亮匹配文本
+                    highlightText(item, query);
+                    hasResults = true;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            if (!hasResults) {
+                showToast('未找到相关内容');
+            }
+        }
+
+        // 清除搜索结果
+        function clearSearchResults() {
+            const allSections = document.querySelectorAll('.help-section');
+            const allItems = document.querySelectorAll('.step-item, .feature-item, .faq-item, .contact-item');
+            
+            allSections.forEach(section => section.style.display = 'block');
+            allItems.forEach(item => {
+                item.style.display = 'block';
+                // 清除高亮
+                clearHighlight(item);
+            });
+        }
+
+        // 高亮文本
+        function highlightText(element, query) {
+            // 简单的高亮实现
+            element.classList.add('bg-yellow-100');
+        }
+
+        // 清除高亮
+        function clearHighlight(element) {
+            element.classList.remove('bg-yellow-100');
+        }
+
+        // 快速入口点击
+        document.querySelectorAll('.quick-entry').forEach(entry => {
+            entry.addEventListener('click', function() {
+                const sectionId = this.dataset.section;
+                const targetSection = document.getElementById(sectionId);
+                
+                if (targetSection) {
+                    // 滚动到目标区域
+                    targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    
+                    // 添加高亮效果
+                    targetSection.classList.add('ring-2', 'ring-primary/20');
+                    setTimeout(() => {
+                        targetSection.classList.remove('ring-2', 'ring-primary/20');
+                    }, 2000);
+                }
+            });
+        });
+
+        // FAQ展开/收起
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', function() {
+                const answer = this.nextElementSibling;
+                const icon = this.querySelector('i');
+                
+                if (answer.classList.contains('hidden')) {
+                    answer.classList.remove('hidden');
+                    icon.style.transform = 'rotate(180deg)';
+                } else {
+                    answer.classList.add('hidden');
+                    icon.style.transform = 'rotate(0deg)';
+                }
+            });
+        });
+
+        // 联系客服功能
+        document.querySelectorAll('.contact-item button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const action = this.textContent.trim();
+                
+                if (action.includes('开始对话')) {
+                    showToast('正在连接在线客服...');
+                    // 这里可以集成在线客服系统
+                } else if (action.includes('拨打电话')) {
+                    // 尝试拨打电话
+                    window.location.href = 'tel:400-888-9999';
+                } else if (action.includes('发送邮件')) {
+                    // 打开邮件客户端
+                    window.location.href = 'mailto:support@intellishop.com?subject=IntelliShop Pro 技术支持';
+                }
+            });
+        });
+
+        // 显示提示消息
+        function showToast(message) {
+            const toast = document.getElementById('successToast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            toast.classList.remove('opacity-0');
+            toast.classList.add('opacity-100');
+            
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0');
+            }, 2000);
+        }
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查是否有特定的锚点
+            const hash = window.location.hash;
+            if (hash) {
+                const targetSection = document.querySelector(hash);
+                if (targetSection) {
+                    setTimeout(() => {
+                        targetSection.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                }
+            }
+        });
+
+        // 键盘快捷键
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + K 打开搜索
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                document.getElementById('searchBtn').click();
+            }
+            
+            // ESC 关闭搜索
+            if (e.key === 'Escape') {
+                const searchBox = document.getElementById('searchBox');
+                if (!searchBox.classList.contains('hidden')) {
+                    searchBox.classList.add('hidden');
+                    clearSearchResults();
+                }
+            }
+        });
+
+        // 滚动到顶部功能
+        let scrollToTopBtn = null;
+        
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 300) {
+                if (!scrollToTopBtn) {
+                    scrollToTopBtn = document.createElement('button');
+                    scrollToTopBtn.innerHTML = '<i class="fas fa-arrow-up"></i>';
+                    scrollToTopBtn.className = 'fixed bottom-20 right-4 w-12 h-12 bg-primary text-white rounded-full shadow-lg hover:bg-primary/90 transition-colors z-40';
+                    scrollToTopBtn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+                    document.body.appendChild(scrollToTopBtn);
+                }
+            } else if (scrollToTopBtn) {
+                scrollToTopBtn.remove();
+                scrollToTopBtn = null;
+            }
+        });
+    </script>
+</body>
+</html>

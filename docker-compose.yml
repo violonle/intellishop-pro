@@ -1,0 +1,260 @@
+version: '3.8'
+
+services:
+  # MySQL数据库
+  mysql:
+    image: mysql:8.0
+    container_name: shoppro-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-123456}
+      MYSQL_DATABASE: shoppro_db
+      MYSQL_USER: shoppro
+      MYSQL_PASSWORD: ${DB_PASSWORD:-shoppro123}
+      TZ: Asia/Shanghai
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./database/data/mysql:/var/lib/mysql
+      - ./database/scripts:/docker-entrypoint-initdb.d
+      - ./database/config/my.cnf:/etc/mysql/conf.d/my.cnf
+    command: --default-authentication-plugin=mysql_native_password
+    networks:
+      - shoppro-network
+
+  # Redis缓存
+  redis:
+    image: redis:latest
+    container_name: shoppro-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./database/data/redis:/data
+      - ./database/config/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    environment:
+      TZ: Asia/Shanghai
+    networks:
+      - shoppro-network
+
+  # RabbitMQ 消息队列
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: shoppro-rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      TZ: Asia/Shanghai
+    networks:
+      - shoppro-network
+
+  # 后端API服务
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: shoppro-backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: shoppro_db
+      DB_USERNAME: shoppro
+      DB_PASSWORD: ${DB_PASSWORD:-shoppro123}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      JWT_SECRET: ${JWT_SECRET:-shoppro-jwt-secret-key-2024}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      TZ: Asia/Shanghai
+    volumes:
+      - backend_logs:/var/log/shoppro
+      - backend_uploads:/data/shoppro/uploads
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - shoppro-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/api/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  # 前端Web服务
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: shoppro-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./frontend/nginx.conf:/etc/nginx/nginx.conf
+      - ./frontend/ssl:/etc/nginx/ssl
+      - frontend_logs:/var/log/nginx
+    depends_on:
+      - backend
+    networks:
+      - shoppro-network
+
+  # AI模型服务
+  ai-service:
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
+    container_name: shoppro-ai
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_ENV: production
+      MODEL_PATH: /app/models
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      TZ: Asia/Shanghai
+    volumes:
+      - ai_models:/app/models
+      - ai_logs:/var/log/ai-service
+    depends_on:
+      - redis
+    networks:
+      - shoppro-network
+    deploy:
+      resources:
+        reservations:
+          memory: 2G
+        limits:
+          memory: 4G
+
+  # MinIO文件存储服务
+  minio:
+    image: minio/minio:latest
+    container_name: shoppro-minio
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-admin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-admin123456}
+      TZ: Asia/Shanghai
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    networks:
+      - shoppro-network
+
+  # 数据库管理工具 (可选)
+  adminer:
+    image: adminer:4.8.1
+    container_name: shoppro-adminer
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: mysql
+      TZ: Asia/Shanghai
+    depends_on:
+      - mysql
+    networks:
+      - shoppro-network
+    profiles:
+      - dev
+
+  # Redis管理工具 (可选)
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: shoppro-redis-commander
+    restart: unless-stopped
+    ports:
+      - "8082:8081"
+    environment:
+      REDIS_HOSTS: local:redis:6379
+      TZ: Asia/Shanghai
+    depends_on:
+      - redis
+    networks:
+      - shoppro-network
+    profiles:
+      - dev
+
+  # 监控服务 (可选)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: shoppro-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+    networks:
+      - shoppro-network
+    profiles:
+      - monitoring
+
+  # Grafana仪表板 (可选)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: shoppro-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin123}
+      TZ: Asia/Shanghai
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+    networks:
+      - shoppro-network
+    profiles:
+      - monitoring
+
+# 数据卷
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+  minio_data:
+    driver: local
+  backend_logs:
+    driver: local
+  backend_uploads:
+    driver: local
+  frontend_logs:
+    driver: local
+  ai_models:
+    driver: local
+  ai_logs:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+# 网络
+networks:
+  shoppro-network:
+    driver: bridge

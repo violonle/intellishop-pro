@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopPro AI SCRM - 智能协同门户导航</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%);
+            color: #F8FAFC;
+            min-height: 100vh;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(99, 102, 241, 0.4);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(99, 102, 241, 0.2);
+        }
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body class="p-6 md:p-12">
+    <div class="max-w-6xl mx-auto">
+        <!-- 头部 Header -->
+        <header class="flex flex-col md:flex-row items-start md:items-center justify-between pb-8 border-b border-slate-800 gap-4">
+            <div>
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/30 text-xl">
+                        S
+                    </div>
+                    <h1 class="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-indigo-200">
+                        ShopPro AI SCRM
+                    </h1>
+                </div>
+                <p class="text-slate-400 mt-2 text-sm">企业级多租户智能客户关系管理系统 · 本地全栈开发与导航控制台</p>
+            </div>
+            <div class="flex items-center gap-3 bg-slate-900/80 px-4 py-2 rounded-xl border border-slate-800">
+                <span class="status-dot bg-emerald-500 animate-pulse"></span>
+                <span class="text-xs text-slate-300 font-medium">本地集成环境已激活</span>
+            </div>
+        </header>
+
+        <!-- 核心入口矩阵 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+            <!-- PC 管理后台 -->
+            <a href="http://localhost:5174" target="_blank" class="glass-card rounded-2xl p-6 flex flex-col justify-between group">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                            🖥️
+                        </div>
+                        <span class="text-xs px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-mono">Port 5174</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">PC 运营管理后台</h2>
+                    <p class="text-slate-400 text-sm mt-2 leading-relaxed">
+                        基于 React 19 + Ant Design 6。支持租户隔离、RBAC 权限管理、AI 模型调度中心、SOP 流程自动化配置及全链路审计。
+                    </p>
+                </div>
+                <div class="mt-6 flex items-center text-sm font-semibold text-blue-400 gap-1 group-hover:translate-x-1 transition-transform">
+                    进入管理端 <span>&rarr;</span>
+                </div>
+            </a>
+
+            <!-- 移动端 App -->
+            <a href="http://localhost:5173" target="_blank" class="glass-card rounded-2xl p-6 flex flex-col justify-between group">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                            📱
+                        </div>
+                        <span class="text-xs px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-mono">Port 5173</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-white group-hover:text-indigo-400 transition-colors">移动端业务 App</h2>
+                    <p class="text-slate-400 text-sm mt-2 leading-relaxed">
+                        基于 React 19 + Tailwind CSS。销售专属移动工作台，提供线索跟进、客户画像、AI 智能大脑、场景化促成话术推荐。
+                    </p>
+                </div>
+                <div class="mt-6 flex items-center text-sm font-semibold text-indigo-400 gap-1 group-hover:translate-x-1 transition-transform">
+                    进入移动端 <span>&rarr;</span>
+                </div>
+            </a>
+
+            <!-- 后端 API 与 Swagger -->
+            <a href="http://localhost:8080/api/swagger-ui.html" target="_blank" class="glass-card rounded-2xl p-6 flex flex-col justify-between group">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                            ⚙️
+                        </div>
+                        <span class="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">Port 8080</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-white group-hover:text-emerald-400 transition-colors">Swagger 接口文档</h2>
+                    <p class="text-slate-400 text-sm mt-2 leading-relaxed">
+                        Spring Boot 3.3.4 (Java 17) 核心后端。集成 Spring Security + JWT 鉴权，提供 280+ RESTful 业务接口与在线调试能力。
+                    </p>
+                </div>
+                <div class="mt-6 flex items-center text-sm font-semibold text-emerald-400 gap-1 group-hover:translate-x-1 transition-transform">
+                    查看接口定义 <span>&rarr;</span>
+                </div>
+            </a>
+        </div>
+
+        <!-- 测试账号与服务看板 -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
+            <!-- 快速测试账号卡片 -->
+            <div class="glass-card rounded-2xl p-6 lg:col-span-2">
+                <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                    <span>🔑</span> 默认测试账号一览
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+                        <div class="text-xs text-indigo-400 font-semibold uppercase">超级管理员</div>
+                        <div class="mt-2 text-sm text-white font-mono font-bold">admin</div>
+                        <div class="text-xs text-slate-400 font-mono mt-1">密码: 123456</div>
+                        <div class="text-[11px] text-slate-500 mt-2">拥有系统全局最高管理权限</div>
+                    </div>
+                    <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+                        <div class="text-xs text-blue-400 font-semibold uppercase">销售团队经理</div>
+                        <div class="mt-2 text-sm text-white font-mono font-bold">manager001</div>
+                        <div class="text-xs text-slate-400 font-mono mt-1">密码: 123456</div>
+                        <div class="text-[11px] text-slate-500 mt-2">部门线索分配与业绩分析</div>
+                    </div>
+                    <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+                        <div class="text-xs text-emerald-400 font-semibold uppercase">一线销售代表</div>
+                        <div class="mt-2 text-sm text-white font-mono font-bold">sales001</div>
+                        <div class="text-xs text-slate-400 font-mono mt-1">密码: 123456</div>
+                        <div class="text-[11px] text-slate-500 mt-2">客户跟进、线索转化与 AI 助手</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 原型文档与资源索引 -->
+            <div class="glass-card rounded-2xl p-6">
+                <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                    <span>📚</span> 资产与原型索引
+                </h3>
+                <ul class="space-y-3 text-sm text-slate-300">
+                    <li class="flex items-center justify-between pb-2 border-b border-slate-800/80">
+                        <span>历史 UI 原型归档</span>
+                        <span class="text-xs text-slate-400 font-mono">docs/prototypes/</span>
+                    </li>
+                    <li class="flex items-center justify-between pb-2 border-b border-slate-800/80">
+                        <span>数据库表结构脚本</span>
+                        <span class="text-xs text-slate-400 font-mono">database/scripts/</span>
+                    </li>
+                    <li class="flex items-center justify-between">
+                        <span>OpenAPI 规范文档</span>
+                        <span class="text-xs text-slate-400 font-mono">openapi/openapi.yaml</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 底部 Footer -->
+        <footer class="mt-12 text-center text-xs text-slate-500 pb-6">
+            ShopPro AI Intelligent SCRM System &copy; 2026 · All Rights Reserved
+        </footer>
+    </div>
+</body>
+</html>

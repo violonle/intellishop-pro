@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>页面未找到 - IntelliShop Pro</title>
+    <link rel="stylesheet" href="../assets/global-styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4640DE',
+                        secondary: '#8B5CF6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .floating-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #4640DE, #8B5CF6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-white to-purple-50 min-h-screen">
+    <div class="min-h-screen flex items-center justify-center px-4">
+        <div class="max-w-md w-full text-center">
+            <!-- 404图标 -->
+            <div class="mb-8">
+                <div class="floating-animation inline-block">
+                    <div class="w-32 h-32 mx-auto bg-gradient-to-br from-primary/10 to-secondary/10 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-search text-6xl text-primary/60"></i>
+                    </div>
+                </div>
+                <div class="text-8xl font-bold gradient-text mb-2">404</div>
+                <div class="text-xl text-gray-600 mb-2">页面未找到</div>
+                <div class="text-sm text-gray-500">抱歉，您访问的页面不存在或已被移动</div>
+            </div>
+
+            <!-- 建议操作 -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">您可以尝试：</h3>
+                <div class="space-y-3 text-left">
+                    <div class="flex items-center space-x-3 text-gray-600">
+                        <i class="fas fa-check-circle text-success w-4"></i>
+                        <span class="text-sm">检查网址是否输入正确</span>
+                    </div>
+                    <div class="flex items-center space-x-3 text-gray-600">
+                        <i class="fas fa-check-circle text-success w-4"></i>
+                        <span class="text-sm">返回上一页重新尝试</span>
+                    </div>
+                    <div class="flex items-center space-x-3 text-gray-600">
+                        <i class="fas fa-check-circle text-success w-4"></i>
+                        <span class="text-sm">访问首页重新开始</span>
+                    </div>
+                    <div class="flex items-center space-x-3 text-gray-600">
+                        <i class="fas fa-check-circle text-success w-4"></i>
+                        <span class="text-sm">联系技术支持获取帮助</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 快速导航 -->
+            <div class="space-y-3">
+                <button onclick="goHome()" class="w-full bg-gradient-to-r from-primary to-secondary text-white py-3 px-6 rounded-xl font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200">
+                    <i class="fas fa-home mr-2"></i>
+                    返回首页
+                </button>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="goBack()" class="bg-white text-gray-700 py-2.5 px-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        返回上页
+                    </button>
+                    <button onclick="showHelp()" class="bg-white text-gray-700 py-2.5 px-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-question-circle mr-2"></i>
+                        获取帮助
+                    </button>
+                </div>
+            </div>
+
+            <!-- 常用功能快捷入口 -->
+            <div class="mt-8 bg-white rounded-xl shadow-sm p-4">
+                <h4 class="text-sm font-medium text-gray-900 mb-3">常用功能</h4>
+                <div class="grid grid-cols-3 gap-3">
+                    <button onclick="goToPage('dashboard.html')" class="p-3 rounded-lg hover:bg-gray-50 transition-colors group">
+                        <i class="fas fa-chart-line text-primary text-lg mb-1 group-hover:scale-110 transition-transform"></i>
+                        <div class="text-xs text-gray-600">数据看板</div>
+                    </button>
+                    <button onclick="goToPage('customer-management.html')" class="p-3 rounded-lg hover:bg-gray-50 transition-colors group">
+                        <i class="fas fa-users text-secondary text-lg mb-1 group-hover:scale-110 transition-transform"></i>
+                        <div class="text-xs text-gray-600">客户管理</div>
+                    </button>
+                    <button onclick="goToPage('ai-brain.html')" class="p-3 rounded-lg hover:bg-gray-50 transition-colors group">
+                        <i class="fas fa-brain text-success text-lg mb-1 group-hover:scale-110 transition-transform"></i>
+                        <div class="text-xs text-gray-600">AI助手</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 底部信息 -->
+            <div class="mt-8 text-xs text-gray-400">
+                <p>如果问题持续存在，请联系技术支持</p>
+                <p class="mt-1">错误代码: 404 | IntelliShop Pro</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 提示 -->
+    <div id="toast" class="fixed top-4 right-4 bg-white border border-gray-200 rounded-lg shadow-lg p-4 transform translate-x-full transition-transform duration-300 z-50">
+        <div class="flex items-center space-x-3">
+            <div class="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center">
+                <i class="fas fa-info text-primary text-xs"></i>
+            </div>
+            <span id="toastMessage" class="text-sm text-gray-700"></span>
+        </div>
+    </div>
+
+    <script>
+        // 显示提示信息
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            toast.classList.remove('translate-x-full');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+            }, 3000);
+        }
+
+        // 返回首页
+        function goHome() {
+            showToast('正在跳转到首页...');
+            setTimeout(() => {
+                window.location.href = '../index.html';
+            }, 500);
+        }
+
+        // 返回上一页
+        function goBack() {
+            if (window.history.length > 1) {
+                showToast('正在返回上一页...');
+                setTimeout(() => {
+                    window.history.back();
+                }, 500);
+            } else {
+                showToast('没有上一页，将跳转到首页');
+                setTimeout(() => {
+                    goHome();
+                }, 1000);
+            }
+        }
+
+        // 显示帮助
+        function showHelp() {
+            showToast('正在打开帮助中心...');
+            setTimeout(() => {
+                window.location.href = './help.html';
+            }, 500);
+        }
+
+        // 跳转到指定页面
+        function goToPage(page) {
+            showToast('正在跳转...');
+            setTimeout(() => {
+                window.location.href = './' + page;
+            }, 500);
+        }
+
+        // 页面加载完成后的动画效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 添加页面加载动画
+            document.body.style.opacity = '0';
+            document.body.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                document.body.style.transition = 'all 0.5s ease-out';
+                document.body.style.opacity = '1';
+                document.body.style.transform = 'translateY(0)';
+            }, 100);
+
+            // 记录404错误（实际项目中可以发送到服务器）
+            console.log('404 Error:', {
+                url: window.location.href,
+                referrer: document.referrer,
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent
+            });
+        });
+
+        // 键盘快捷键支持
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                goBack();
+            } else if (e.key === 'h' || e.key === 'H') {
+                goHome();
+            } else if (e.key === '?' || e.key === '/') {
+                showHelp();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能营销自动化 - ShopPro AI SCRM</title>
+    
+    <!-- 样式文件 -->
+    <link rel="stylesheet" href="../assets/css/ui-components.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981', 
+                        accent: '#F59E0B',
+                        danger: '#EF4444'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen">
+        <!-- 页面头部 -->
+        <header class="bg-white shadow-sm border-b">
+            <div class="px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <button onclick="history.back()" class="p-2 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                        </button>
+                        <div>
+                            <h1 class="text-2xl font-bold text-gray-900">智能营销自动化</h1>
+                            <p class="text-sm text-gray-600">AI驱动的营销活动管理与客户旅程优化</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button onclick="showMarketingInsights()" class="btn btn-secondary btn-sm">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                            营销洞察
+                        </button>
+                        <button onclick="createNewCampaign()" class="btn btn-primary">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            创建营销活动
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- AI智能推荐区域 -->
+        <div class="px-6 py-4">
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border-l-4 border-primary">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-primary text-white rounded-lg flex items-center justify-center mr-4">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">AI营销建议</h3>
+                            <p class="text-sm text-gray-600">基于实时数据分析为您提供智能营销策略</p>
+                        </div>
+                    </div>
+                    <button onclick="refreshMarketingAI()" class="btn btn-primary btn-sm">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        刷新建议
+                    </button>
+                </div>
+                <div id="marketing-ai-recommendations">
+                    <div class="flex items-center">
+                        <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-3"></div>
+                        正在分析营销数据，生成智能建议...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主要功能区域 -->
+        <div class="px-6 pb-6">
+            <!-- 营销导航卡片 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- 客户旅程自动化 -->
+                <div class="card hover:shadow-lg transition-shadow cursor-pointer" onclick="openJourneyManager()">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center mb-3">
+                                <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mr-3">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="font-semibold text-gray-900">客户旅程自动化</h3>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-4">设计和管理个性化的客户互动旅程，自动化营销触点</p>
+                            <div class="flex items-center text-xs text-gray-500">
+                                <span class="bg-green-100 text-green-600 px-2 py-1 rounded-full mr-2">活跃旅程: 5</span>
+                                <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded-full">本月触发: 1,234</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 个性化营销活动 -->
+                <div class="card hover:shadow-lg transition-shadow cursor-pointer" onclick="openCampaignManager()">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center mb-3">
+                                <div class="w-8 h-8 bg-green-100 text-green-600 rounded-lg flex items-center justify-center mr-3">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="font-semibold text-gray-900">个性化营销活动</h3>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-4">创建针对不同客户群体的个性化营销内容和活动</p>
+                            <div class="flex items-center text-xs text-gray-500">
+                                <span class="bg-purple-100 text-purple-600 px-2 py-1 rounded-full mr-2">进行中: 8</span>
+                                <span class="bg-yellow-100 text-yellow-600 px-2 py-1 rounded-full">平均ROI: 325%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 智能邮件营销 -->
+                <div class="card hover:shadow-lg transition-shadow cursor-pointer" onclick="openEmailMarketing()">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center mb-3">
+                                <div class="w-8 h-8 bg-orange-100 text-orange-600 rounded-lg flex items-center justify-center mr-3">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="font-semibold text-gray-900">智能邮件营销</h3>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-4">AI驱动的邮件内容优化、发送时机预测和效果分析</p>
+                            <div class="flex items-center text-xs text-gray-500">
+                                <span class="bg-indigo-100 text-indigo-600 px-2 py-1 rounded-full mr-2">打开率: 42%</span>
+                                <span class="bg-red-100 text-red-600 px-2 py-1 rounded-full">点击率: 18%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 营销绩效概览 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- 营销漏斗图表 -->
+                <div class="card">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900">营销转化漏斗</h3>
+                        <select class="text-sm border border-gray-300 rounded px-3 py-1">
+                            <option>本月</option>
+                            <option>本季度</option>
+                            <option>本年</option>
+                        </select>
+                    </div>
+                    <div class="relative h-80">
+                        <canvas id="marketingFunnelChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 营销活动ROI -->
+                <div class="card">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900">营销活动ROI趋势</h3>
+                        <button onclick="exportROIData()" class="btn btn-secondary btn-sm">导出数据</button>
+                    </div>
+                    <div class="relative h-80">
+                        <canvas id="roiTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 活跃营销活动 -->
+            <div class="card">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900">活跃营销活动</h3>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="filterCampaigns('all')" class="btn btn-secondary btn-sm">全部</button>
+                        <button onclick="filterCampaigns('email')" class="btn btn-outline btn-sm">邮件营销</button>
+                        <button onclick="filterCampaigns('social')" class="btn btn-outline btn-sm">社交媒体</button>
+                        <button onclick="filterCampaigns('sms')" class="btn btn-outline btn-sm">短信营销</button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">活动名称</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">类型</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">目标受众</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">转化率</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ROI</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="campaignTableBody" class="bg-white divide-y divide-gray-200">
+                            <!-- 动态填充内容 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/api-client.js"></script>
+    <script src="../assets/js/ui-components.js"></script>
+    <script>
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMarketingData();
+            initializeCharts();
+            
+            // 自动刷新AI建议
+            setTimeout(refreshMarketingAI, 1000);
+        });
+
+        // AI功能：刷新营销建议
+        async function refreshMarketingAI() {
+            const contentEl = document.getElementById('marketing-ai-recommendations');
+            contentEl.innerHTML = '<div class="flex items-center"><div class="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-3"></div>分析营销数据中...</div>';
+            
+            try {
+                // 模拟AI分析营销数据
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // 生成智能营销建议
+                const recommendations = [
+                    '🎯 建议为"高价值潜在客户"群体创建个性化邮件序列，预估转化率可提升35%',
+                    '📧 最佳发送时间：周二上午9:30，基于用户行为分析，此时段邮件打开率最高',
+                    '🔥 推荐启动"产品体验"客户旅程，针对最近注册的用户进行7天自动化跟进',
+                    '📊 当前A/B测试显示：个性化主题行比通用主题行效果好28%，建议扩大使用范围'
+                ];
+                
+                contentEl.innerHTML = `
+                    <div class="space-y-3">
+                        ${recommendations.map(rec => `
+                            <div class="flex items-start">
+                                <div class="w-1.5 h-1.5 bg-primary rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                                <span class="text-sm text-gray-700">${rec}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="flex space-x-2 mt-4">
+                        <button onclick="createAutomatedJourney()" class="btn btn-success btn-xs">创建客户旅程</button>
+                        <button onclick="optimizeEmailTiming()" class="btn btn-primary btn-xs">优化发送时机</button>
+                        <button onclick="setupABTest()" class="btn btn-secondary btn-xs">设置A/B测试</button>
+                    </div>
+                `;
+                
+                UI.showMessage('AI营销建议已更新', 'success');
+                
+            } catch (error) {
+                contentEl.innerHTML = '<span class="text-red-600 text-sm">AI服务暂时不可用，请稍后重试</span>';
+                UI.showMessage('获取AI建议失败: ' + error.message, 'error');
+            }
+        }
+
+        // 加载营销数据
+        async function loadMarketingData() {
+            try {
+                // 加载营销活动数据
+                const campaignData = getMockCampaignData();
+                renderCampaignTable(campaignData);
+                
+            } catch (error) {
+                console.error('加载营销数据失败:', error);
+                UI.showMessage('数据加载失败', 'error');
+            }
+        }
+
+        // 初始化图表
+        function initializeCharts() {
+            // 营销漏斗图表
+            const funnelCtx = document.getElementById('marketingFunnelChart').getContext('2d');
+            new Chart(funnelCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['曝光', '点击', '访问', '注册', '转化'],
+                    datasets: [{
+                        data: [10000, 1200, 800, 350, 89],
+                        backgroundColor: [
+                            '#3B82F6',
+                            '#10B981', 
+                            '#F59E0B',
+                            '#EF4444',
+                            '#8B5CF6'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // ROI趋势图表
+            const roiCtx = document.getElementById('roiTrendChart').getContext('2d');
+            new Chart(roiCtx, {
+                type: 'line',
+                data: {
+                    labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
+                    datasets: [{
+                        label: 'ROI(%)',
+                        data: [180, 220, 280, 320, 380, 425],
+                        borderColor: '#10B981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 获取模拟营销活动数据
+        function getMockCampaignData() {
+            return [
+                {
+                    id: 1,
+                    name: '新用户欢迎序列',
+                    type: '邮件营销',
+                    audience: '新注册用户',
+                    status: '进行中',
+                    conversion_rate: '12.5%',
+                    roi: '285%'
+                },
+                {
+                    id: 2,
+                    name: '春季产品推广',
+                    type: '社交媒体',
+                    audience: '活跃客户',
+                    status: '进行中',
+                    conversion_rate: '8.3%',
+                    roi: '195%'
+                },
+                {
+                    id: 3,
+                    name: '客户回访提醒',
+                    type: '短信营销',
+                    audience: '沉睡客户',
+                    status: '已完成',
+                    conversion_rate: '15.7%',
+                    roi: '420%'
+                },
+                {
+                    id: 4,
+                    name: '生日特惠活动',
+                    type: '邮件营销',
+                    audience: '生日用户',
+                    status: '计划中',
+                    conversion_rate: '18.2%',
+                    roi: '365%'
+                }
+            ];
+        }
+
+        // 渲染营销活动表格
+        function renderCampaignTable(data) {
+            const tbody = document.getElementById('campaignTableBody');
+            
+            tbody.innerHTML = data.map(campaign => {
+                const statusClass = {
+                    '进行中': 'bg-green-100 text-green-800',
+                    '已完成': 'bg-blue-100 text-blue-800',
+                    '计划中': 'bg-yellow-100 text-yellow-800'
+                }[campaign.status];
+
+                return `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="font-medium text-gray-900">${campaign.name}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${campaign.type}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${campaign.audience}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusClass}">
+                                ${campaign.status}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${campaign.conversion_rate}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">${campaign.roi}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button onclick="viewCampaignDetails(${campaign.id})" class="text-primary hover:text-primary/80 mr-3">查看</button>
+                            <button onclick="editCampaign(${campaign.id})" class="text-gray-600 hover:text-gray-900 mr-3">编辑</button>
+                            <button onclick="pauseCampaign(${campaign.id})" class="text-yellow-600 hover:text-yellow-900">暂停</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // 营销功能
+        function openJourneyManager() {
+            UI.showModal('客户旅程管理', `
+                <div class="space-y-4">
+                    <div class="bg-blue-50 rounded-lg p-4">
+                        <h4 class="font-medium text-blue-900 mb-2">客户旅程自动化</h4>
+                        <p class="text-sm text-blue-700">设计个性化的客户互动路径，自动化营销触点</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button onclick="createJourneyTemplate('welcome')" class="p-4 border border-dashed border-gray-300 rounded-lg hover:border-primary hover:bg-primary/5 transition-colors">
+                            <div class="text-center">
+                                <div class="w-8 h-8 bg-green-100 text-green-600 rounded-lg mx-auto mb-2 flex items-center justify-center">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                </div>
+                                <div class="font-medium">新用户欢迎旅程</div>
+                                <div class="text-xs text-gray-500 mt-1">7天自动化跟进序列</div>
+                            </div>
+                        </button>
+                        <button onclick="createJourneyTemplate('reactivation')" class="p-4 border border-dashed border-gray-300 rounded-lg hover:border-primary hover:bg-primary/5 transition-colors">
+                            <div class="text-center">
+                                <div class="w-8 h-8 bg-orange-100 text-orange-600 rounded-lg mx-auto mb-2 flex items-center justify-center">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                    </svg>
+                                </div>
+                                <div class="font-medium">客户激活旅程</div>
+                                <div class="text-xs text-gray-500 mt-1">沉睡客户唤醒序列</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            `, { size: 'lg' });
+        }
+
+        function openCampaignManager() {
+            UI.showModal('个性化营销活动', `
+                <div class="space-y-4">
+                    <div class="bg-green-50 rounded-lg p-4">
+                        <h4 class="font-medium text-green-900 mb-2">智能营销活动创建</h4>
+                        <p class="text-sm text-green-700">AI驱动的个性化内容生成和精准投放</p>
+                    </div>
+                    <div class="space-y-3">
+                        <button onclick="createCampaignType('email')" class="w-full p-4 border rounded-lg hover:bg-gray-50 text-left">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mr-3">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="font-medium">邮件营销活动</div>
+                                    <div class="text-sm text-gray-600">个性化邮件内容和智能发送时机</div>
+                                </div>
+                            </div>
+                        </button>
+                        <button onclick="createCampaignType('social')" class="w-full p-4 border rounded-lg hover:bg-gray-50 text-left">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center mr-3">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="font-medium">社交媒体活动</div>
+                                    <div class="text-sm text-gray-600">多平台协同投放和效果跟踪</div>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            `, { size: 'lg' });
+        }
+
+        function openEmailMarketing() {
+            UI.showModal('智能邮件营销', `
+                <div class="space-y-4">
+                    <div class="bg-orange-50 rounded-lg p-4">
+                        <h4 class="font-medium text-orange-900 mb-2">AI邮件营销优化</h4>
+                        <p class="text-sm text-orange-700">智能内容生成、发送时机优化和效果预测</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="text-center p-4 bg-gray-50 rounded-lg">
+                            <div class="text-2xl font-bold text-blue-600">42%</div>
+                            <div class="text-sm text-gray-600">平均打开率</div>
+                        </div>
+                        <div class="text-center p-4 bg-gray-50 rounded-lg">
+                            <div class="text-2xl font-bold text-green-600">18%</div>
+                            <div class="text-sm text-gray-600">平均点击率</div>
+                        </div>
+                        <div class="text-center p-4 bg-gray-50 rounded-lg">
+                            <div class="text-2xl font-bold text-purple-600">285%</div>
+                            <div class="text-sm text-gray-600">平均ROI</div>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="createEmailTemplate()" class="btn btn-primary flex-1">创建邮件模板</button>
+                        <button onclick="optimizeEmailTiming()" class="btn btn-secondary flex-1">优化发送时机</button>
+                        <button onclick="setupABTest()" class="btn btn-outline flex-1">A/B测试</button>
+                    </div>
+                </div>
+            `, { size: 'lg' });
+        }
+
+        // AI增强功能
+        async function createAutomatedJourney() {
+            try {
+                UI.showLoading('创建客户旅程...');
+                
+                // 示例旅程配置
+                const journeyConfig = {
+                    name: "新用户欢迎旅程",
+                    trigger: "user_registration",
+                    steps: [
+                        { type: "email", template: "welcome", delay: 0 },
+                        { type: "email", template: "onboarding_guide", delay: 86400 },
+                        { type: "email", template: "feature_introduction", delay: 259200 }
+                    ]
+                };
+                
+                const result = await api.aiMarketing.createJourney(journeyConfig);
+                
+                UI.showMessage('客户旅程创建成功', 'success');
+                UI.closeModal();
+                
+            } catch (error) {
+                UI.showMessage('创建失败: ' + error.message, 'error');
+            } finally {
+                UI.hideLoading();
+            }
+        }
+
+        async function optimizeEmailTiming() {
+            try {
+                UI.showLoading('分析最佳发送时机...');
+                
+                // 示例收件人数据
+                const recipients = [
+                    { id: 1, timezone: "Asia/Shanghai", behavior_pattern: "morning" },
+                    { id: 2, timezone: "Asia/Shanghai", behavior_pattern: "evening" }
+                ];
+                
+                const optimizedSchedule = await api.aiMarketing.optimizeSendTiming(recipients);
+                
+                UI.showMessage(`最佳发送时间：${optimizedSchedule.recommended_time}`, 'success');
+                
+            } catch (error) {
+                UI.showMessage('优化失败: ' + error.message, 'error');
+            } finally {
+                UI.hideLoading();
+            }
+        }
+
+        function showMarketingInsights() {
+            UI.showModal('营销洞察报告', `
+                <div class="space-y-6">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="text-center p-4 bg-blue-50 rounded-lg">
+                            <div class="text-xl font-bold text-blue-600">1,234</div>
+                            <div class="text-sm text-gray-600">本月触达用户</div>
+                        </div>
+                        <div class="text-center p-4 bg-green-50 rounded-lg">
+                            <div class="text-xl font-bold text-green-600">15.6%</div>
+                            <div class="text-sm text-gray-600">平均转化率</div>
+                        </div>
+                        <div class="text-center p-4 bg-yellow-50 rounded-lg">
+                            <div class="text-xl font-bold text-yellow-600">¥8.9万</div>
+                            <div class="text-sm text-gray-600">营销收入</div>
+                        </div>
+                        <div class="text-center p-4 bg-purple-50 rounded-lg">
+                            <div class="text-xl font-bold text-purple-600">325%</div>
+                            <div class="text-sm text-gray-600">平均ROI</div>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="border rounded-lg p-4">
+                            <h4 class="font-medium mb-2">🎯 关键洞察</h4>
+                            <ul class="text-sm space-y-1 text-gray-600">
+                                <li>• 邮件营销在周二上午9-11点效果最佳</li>
+                                <li>• 个性化主题行比通用主题行转化率高28%</li>
+                                <li>• 短信营销对35岁以上用户效果更好</li>
+                                <li>• 客户旅程自动化减少了65%的人工工作量</li>
+                            </ul>
+                        </div>
+                        <div class="border rounded-lg p-4">
+                            <h4 class="font-medium mb-2">📈 优化建议</h4>
+                            <ul class="text-sm space-y-1 text-gray-600">
+                                <li>• 扩大高ROI活动的投放规模</li>
+                                <li>• 针对不同年龄段用户制定差异化策略</li>
+                                <li>• 增加视频内容在社交媒体营销中的占比</li>
+                                <li>• 完善客户画像数据以提升个性化效果</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `, { size: 'xl' });
+        }
+
+        // 其他功能
+        function createNewCampaign() {
+            openCampaignManager();
+        }
+
+        function filterCampaigns(type) {
+            // 实现活动筛选逻辑
+            console.log('筛选活动类型:', type);
+        }
+
+        function exportROIData() {
+            UI.showMessage('ROI数据导出功能开发中...', 'info');
+        }
+
+        // 表格操作
+        function viewCampaignDetails(id) {
+            UI.showMessage(`查看活动详情: ${id}`, 'info');
+        }
+
+        function editCampaign(id) {
+            UI.showMessage(`编辑活动: ${id}`, 'info');
+        }
+
+        function pauseCampaign(id) {
+            UI.showMessage(`暂停活动: ${id}`, 'warning');
+        }
+    </script>
+</body>
+</html>

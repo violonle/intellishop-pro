@@ -1,0 +1,276 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #1677ff;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  background: #f3f5f7;
+  color: #1f2937;
+}
+
+/*
+ * ShopPro B2B visual system
+ * Direction: restrained operations workspace, one brand accent, semantic status colors only.
+ */
+.shoppro-app-shell {
+  --sp-bg: #f3f5f7;
+  --sp-surface: #ffffff;
+  --sp-surface-muted: #f7f8fa;
+  --sp-border: #dfe4ea;
+  --sp-border-strong: #cbd5df;
+  --sp-text: #1f2937;
+  --sp-text-muted: #667085;
+  --sp-accent: #2563eb;
+  --sp-accent-strong: #1d4ed8;
+  --sp-accent-soft: #eff6ff;
+  --sp-accent-faint: #f8fbff;
+  --sp-shadow: 0 8px 22px rgba(31, 41, 55, 0.06);
+  min-height: 100vh;
+  background: var(--sp-bg);
+  color: var(--sp-text);
+}
+
+html.dark .shoppro-app-shell {
+  --sp-bg: #151a20;
+  --sp-surface: #1c232b;
+  --sp-surface-muted: #202932;
+  --sp-border: #303b46;
+  --sp-border-strong: #465362;
+  --sp-text: #e8edf2;
+  --sp-text-muted: #a3afbb;
+  --sp-accent: #2563eb;
+  --sp-accent-strong: #1d4ed8;
+  --sp-accent-soft: #1e3a5f;
+  --sp-accent-faint: #182d43;
+  --sp-shadow: 0 8px 22px rgba(0, 0, 0, 0.16);
+}
+
+.shoppro-app-shell .ant-layout,
+.shoppro-app-shell .ant-layout-content {
+  background: var(--sp-bg) !important;
+}
+
+.shoppro-app-shell .ant-layout-header,
+.shoppro-app-shell .ant-layout-sider {
+  background: var(--sp-surface) !important;
+  border-color: var(--sp-border) !important;
+}
+
+.shoppro-app-shell .ant-btn-primary {
+  background: var(--sp-accent) !important;
+  border-color: var(--sp-accent) !important;
+  box-shadow: none !important;
+}
+
+.shoppro-app-shell .ant-btn-primary:hover,
+.shoppro-app-shell .ant-btn-primary:focus {
+  background: var(--sp-accent-strong) !important;
+  border-color: var(--sp-accent-strong) !important;
+}
+
+.shoppro-app-shell .ant-menu-item-selected {
+  color: var(--sp-accent) !important;
+  background: var(--sp-accent-soft) !important;
+}
+
+.shoppro-app-shell .ant-menu-item:hover,
+.shoppro-app-shell .ant-menu-submenu-title:hover {
+  color: var(--sp-accent) !important;
+  background: var(--sp-accent-faint) !important;
+}
+
+.shoppro-app-shell .ant-table-thead > tr > th {
+  background: var(--sp-surface-muted) !important;
+  border-bottom-color: var(--sp-border) !important;
+}
+
+html.dark .shoppro-app-shell [class~="bg-white"],
+html.dark .shoppro-app-shell [class*="bg-white/"] {
+  background-color: var(--sp-surface) !important;
+}
+
+html.dark .shoppro-app-shell [class*="bg-slate-50"],
+html.dark .shoppro-app-shell [class*="bg-slate-100"],
+html.dark .shoppro-app-shell [class*="bg-gray-50"],
+html.dark .shoppro-app-shell [class*="bg-gray-100"] {
+  background-color: var(--sp-surface-muted) !important;
+}
+
+html.dark .shoppro-app-shell [class*="text-slate-900"],
+html.dark .shoppro-app-shell [class*="text-slate-800"],
+html.dark .shoppro-app-shell [class*="text-gray-900"],
+html.dark .shoppro-app-shell [class*="text-gray-800"],
+html.dark .shoppro-app-shell [class*="text-[#1D1D1F]"] {
+  color: var(--sp-text) !important;
+}
+
+html.dark .shoppro-app-shell [class*="border-slate-200"],
+html.dark .shoppro-app-shell [class*="border-slate-100"],
+html.dark .shoppro-app-shell [class*="border-gray-200"],
+html.dark .shoppro-app-shell [class*="border-gray-100"] {
+  border-color: var(--sp-border) !important;
+}
+
+html.dark .shoppro-app-shell button[class*="bg-white"] {
+  background-color: #ffffff !important;
+  color: var(--sp-accent-strong) !important;
+}
+
+/* Reduce the soft, inflated AI-card feel without changing the page grid. */
+.shoppro-app-shell [class*="rounded-3xl"] {
+  border-radius: 14px !important;
+}
+
+.shoppro-app-shell [class*="rounded-2xl"] {
+  border-radius: 12px !important;
+}
+
+.shoppro-app-shell [class*="rounded-xl"] {
+  border-radius: 9px !important;
+}
+
+.shoppro-app-shell [class~="font-black"] {
+  font-weight: 700 !important;
+}
+
+.shoppro-app-shell [class*="shadow-lg"],
+.shoppro-app-shell [class*="shadow-xl"],
+.shoppro-app-shell [class*="shadow-2xl"] {
+  box-shadow: var(--sp-shadow) !important;
+}
+
+/* Decorative cool colors collapse into the single brand accent. Semantic green/amber/red states stay intact. */
+.shoppro-app-shell [class*="text-blue-"],
+.shoppro-app-shell [class*="text-cyan-"],
+.shoppro-app-shell [class*="text-indigo-"],
+.shoppro-app-shell [class*="text-purple-"],
+.shoppro-app-shell [class*="text-violet-"] {
+  color: var(--sp-accent) !important;
+}
+
+.shoppro-app-shell [class*="border-blue-"],
+.shoppro-app-shell [class*="border-cyan-"],
+.shoppro-app-shell [class*="border-indigo-"],
+.shoppro-app-shell [class*="border-purple-"],
+.shoppro-app-shell [class*="border-violet-"] {
+  border-color: var(--sp-border-strong) !important;
+}
+
+.shoppro-app-shell [class*="bg-blue-50"],
+.shoppro-app-shell [class*="bg-blue-100"],
+.shoppro-app-shell [class*="bg-cyan-50"],
+.shoppro-app-shell [class*="bg-cyan-100"],
+.shoppro-app-shell [class*="bg-indigo-50"],
+.shoppro-app-shell [class*="bg-indigo-100"],
+.shoppro-app-shell [class*="bg-purple-50"],
+.shoppro-app-shell [class*="bg-purple-100"],
+.shoppro-app-shell [class*="bg-violet-50"],
+.shoppro-app-shell [class*="bg-violet-100"] {
+  background-color: var(--sp-accent-soft) !important;
+}
+
+.shoppro-app-shell [class*="bg-blue-600"],
+.shoppro-app-shell [class*="bg-blue-700"],
+.shoppro-app-shell [class*="bg-indigo-600"],
+.shoppro-app-shell [class*="bg-indigo-700"],
+.shoppro-app-shell [class*="bg-purple-600"],
+.shoppro-app-shell [class*="bg-purple-700"],
+.shoppro-app-shell [class*="bg-violet-600"],
+.shoppro-app-shell [class*="bg-violet-700"] {
+  background-color: var(--sp-accent) !important;
+}
+
+.shoppro-app-shell .shoppro-ai-panel {
+  background: linear-gradient(135deg, #2563eb 0%, #4338ca 100%) !important;
+  color: #ffffff !important;
+  border: 0 !important;
+  box-shadow: 0 8px 22px rgba(37, 99, 235, 0.16) !important;
+}
+
+.shoppro-app-shell .shoppro-dashboard [class*="bg-gradient-to-"]:not([class*="absolute"]) {
+  background-image: none !important;
+  background-color: var(--sp-surface-muted) !important;
+}
+
+.shoppro-app-shell .shoppro-dashboard .shoppro-ai-panel {
+  background: linear-gradient(135deg, #2563eb 0%, #4338ca 100%) !important;
+}
+
+/* Icons sit directly in the module. Their only visual identity is the theme color. */
+.shoppro-app-shell .shoppro-icon {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: var(--sp-accent) !important;
+}
+
+.shoppro-app-shell .shoppro-icon svg,
+.shoppro-app-shell svg {
+  color: var(--sp-accent) !important;
+  stroke: currentColor;
+}
+
+.shoppro-app-shell .shoppro-ai-panel svg {
+  color: #ffffff !important;
+  stroke: currentColor;
+}
+
+.shoppro-app-shell .shoppro-ai-panel [class*="text-blue-"],
+.shoppro-app-shell .shoppro-ai-panel [class*="text-slate-"] {
+  color: #ffffff !important;
+}
+
+.shoppro-app-shell .shoppro-primary-action svg,
+.shoppro-app-shell .shoppro-primary-action .anticon {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+/* Module frames use a quiet boundary instead of a floating, oversized card. */
+.shoppro-app-shell [class*="rounded-3xl"][class*="bg-white"],
+.shoppro-app-shell [class*="rounded-2xl"][class*="bg-white"],
+.shoppro-app-shell [class*="rounded-3xl"][class*="bg-slate-"],
+.shoppro-app-shell [class*="rounded-2xl"][class*="bg-slate-"] {
+  border: 1px solid var(--sp-border) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+
+.shoppro-app-shell .ant-card {
+  border-color: var(--sp-border) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+
+.shoppro-app-shell .ant-table-container {
+  border: 1px solid var(--sp-border) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+}
+
+.shoppro-app-shell .shoppro-side-menu [class*="text-blue-"],
+.shoppro-app-shell .shoppro-side-menu [class*="text-cyan-"],
+.shoppro-app-shell .shoppro-side-menu [class*="text-indigo-"],
+.shoppro-app-shell .shoppro-side-menu [class*="text-purple-"],
+.shoppro-app-shell .shoppro-side-menu [class*="text-violet-"] {
+  color: var(--sp-accent) !important;
+}
+
+/* 展开侧栏优先保证菜单语义完整，避免简称和长菜单被 Ant Design 省略。 */
+.shoppro-side-menu.ant-menu-inline .ant-menu-item,
+.shoppro-side-menu.ant-menu-inline .ant-menu-submenu-title,
+.shoppro-side-menu.ant-menu-inline .ant-menu-item-group-title {
+  overflow: visible;
+}
+
+.shoppro-side-menu.ant-menu-inline .ant-menu-title-content,
+.shoppro-side-menu.ant-menu-inline .ant-menu-item-group-title {
+  min-width: max-content;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: nowrap;
+}

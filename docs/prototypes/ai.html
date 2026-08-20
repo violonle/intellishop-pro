@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI智能助手 - IntelliSHop Pro</title>
+    <link rel="stylesheet" href="../assets/global-styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4640DE',
+                        secondary: '#7C3AED',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- 必需的全局脚本与API客户端 -->
+    <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/ui-components.js"></script>
+    <script src="../assets/js/api-client.js"></script>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen flex flex-col">
+        <!-- 顶部头部 -->
+        <div class="px-4 py-6 text-white bg-primary">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center space-x-3">
+                    <button onclick="goBack()" class="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-colors">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                    </button>
+                    <h1 class="text-xl font-semibold">🤖 AI智能助手</h1>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <div class="w-2 h-2 bg-success rounded-full animate-pulse"></div>
+                    <span class="text-sm">运行中</span>
+                </div>
+            </div>
+            <div class="bg-white bg-opacity-20 rounded-xl p-3 border border-white border-opacity-20">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-white bg-opacity-30 rounded-full flex items-center justify-center">
+                        <span class="text-lg">🤖</span>
+                    </div>
+                    <div>
+                        <p class="font-medium">智能助手小智</p>
+                        <p class="text-xs opacity-90">为您提供专业的销售建议和话术推荐</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 功能快捷入口 -->
+        <div class="px-4 py-4">
+            <div class="flex flex-nowrap gap-3 overflow-x-auto">
+                <button onclick="insertQuickMessage('请为我推荐一些销售话术')" class="bg-white rounded-xl p-4 text-center shadow-sm border hover:border-primary transition-colors flex-shrink-0 min-w-[120px]">
+                    <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <span class="text-lg">💬</span>
+                    </div>
+                    <p class="font-medium text-gray-900">话术推荐</p>
+                    <p class="text-xs text-gray-500">智能生成销售话术</p>
+                </button>
+                <button onclick="insertQuickMessage('帮我分析一下客户画像')" class="bg-white rounded-xl p-4 text-center shadow-sm border hover:border-primary transition-colors flex-shrink-0 min-w-[120px]">
+                    <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <span class="text-lg">📊</span>
+                    </div>
+                    <p class="font-medium text-gray-900">用户画像</p>
+                    <p class="text-xs text-gray-500">深度客户画像分析</p>
+                </button>
+                <button onclick="insertQuickMessage('请制定个性化销售策略')" class="bg-white rounded-xl p-4 text-center shadow-sm border hover:border-primary transition-colors flex-shrink-0 min-w-[120px]">
+                    <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <span class="text-lg">🎯</span>
+                    </div>
+                    <p class="font-medium text-gray-900">销售行为分析</p>
+                    <p class="text-xs text-gray-500">个性化销售建议</p>
+                </button>
+                <button onclick="insertQuickMessage('分析一下成交概率')" class="bg-white rounded-xl p-4 text-center shadow-sm border hover:border-primary transition-colors flex-shrink-0 min-w-[120px]">
+                    <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <span class="text-lg">📈</span>
+                    </div>
+                    <p class="font-medium text-gray-900">数据统计分析</p>
+                    <p class="text-xs text-gray-500">业务数据分析</p>
+                </button>
+            </div>
+        </div>
+
+        <!-- AI 对话容器 -->
+        <div class="flex-1 flex flex-col px-4 pb-4">
+            <!-- 今天分割线 -->
+            <div class="flex items-center my-4">
+                <div class="flex-1 h-px bg-gray-200"></div>
+                <span class="px-4 text-sm text-gray-500 bg-gray-50">今天</span>
+                <div class="flex-1 h-px bg-gray-200"></div>
+            </div>
+
+            <!-- 消息列表容器 -->
+            <div id="chatMessages" class="flex-1 overflow-y-auto space-y-4 mb-4">
+                <!-- AI 欢迎消息 -->
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span class="text-sm">🤖</span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="bg-white rounded-2xl rounded-tl-md p-4 shadow-sm border">
+                            <p class="text-gray-800">您好！我是您的AI智能助手小智，很高兴为您服务。我可以帮您：</p>
+                            <ul class="mt-2 text-sm text-gray-600 space-y-1">
+                                <li>• 生成个性化销售话术</li>
+                                <li>• 分析客户行为和需求</li>
+                                <li>• 销售行为分析建议</li>
+                                <li>• 数据统计分析</li>
+                            </ul>
+                            <p class="mt-2 text-gray-800">请告诉我您需要什么帮助？</p>
+                        </div>
+                        <div class="flex items-center mt-2 space-x-2">
+                            <span class="text-xs text-gray-400">12:38 PM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 输入区域 -->
+            <div class="bg-white rounded-3xl shadow-lg border border-gray-100 p-4">
+                <div class="flex items-center space-x-3">
+                    <!-- 附件按钮 -->
+                    <button class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors">
+                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                    </button>
+                    
+                    <!-- 分割线 -->
+                    <div class="w-px h-6 bg-gray-200"></div>
+                    
+                    <!-- 输入框 -->
+                    <input 
+                        type="text" 
+                        id="messageInput" 
+                        placeholder="输入消息..." 
+                        class="flex-1 bg-transparent border-none outline-none text-gray-800 placeholder-gray-500"
+                        onkeypress="handleKeyPress(event)"
+                    >
+                    
+                    <!-- 发送/语音按钮 -->
+                    <button id="sendButton" onclick="sendMessage()" class="w-10 h-10 bg-primary rounded-full flex items-center justify-center hover:bg-primary/90 transition-colors">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入AI集成脚本 -->
+    <script src="../assets/js/ai-integration.js"></script>
+    <script src="../assets/js/ai-integration-quick-ref.js"></script>
+
+    <script>
+        // 获取当前时间
+        function getCurrentTime() {
+            const now = new Date();
+            return now.toLocaleTimeString('zh-CN', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: false 
+            });
+        }
+
+        // 添加消息到聊天
+        function addMessage(content, isUser = false) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            const currentTime = getCurrentTime();
+            
+            if (isUser) {
+                // 用户消息
+                messageDiv.innerHTML = `
+                    <div class="flex items-start space-x-3 justify-end">
+                        <div class="flex-1 max-w-xs lg:max-w-md">
+                            <div class="bg-primary rounded-2xl rounded-tr-md p-4 shadow-sm">
+                                <p class="text-white">${content}</p>
+                            </div>
+                            <div class="flex items-center justify-end mt-2 space-x-2">
+                                <span class="text-xs text-gray-400">${currentTime}</span>
+                                <svg class="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                            <span class="text-sm text-white">👤</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // AI 消息
+                messageDiv.innerHTML = `
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                            <span class="text-sm">🤖</span>
+                        </div>
+                        <div class="flex-1 max-w-xs lg:max-w-md">
+                            <div class="bg-white rounded-2xl rounded-tl-md p-4 shadow-sm border">
+                                <p class="text-gray-800">${content}</p>
+                            </div>
+                            <div class="flex items-center mt-2 space-x-2">
+                                <span class="text-xs text-gray-400">${currentTime}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            
+            // 滚动到底部
+            setTimeout(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 100);
+        }
+
+        // 生成/获取会话ID
+        function getOrCreateSessionId() {
+            let sid = localStorage.getItem('shoppro_chat_session_id');
+            if (!sid) {
+                sid = `sess_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+                localStorage.setItem('shoppro_chat_session_id', sid);
+            }
+            return sid;
+        }
+
+        // 获取用户ID（如无登录，使用guest）
+        function getUserId() {
+            return localStorage.getItem('user_id') || 'guest';
+        }
+
+        // 发送消息
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            // 添加用户消息
+            addMessage(message, true);
+            input.value = '';
+
+            const sessionId = getOrCreateSessionId();
+            const userId = getUserId();
+
+            try {
+                // 显示加载状态
+                window.aiIntegration.showAILoading();
+                
+                // 调用AI集成函数
+                const result = await window.aiIntegration.sendChatMessage(message, {
+                    sessionId: sessionId,
+                    userId: userId,
+                    channel: 'web'
+                });
+
+                window.aiIntegration.hideAILoading();
+                
+                if (result.success) {
+                    addMessage(result.botResponse);
+                } else {
+                    addMessage('抱歉，未能获取回复: ' + (result.error || '未知错误'));
+                }
+            } catch (err) {
+                window.aiIntegration.hideAILoading();
+                
+                const msg = (err && err.message) ? err.message : '服务暂不可用，请稍后再试。';
+                console.error('聊天错误:', err);
+                
+                if (window.UI && window.UI.showMessage) {
+                    UI.showMessage(`聊天失败：${msg}`, 'danger');
+                }
+                
+                // 回退提示
+                addMessage('抱歉，我现在有点忙，请稍后重试。');
+            }
+        }
+
+        // 处理回车键
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        // 快捷消息插入
+        function insertQuickMessage(message) {
+            const input = document.getElementById('messageInput');
+            input.value = message;
+            input.focus();
+        }
+
+        // 返回上一页
+        function goBack() {
+            // 优先使用浏览器历史记录返回
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                // 如果没有历史记录，返回到主页面
+                window.location.href = '../main-app.html';
+            }
+        }
+
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('✅ AI聊天页面已加载');
+            
+            // 检查AI服务健康状态
+            try {
+                const isHealthy = await window.aiIntegration.checkAIServiceHealth();
+                if (!isHealthy) {
+                    console.warn('⚠️  AI服务暂不可用');
+                    addMessage('AI服务正在初始化中，请稍候...');
+                }
+            } catch (err) {
+                console.error('❌ AI服务检查失败:', err);
+            }
+        });
+
+        // 页面加载完成后自动滚动到底部
+        window.addEventListener('load', () => {
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        });
+    </script>
+</body>
+</html>

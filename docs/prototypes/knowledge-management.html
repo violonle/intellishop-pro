@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang=\"zh-CN\">
+<head>
+    <meta charset=\"UTF-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+    <title>知识库管理 - IntelliSHop Pro</title>
+    <link rel=\"stylesheet\" href=\"../assets/global-styles.css\">
+    <script src=\"https://cdn.tailwindcss.com\"></script>
+    <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css\">
+    
+    <!-- TinyMCE 富文本编辑器 -->
+    <script src=\"https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js\"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4640DE',
+                        secondary: '#4ECDC4',
+                        success: '#45B7D1',
+                        warning: '#FFA726',
+                        danger: '#EF5350'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .tox-tinymce {
+            border: 1px solid #e5e7eb !important;
+            border-radius: 0.5rem !important;
+        }
+        .tox .tox-toolbar {
+            background-color: #f9fafb !important;
+        }
+        .upload-area {
+            border: 2px dashed #d1d5db;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .upload-area.drag-over {
+            border-color: #4640DE;
+            background-color: #f0f0ff;
+        }
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            background: #f9fafb;
+            border-radius: 0.375rem;
+            margin-bottom: 0.5rem;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4640DE, #7c3aed);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 50;
+        }
+        .modal-backdrop.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class=\"bg-gray-50\">
+    <div class=\"min-h-screen\">
+        <!-- 顶部导航 -->
+        <div class=\"bg-white shadow-sm border-b sticky top-0 z-20\">
+            <div class=\"px-6 py-4\">
+                <div class=\"flex items-center justify-between\">
+                    <div class=\"flex items-center space-x-3\">
+                        <button onclick=\"goBack()\" class=\"p-2 rounded-lg hover:bg-gray-100\">
+                            <i class=\"fas fa-arrow-left text-gray-600\"></i>
+                        </button>
+                        <div>
+                            <h1 class=\"text-xl font-bold text-gray-900\">知识库管理</h1>
+                            <p class=\"text-sm text-gray-500\">创建、编辑和管理知识库内容</p>
+                        </div>
+                    </div>
+                    <button onclick=\"openCreateModal()\" class=\"flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors\">
+                        <i class=\"fas fa-plus mr-2\"></i>
+                        新建知识库
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 搜索和筛选 -->
+        <div class=\"bg-white border-b\">
+            <div class=\"px-6 py-4\">
+                <div class=\"flex items-center gap-4\">
+                    <input type=\"text\" id=\"searchKeyword\" placeholder=\"搜索知识库...\" 
+                           class=\"flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary\">
+                    <select id=\"filterCategory\" class=\"px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary\">
+                        <option value=\"\">所有分类</option>
+                        <option value=\"product\">产品资料</option>
+                        <option value=\"sales\">销售技巧</option>
+                        <option value=\"faq\">常见问题</option>
+                        <option value=\"policy\">政策法规</option>
+                    </select>
+                    <button onclick=\"searchKnowledge()\" class=\"px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors\">
+                        <i class=\"fas fa-search mr-2\"></i>
+                        搜索
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 知识库列表 -->
+        <div class=\"px-6 py-6\">
+            <div id=\"knowledgeList\" class=\"space-y-4\">
+                <!-- 加载中提示 -->
+                <div class=\"flex justify-center py-8\">
+                    <div class=\"text-center\">
+                        <div class=\"inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary\"></div>
+                        <p class=\"text-gray-600 mt-2\">加载知识库列表...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 创建/编辑 模态框 -->
+    <div id=\"knowledgeModal\" class=\"modal-backdrop\">
+        <div class=\"bg-white rounded-lg shadow-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto\">
+            <div class=\"sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between\">
+                <h2 class=\"text-xl font-bold text-gray-900\" id=\"modalTitle\">新建知识库</h2>
+                <button onclick=\"closeModal()\" class=\"p-1 hover:bg-gray-100 rounded-lg\">
+                    <i class=\"fas fa-times text-gray-600\"></i>
+                </button>
+            </div>
+
+            <div class=\"p-6 space-y-6\">
+                <!-- 标题输入 -->
+                <div>
+                    <label class=\"block text-sm font-medium text-gray-900 mb-2\">标题 <span class=\"text-red-500\">*</span></label>
+                    <input type=\"text\" id=\"knowledgeTitle\" placeholder=\"输入知识库标题\" 
+                           class=\"w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary\">
+                </div>
+
+                <!-- 分类选择 -->
+                <div class=\"grid grid-cols-2 gap-4\">
+                    <div>
+                        <label class=\"block text-sm font-medium text-gray-900 mb-2\">分类 <span class=\"text-red-500\">*</span></label>
+                        <select id=\"knowledgeCategory\" class=\"w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary\">
+                            <option value=\"\">-- 选择分类 --</option>
+                            <option value=\"product\">产品资料</option>
+                            <option value=\"sales\">销售技巧</option>
+                            <option value=\"faq\">常见问题</option>
+                            <option value=\"policy\">政策法规</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class=\"block text-sm font-medium text-gray-900 mb-2\">是否公开</label>
+                        <select id=\"knowledgeIsPublic\" class=\"w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary\">
+                            <option value=\"1\">公开</option>
+                            <option value=\"0\">私有</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 摘要 -->
+                <div>
+                    <label class=\"block text-sm font-medium text-gray-900 mb-2\">摘要</label>
+                    <textarea id=\"knowledgeSummary\" placeholder=\"输入知识库摘要（可选）\" rows=\"2\"
+                              class=\"w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary\"></textarea>
+                </div>
+
+                <!-- 富文本编辑器 -->
+                <div>
+                    <label class=\"block text-sm font-medium text-gray-900 mb-2\">内容 <span class=\"text-red-500\">*</span></label>
+                    <textarea id=\"knowledgeContent\" placeholder=\"输入知识库内容...\"></textarea>
+                </div>
+
+                <!-- 标签输入 -->
+                <div>
+                    <label class=\"block text-sm font-medium text-gray-900 mb-2\">标签（用逗号分隔）</label>
+                    <input type=\"text\" id=\"knowledgeTags\" placeholder=\"例：销售话术, 客户服务, 产品知识\" 
+                           class=\"w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary\">
+                </div>
+
+                <!-- 文件上传 -->
+                <div>
+                    <label class=\"block text-sm font-medium text-gray-900 mb-2\">附件上传</label>
+                    <div id=\"uploadArea\" class=\"upload-area p-8 text-center cursor-pointer hover:bg-gray-50 transition-colors\">
+                        <input type=\"file\" id=\"fileInput\" multiple accept=\".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png\" style=\"display: none;\">
+                        <i class=\"fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2\"></i>
+                        <p class=\"text-gray-600\">拖拽文件到此处或<span class=\"text-primary font-medium\">点击上传</span></p>
+                        <p class=\"text-xs text-gray-500 mt-1\">支持：PDF、文档、图片等常见格式（最大10MB）</p>
+                    </div>
+                    <div id=\"fileList\" class=\"mt-4 space-y-2\"></div>
+                </div>
+
+                <!-- 操作按钮 -->
+                <div class=\"flex gap-3 justify-end pt-4 border-t\">
+                    <button onclick=\"closeModal()\" class=\"px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors\">
+                        取消
+                    </button>
+                    <button onclick=\"saveKnowledge()\" class=\"px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2\">
+                        <i class=\"fas fa-save\"></i>
+                        保存
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 必需的全局脚本和API客户端 -->
+    <script src=\"../assets/js/utils.js\"></script>
+    <script src=\"../assets/js/ui-components.js\"></script>
+    <script src=\"../assets/js/api-client.js\"></script>
+
+    <script>
+        let currentEditingId = null;
+        let uploadedFiles = [];
+
+        // 初始化 TinyMCE 编辑器
+        function initTinyMCE() {
+            tinymce.init({
+                selector: '#knowledgeContent',
+                height: 400,
+                language: 'zh_CN',
+                skin: 'oxide',
+                content_css: 'default',
+                plugins: [
+                    'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                    'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                    'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                ],
+                toolbar: 'undo redo | formatselect | ' +
+                    'bold italic backcolor | alignleft aligncenter ' +
+                    'alignright alignjustify | bullist numlist outdent indent | ' +
+                    'removeformat | table | link image media | code preview fullscreen',
+                file_picker_callback: function(callback, value, meta) {
+                    if (meta.filetype === 'image') {
+                        uploadImageToEditor(callback);
+                    }
+                }
+            });
+        }
+
+        // 初始化页面
+        async function initPage() {
+            initTinyMCE();
+            setupFileUpload();
+            await loadKnowledgeList();
+        }
+
+        // 设置文件上传
+        function setupFileUpload() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+
+            uploadArea.addEventListener('click', () => fileInput.click());
+
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('drag-over');
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('drag-over');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('drag-over');
+                const files = e.dataTransfer.files;
+                handleFiles(files);
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                handleFiles(e.target.files);
+            });
+        }
+
+        // 处理文件
+        async function handleFiles(files) {
+            for (let file of files) {
+                if (file.size > 10 * 1024 * 1024) {
+                    UI.showMessage('文件大小不能超过10MB', 'warning');
+                    continue;
+                }
+
+                try {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('relatedEntityType', 'knowledge');
+                    formData.append('relatedEntityId', currentEditingId || 0);
+
+                    // 显示上传进度
+                    const fileItem = createFileItem(file.name, 'uploading');
+                    document.getElementById('fileList').appendChild(fileItem);
+
+                    const response = await fetch('http://localhost:8080/api/files/upload', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+                        },
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        uploadedFiles.push(data.data);
+                        updateFileItem(fileItem, file.name, 'success', data.data.id);
+                        UI.showMessage('文件上传成功', 'success');
+                    } else {
+                        updateFileItem(fileItem, file.name, 'error');
+                        UI.showMessage('文件上传失败', 'danger');
+                    }
+                } catch (error) {
+                    console.error('文件上传错误:', error);
+                    UI.showMessage('文件上传出错', 'danger');
+                }
+            }
+        }
+
+        // 创建文件项
+        function createFileItem(fileName, status) {
+            const item = document.createElement('div');
+            item.className = 'file-item';
+            item.innerHTML = `
+                <div class=\"flex items-center flex-1\">
+                    <i class=\"fas fa-file text-gray-400 mr-2\"></i>
+                    <span class=\"text-sm text-gray-700\">${fileName}</span>
+                </div>
+                <div class=\"flex items-center gap-2\">
+                    <span class=\"text-xs text-gray-500\" id=\"status-${fileName}\">
+                        ${status === 'uploading' ? '上传中...' : status === 'success' ? '已上传' : '失败'}
+                    </span>
+                    ${status === 'uploading' ? '<div class=\"progress-bar\"><div class=\"progress-fill\"></div></div>' : ''}
+                </div>
+            `;
+            return item;
+        }
+
+        // 更新文件项状态
+        function updateFileItem(item, fileName, status, fileId) {
+            const statusEl = item.querySelector(`#status-${fileName}`);
+            if (statusEl) {
+                statusEl.textContent = status === 'success' ? '已上传' : '失败';
+            }
+            if (status === 'success') {
+                item.setAttribute('data-file-id', fileId);
+                const progressBar = item.querySelector('.progress-bar');
+                if (progressBar) progressBar.remove();
+            }
+        }
+
+        // 加载知识库列表
+        async function loadKnowledgeList() {
+            try {
+                const response = await api.knowledge.list({ pageNo: 1, pageSize: 20 });
+                displayKnowledgeList(response.data.records || []);
+            } catch (error) {
+                console.error('加载知识库列表失败:', error);
+                UI.showMessage('加载知识库列表失败', 'danger');
+            }
+        }
+
+        // 显示知识库列表
+        function displayKnowledgeList(items) {
+            const listContainer = document.getElementById('knowledgeList');
+            
+            if (items.length === 0) {
+                listContainer.innerHTML = `
+                    <div class=\"text-center py-8\">
+                        <i class=\"fas fa-inbox text-4xl text-gray-300 mb-3 block\"></i>
+                        <p class=\"text-gray-600\">暂无知识库内容</p>
+                    </div>
+                `;
+                return;
+            }
+
+            listContainer.innerHTML = items.map(item => `
+                <div class=\"bg-white rounded-lg p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow\">
+                    <div class=\"flex items-start justify-between mb-2\">
+                        <h3 class=\"text-lg font-medium text-gray-900\">${item.title}</h3>
+                        <div class=\"flex gap-2\">
+                            <button onclick=\"editKnowledge(${item.id})\" class=\"p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors\" title=\"编辑\">
+                                <i class=\"fas fa-edit\"></i>
+                            </button>
+                            <button onclick=\"deleteKnowledge(${item.id})\" class=\"p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors\" title=\"删除\">
+                                <i class=\"fas fa-trash\"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <p class=\"text-gray-600 text-sm mb-3\">${item.summary || item.content.substring(0, 100)}</p>
+                    <div class=\"flex items-center justify-between text-xs text-gray-500\">
+                        <div class=\"flex gap-2\">
+                            <span class=\"px-2 py-1 bg-gray-100 rounded\">
+                                <i class=\"fas fa-tag mr-1\"></i>${item.categoryId || '未分类'}
+                            </span>
+                            ${item.isPublic ? '<span class=\"px-2 py-1 bg-green-100 text-green-700 rounded\">公开</span>' : '<span class=\"px-2 py-1 bg-gray-100 rounded\">私有</span>'}
+                        </div>
+                        <span><i class=\"fas fa-eye mr-1\"></i>${item.viewCount || 0}</span>
+                    </div>
+                </div>
+            \`).join('');
+        }
+
+        // 打开创建模态框
+        function openCreateModal() {
+            currentEditingId = null;
+            uploadedFiles = [];
+            document.getElementById('modalTitle').textContent = '新建知识库';
+            document.getElementById('knowledgeTitle').value = '';
+            document.getElementById('knowledgeCategory').value = '';
+            document.getElementById('knowledgeIsPublic').value = '1';
+            document.getElementById('knowledgeSummary').value = '';
+            document.getElementById('knowledgeTags').value = '';
+            document.getElementById('fileList').innerHTML = '';
+            
+            // 清空编辑器内容
+            if (tinymce.get('knowledgeContent')) {
+                tinymce.get('knowledgeContent').setContent('');
+            }
+            
+            openModal();
+        }
+
+        // 编辑知识库
+        async function editKnowledge(id) {
+            try {
+                const response = await api.knowledge.get(id);
+                const data = response.data;
+                
+                currentEditingId = id;
+                document.getElementById('modalTitle').textContent = '编辑知识库';
+                document.getElementById('knowledgeTitle').value = data.title;
+                document.getElementById('knowledgeCategory').value = data.categoryId || '';
+                document.getElementById('knowledgeIsPublic').value = data.isPublic ? '1' : '0';
+                document.getElementById('knowledgeSummary').value = data.summary || '';
+                document.getElementById('knowledgeTags').value = data.tags ? data.tags.join(', ') : '';
+                
+                // 加载文件列表
+                if (data.fileUrls) {
+                    uploadedFiles = data.fileUrls;
+                    document.getElementById('fileList').innerHTML = uploadedFiles.map(file => `
+                        <div class=\"file-item\">
+                            <div class=\"flex items-center flex-1\">
+                                <i class=\"fas fa-file text-gray-400 mr-2\"></i>
+                                <span class=\"text-sm text-gray-700\">${file.originalFileName}</span>
+                            </div>
+                            <button onclick=\"removeUploadedFile('${file.id}')\" class=\"text-red-600 hover:bg-red-50 rounded p-1\">
+                                <i class=\"fas fa-times\"></i>
+                            </button>
+                        </div>
+                    \`).join('');
+                }
+                
+                // 设置编辑器内容
+                if (tinymce.get('knowledgeContent')) {
+                    tinymce.get('knowledgeContent').setContent(data.content || '');
+                }
+                
+                openModal();
+            } catch (error) {
+                console.error('加载知识库详情失败:', error);
+                UI.showMessage('加载知识库详情失败', 'danger');
+            }
+        }
+
+        // 删除知识库
+        async function deleteKnowledge(id) {
+            if (!confirm('确定要删除此知识库吗？')) return;
+            
+            try {
+                await api.knowledge.delete(id);
+                UI.showMessage('知识库删除成功', 'success');
+                await loadKnowledgeList();
+            } catch (error) {
+                console.error('删除知识库失败:', error);
+                UI.showMessage('删除知识库失败', 'danger');
+            }
+        }
+
+        // 保存知识库
+        async function saveKnowledge() {
+            const title = document.getElementById('knowledgeTitle').value.trim();
+            const category = document.getElementById('knowledgeCategory').value;
+            const isPublic = document.getElementById('knowledgeIsPublic').value === '1';
+            const summary = document.getElementById('knowledgeSummary').value.trim();
+            const content = tinymce.get('knowledgeContent').getContent();
+            const tags = document.getElementById('knowledgeTags').value.split(',').filter(t => t.trim());
+
+            // 验证
+            if (!title) {
+                UI.showMessage('请输入标题', 'warning');
+                return;
+            }
+            if (!category) {
+                UI.showMessage('请选择分类', 'warning');
+                return;
+            }
+            if (!content) {
+                UI.showMessage('请输入内容', 'warning');
+                return;
+            }
+
+            try {
+                const knowledgeData = {
+                    title,
+                    categoryId: parseInt(category),
+                    summary,
+                    content,
+                    tags,
+                    isPublic: isPublic ? 1 : 0,
+                    fileUrls: uploadedFiles
+                };
+
+                if (currentEditingId) {
+                    // 更新
+                    await api.knowledge.update(currentEditingId, knowledgeData);
+                    UI.showMessage('知识库更新成功', 'success');
+                } else {
+                    // 创建
+                    await api.knowledge.create(knowledgeData);
+                    UI.showMessage('知识库创建成功', 'success');
+                }
+
+                closeModal();
+                await loadKnowledgeList();
+            } catch (error) {
+                console.error('保存知识库失败:', error);
+                UI.showMessage('保存知识库失败', 'danger');
+            }
+        }
+
+        // 搜索知识库
+        async function searchKnowledge() {
+            const keyword = document.getElementById('searchKeyword').value.trim();
+            const category = document.getElementById('filterCategory').value;
+
+            try {
+                if (keyword) {
+                    const response = await api.knowledge.search(keyword);
+                    let items = response.data || response;
+                    
+                    // 按分类筛选
+                    if (category) {
+                        items = items.filter(item => item.categoryId === parseInt(category));
+                    }
+                    
+                    displayKnowledgeList(items);
+                } else {
+                    await loadKnowledgeList();
+                }
+            } catch (error) {
+                console.error('搜索知识库失败:', error);
+                UI.showMessage('搜索知识库失败', 'danger');
+            }
+        }
+
+        // 移除上传的文件
+        function removeUploadedFile(fileId) {
+            uploadedFiles = uploadedFiles.filter(f => f.id !== fileId);
+            loadKnowledgeList();
+        }
+
+        // 模态框控制
+        function openModal() {
+            document.getElementById('knowledgeModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('knowledgeModal').classList.remove('show');
+        }
+
+        // 返回上一页
+        function goBack() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = '../pages/main-app.html';
+            }
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>

@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>功能演示 - IntelliShop Pro</title>
+    <link rel="stylesheet" href="../assets/global-styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4640DE',
+                        secondary: '#8B5CF6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .demo-card {
+            transition: all 0.3s ease-out;
+        }
+        
+        .demo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .demo-screen {
+            transition: all 0.5s ease-out;
+        }
+        
+        .typing-animation {
+            border-right: 2px solid #4640DE;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { border-color: transparent; }
+            51%, 100% { border-color: #4640DE; }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+        
+        .demo-modal {
+            backdrop-filter: blur(10px);
+        }
+        
+        .progress-ring {
+            transition: stroke-dasharray 0.3s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-white to-purple-50 min-h-screen">
+    
+    <!-- 顶部导航 -->
+    <nav class="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-4">
+                    <button onclick="goBack()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                        <i class="fas fa-arrow-left text-gray-600"></i>
+                    </button>
+                    <h1 class="text-xl font-semibold text-gray-900">功能演示</h1>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button onclick="resetDemo()" class="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors">
+                        <i class="fas fa-redo mr-2"></i>重置演示
+                    </button>
+                    <button onclick="goToPage('dashboard.html')" class="px-4 py-2 bg-primary text-white rounded-lg text-sm hover:bg-primary/90 transition-colors">
+                        进入系统
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- 介绍区域 -->
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">体验 IntelliShop Pro 的强大功能</h2>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                通过交互式演示，深入了解我们的智能销售管理系统如何帮助您提升销售效率和客户满意度
+            </p>
+        </div>
+
+        <!-- 功能演示卡片 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            
+            <!-- AI智能助手演示 -->
+            <div class="demo-card bg-white rounded-2xl p-6 shadow-lg cursor-pointer" onclick="startDemo('ai')">
+                <div class="w-16 h-16 bg-gradient-to-br from-purple-100 to-blue-100 rounded-xl flex items-center justify-center mb-4">
+                    <i class="fas fa-brain text-2xl text-purple-600"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">AI智能助手</h3>
+                <p class="text-gray-600 mb-4">体验AI如何为您提供智能话术推荐、客户分析和销售建议</p>
+                <div class="flex items-center text-primary text-sm font-medium">
+                    <span>开始演示</span>
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </div>
+                <div class="mt-4 flex items-center space-x-2">
+                    <span class="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full">智能分析</span>
+                    <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">话术推荐</span>
+                </div>
+            </div>
+
+            <!-- 客户管理演示 -->
+            <div class="demo-card bg-white rounded-2xl p-6 shadow-lg cursor-pointer" onclick="startDemo('customer')">
+                <div class="w-16 h-16 bg-gradient-to-br from-green-100 to-teal-100 rounded-xl flex items-center justify-center mb-4">
+                    <i class="fas fa-users text-2xl text-green-600"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">客户管理</h3>
+                <p class="text-gray-600 mb-4">了解如何高效管理客户档案、跟进记录和用户画像分析</p>
+                <div class="flex items-center text-primary text-sm font-medium">
+                    <span>开始演示</span>
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </div>
+                <div class="mt-4 flex items-center space-x-2">
+                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">档案管理</span>
+                    <span class="px-2 py-1 bg-teal-100 text-teal-700 text-xs rounded-full">智能跟进</span>
+                </div>
+            </div>
+
+            <!-- 数据分析演示 -->
+            <div class="demo-card bg-white rounded-2xl p-6 shadow-lg cursor-pointer" onclick="startDemo('analytics')">
+                <div class="w-16 h-16 bg-gradient-to-br from-orange-100 to-red-100 rounded-xl flex items-center justify-center mb-4">
+                    <i class="fas fa-chart-bar text-2xl text-orange-600"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">数据分析</h3>
+                <p class="text-gray-600 mb-4">探索强大的数据分析功能，获取深度业务洞察</p>
+                <div class="flex items-center text-primary text-sm font-medium">
+                    <span>开始演示</span>
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </div>
+                <div class="mt-4 flex items-center space-x-2">
+                    <span class="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full">实时统计</span>
+                    <span class="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full">趋势分析</span>
+                </div>
+            </div>
+
+            <!-- 销售管理演示 -->
+            <div class="demo-card bg-white rounded-2xl p-6 shadow-lg cursor-pointer" onclick="startDemo('sales')">
+                <div class="w-16 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center mb-4">
+                    <i class="fas fa-chart-line text-2xl text-blue-600"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">销售管理</h3>
+                <p class="text-gray-600 mb-4">体验完整的销售流程管理和业绩跟踪功能</p>
+                <div class="flex items-center text-primary text-sm font-medium">
+                    <span>开始演示</span>
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </div>
+                <div class="mt-4 flex items-center space-x-2">
+                    <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">流程管理</span>
+                    <span class="px-2 py-1 bg-indigo-100 text-indigo-700 text-xs rounded-full">业绩跟踪</span>
+                </div>
+            </div>
+
+            <!-- 产品管理演示 -->
+            <div class="demo-card bg-white rounded-2xl p-6 shadow-lg cursor-pointer" onclick="startDemo('product')">
+                <div class="w-16 h-16 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-xl flex items-center justify-center mb-4">
+                    <i class="fas fa-box text-2xl text-yellow-600"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">产品管理</h3>
+                <p class="text-gray-600 mb-4">了解产品信息管理、库存跟踪和销售策略制定</p>
+                <div class="flex items-center text-primary text-sm font-medium">
+                    <span>开始演示</span>
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </div>
+                <div class="mt-4 flex items-center space-x-2">
+                    <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs rounded-full">库存管理</span>
+                    <span class="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full">策略制定</span>
+                </div>
+            </div>
+
+            <!-- 移动端体验 -->
+            <div class="demo-card bg-white rounded-2xl p-6 shadow-lg cursor-pointer" onclick="startDemo('mobile')">
+                <div class="w-16 h-16 bg-gradient-to-br from-pink-100 to-purple-100 rounded-xl flex items-center justify-center mb-4">
+                    <i class="fas fa-mobile-alt text-2xl text-pink-600"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">移动端体验</h3>
+                <p class="text-gray-600 mb-4">体验专为移动设备优化的界面和操作流程</p>
+                <div class="flex items-center text-primary text-sm font-medium">
+                    <span>开始演示</span>
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </div>
+                <div class="mt-4 flex items-center space-x-2">
+                    <span class="px-2 py-1 bg-pink-100 text-pink-700 text-xs rounded-full">响应式设计</span>
+                    <span class="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full">触控优化</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 快速导览 -->
+        <div class="bg-white rounded-2xl p-8 shadow-lg mb-8">
+            <div class="text-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-900 mb-2">快速导览</h3>
+                <p class="text-gray-600">5分钟了解系统核心功能</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <button onclick="quickTour(1)" class="p-4 text-left rounded-xl border border-gray-200 hover:border-primary hover:bg-primary/5 transition-all duration-200">
+                    <div class="flex items-center space-x-3 mb-2">
+                        <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                            <span class="text-primary font-semibold text-sm">1</span>
+                        </div>
+                        <span class="font-medium text-gray-900">登录注册</span>
+                    </div>
+                    <p class="text-sm text-gray-600">快速注册和登录流程</p>
+                </button>
+                
+                <button onclick="quickTour(2)" class="p-4 text-left rounded-xl border border-gray-200 hover:border-primary hover:bg-primary/5 transition-all duration-200">
+                    <div class="flex items-center space-x-3 mb-2">
+                        <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                            <span class="text-primary font-semibold text-sm">2</span>
+                        </div>
+                        <span class="font-medium text-gray-900">数据看板</span>
+                    </div>
+                    <p class="text-sm text-gray-600">业务数据一目了然</p>
+                </button>
+                
+                <button onclick="quickTour(3)" class="p-4 text-left rounded-xl border border-gray-200 hover:border-primary hover:bg-primary/5 transition-all duration-200">
+                    <div class="flex items-center space-x-3 mb-2">
+                        <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                            <span class="text-primary font-semibold text-sm">3</span>
+                        </div>
+                        <span class="font-medium text-gray-900">AI助手</span>
+                    </div>
+                    <p class="text-sm text-gray-600">智能销售建议</p>
+                </button>
+                
+                <button onclick="quickTour(4)" class="p-4 text-left rounded-xl border border-gray-200 hover:border-primary hover:bg-primary/5 transition-all duration-200">
+                    <div class="flex items-center space-x-3 mb-2">
+                        <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                            <span class="text-primary font-semibold text-sm">4</span>
+                        </div>
+                        <span class="font-medium text-gray-900">客户管理</span>
+                    </div>
+                    <p class="text-sm text-gray-600">高效客户跟进</p>
+                </button>
+            </div>
+            
+            <div class="text-center mt-6">
+                <button onclick="startFullTour()" class="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200">
+                    <i class="fas fa-play mr-2"></i>
+                    开始完整导览
+                </button>
+            </div>
+        </div>
+
+        <!-- 用户反馈 -->
+        <div class="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-2xl p-8">
+            <div class="text-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-900 mb-2">用户反馈</h3>
+                <p class="text-gray-600">看看其他用户怎么说</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold">
+                            张
+                        </div>
+                        <div class="ml-3">
+                            <div class="font-semibold text-gray-900">张经理</div>
+                            <div class="text-sm text-gray-500">销售总监</div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-3">"AI助手的话术推荐非常实用，帮助我们的销售团队提升了30%的转化率。"</p>
+                    <div class="flex text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-teal-500 rounded-full flex items-center justify-center text-white font-semibold">
+                            李
+                        </div>
+                        <div class="ml-3">
+                            <div class="font-semibold text-gray-900">李总</div>
+                            <div class="text-sm text-gray-500">公司CEO</div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-3">"数据分析功能让我们对业务有了更深入的了解，决策更加精准。"</p>
+                    <div class="flex text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-pink-400 to-red-500 rounded-full flex items-center justify-center text-white font-semibold">
+                            王
+                        </div>
+                        <div class="ml-3">
+                            <div class="font-semibold text-gray-900">王主管</div>
+                            <div class="text-sm text-gray-500">客户经理</div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-3">"客户管理功能很全面，跟进提醒让我再也不会错过重要客户。"</p>
+                    <div class="flex text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 演示模态框 -->
+    <div id="demoModal" class="fixed inset-0 bg-black/50 demo-modal flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300 z-50">
+        <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden transform scale-95 transition-all duration-300">
+            <!-- 模态框头部 -->
+            <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                <div class="flex items-center space-x-3">
+                    <div id="demoIcon" class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-brain text-primary"></i>
+                    </div>
+                    <div>
+                        <h3 id="demoTitle" class="text-lg font-semibold text-gray-900">AI智能助手演示</h3>
+                        <p id="demoSubtitle" class="text-sm text-gray-500">体验智能销售助手功能</p>
+                    </div>
+                </div>
+                <button onclick="closeDemo()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                    <i class="fas fa-times text-gray-500"></i>
+                </button>
+            </div>
+            
+            <!-- 模态框内容 -->
+            <div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+                <div id="demoContent">
+                    <!-- 动态内容将在这里显示 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 提示 -->
+    <div id="toast" class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg shadow-lg p-4 translate-y-[-100px] opacity-0 transition-all duration-300 z-50">
+        <div class="flex items-center space-x-3">
+            <div class="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center">
+                <i class="fas fa-info text-primary text-xs"></i>
+            </div>
+            <span id="toastMessage" class="text-sm text-gray-700"></span>
+        </div>
+    </div>
+
+    <script>
+        // 显示提示信息
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            toast.classList.remove('translate-y-[-100px]', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-[-100px]', 'opacity-0');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 3000);
+        }
+
+        // 返回上一页
+        function goBack() {
+            window.history.back();
+        }
+
+        // 跳转到指定页面
+        function goToPage(page) {
+            window.location.href = './' + page;
+        }
+
+        // 重置演示
+        function resetDemo() {
+            showToast('演示已重置');
+            closeDemo();
+        }
+
+        // 开始演示
+        function startDemo(type) {
+            const modal = document.getElementById('demoModal');
+            const icon = document.getElementById('demoIcon');
+            const title = document.getElementById('demoTitle');
+            const subtitle = document.getElementById('demoSubtitle');
+            const content = document.getElementById('demoContent');
+
+            // 设置演示内容
+            const demoData = {
+                ai: {
+                    icon: 'fas fa-brain text-purple-600',
+                    iconBg: 'bg-purple-100',
+                    title: 'AI智能助手演示',
+                    subtitle: '体验智能销售助手功能',
+                    content: generateAIDemo()
+                },
+                customer: {
+                    icon: 'fas fa-users text-green-600',
+                    iconBg: 'bg-green-100',
+                    title: '客户管理演示',
+                    subtitle: '高效管理客户关系',
+                    content: generateCustomerDemo()
+                },
+                analytics: {
+                    icon: 'fas fa-chart-bar text-orange-600',
+                    iconBg: 'bg-orange-100',
+                    title: '数据分析演示',
+                    subtitle: '深度业务洞察',
+                    content: generateAnalyticsDemo()
+                },
+                sales: {
+                    icon: 'fas fa-chart-line text-blue-600',
+                    iconBg: 'bg-blue-100',
+                    title: '销售管理演示',
+                    subtitle: '完整销售流程管理',
+                    content: generateSalesDemo()
+                },
+                product: {
+                    icon: 'fas fa-box text-yellow-600',
+                    iconBg: 'bg-yellow-100',
+                    title: '产品管理演示',
+                    subtitle: '智能产品管理',
+                    content: generateProductDemo()
+                },
+                mobile: {
+                    icon: 'fas fa-mobile-alt text-pink-600',
+                    iconBg: 'bg-pink-100',
+                    title: '移动端体验',
+                    subtitle: '随时随地管理业务',
+                    content: generateMobileDemo()
+                }
+            };
+
+            const demo = demoData[type];
+            if (demo) {
+                icon.className = `w-10 h-10 ${demo.iconBg} rounded-lg flex items-center justify-center`;
+                icon.innerHTML = `<i class="${demo.icon}"></i>`;
+                title.textContent = demo.title;
+                subtitle.textContent = demo.subtitle;
+                content.innerHTML = demo.content;
+
+                // 显示模态框
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                modal.classList.add('opacity-100');
+                modal.querySelector('.bg-white').classList.remove('scale-95');
+                modal.querySelector('.bg-white').classList.add('scale-100');
+
+                showToast(`开始 ${demo.title}`);
+            }
+        }
+
+        // 关闭演示
+        function closeDemo() {
+            const modal = document.getElementById('demoModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modal.classList.remove('opacity-100');
+            modal.querySelector('.bg-white').classList.add('scale-95');
+            modal.querySelector('.bg-white').classList.remove('scale-100');
+        }
+
+        // 生成AI演示内容
+        function generateAIDemo() {
+            return `
+                <div class="space-y-6">
+                    <div class="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-6">
+                        <h4 class="font-semibold text-gray-900 mb-4">智能话术推荐</h4>
+                        <div class="space-y-3">
+                            <div class="bg-white rounded-lg p-4 border-l-4 border-purple-500">
+                                <div class="text-sm text-gray-600 mb-2">客户类型：潜在客户</div>
+                                <div class="text-gray-900">"您好，我注意到您对我们的产品很感兴趣，我可以为您详细介绍一下我们的解决方案吗？"</div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 border-l-4 border-blue-500">
+                                <div class="text-sm text-gray-600 mb-2">客户类型：犹豫客户</div>
+                                <div class="text-gray-900">"我理解您的顾虑，让我为您分享一个类似客户的成功案例..."</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-green-50 to-teal-50 rounded-xl p-6">
+                        <h4 class="font-semibold text-gray-900 mb-4">客户画像分析</h4>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-white rounded-lg p-4">
+                                <div class="text-2xl font-bold text-green-600 mb-1">85%</div>
+                                <div class="text-sm text-gray-600">成交概率</div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4">
+                                <div class="text-2xl font-bold text-blue-600 mb-1">高</div>
+                                <div class="text-sm text-gray-600">购买意向</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button onclick="goToPage('ai-brain.html')" class="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200">
+                            体验完整功能
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 生成客户管理演示内容
+        function generateCustomerDemo() {
+            return `
+                <div class="space-y-6">
+                    <div class="bg-gradient-to-r from-green-50 to-teal-50 rounded-xl p-6">
+                        <h4 class="font-semibold text-gray-900 mb-4">客户档案管理</h4>
+                        <div class="bg-white rounded-lg p-4">
+                            <div class="flex items-center space-x-4 mb-4">
+                                <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-teal-500 rounded-full flex items-center justify-center text-white font-semibold">
+                                    张
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-gray-900">张先生</div>
+                                    <div class="text-sm text-gray-500">高级客户 • 上次联系：2天前</div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4 text-center">
+                                <div>
+                                    <div class="text-lg font-bold text-green-600">15</div>
+                                    <div class="text-xs text-gray-500">跟进次数</div>
+                                </div>
+                                <div>
+                                    <div class="text-lg font-bold text-blue-600">¥50K</div>
+                                    <div class="text-xs text-gray-500">预期订单</div>
+                                </div>
+                                <div>
+                                    <div class="text-lg font-bold text-orange-600">90%</div>
+                                    <div class="text-xs text-gray-500">成交概率</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6">
+                        <h4 class="font-semibold text-gray-900 mb-4">智能跟进提醒</h4>
+                        <div class="space-y-3">
+                            <div class="bg-white rounded-lg p-4 flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-exclamation text-red-600 text-xs"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="font-medium text-gray-900">紧急跟进</div>
+                                    <div class="text-sm text-gray-500">李总 - 合同即将到期</div>
+                                </div>
+                                <div class="text-xs text-red-600">今天</div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-clock text-yellow-600 text-xs"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="font-medium text-gray-900">定期回访</div>
+                                    <div class="text-sm text-gray-500">王经理 - 产品使用情况</div>
+                                </div>
+                                <div class="text-xs text-yellow-600">明天</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button onclick="goToPage('customer-profile.html')" class="px-6 py-3 bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200">
+                            查看客户管理
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 生成数据分析演示内容
+        function generateAnalyticsDemo() {
+            return `
+                <div class="space-y-6">
+                    <div class="bg-gradient-to-r from-orange-50 to-red-50 rounded-xl p-6">
+                        <h4 class="font-semibold text-gray-900 mb-4">实时业务数据</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="bg-white rounded-lg p-4 text-center">
+                                <div class="text-2xl font-bold text-orange-600 mb-1">1,234</div>
+                                <div class="text-xs text-gray-500">总客户数</div>
+                                <div class="text-xs text-green-600 mt-1">↑ 12%</div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 text-center">
+                                <div class="text-2xl font-bold text-blue-600 mb-1">¥2.5M</div>
+                                <div class="text-xs text-gray-500">月销售额</div>
+                                <div class="text-xs text-green-600 mt-1">↑ 8%</div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 text-center">
+                                <div class="text-2xl font-bold text-green-600 mb-1">68%</div>
+                                <div class="text-xs text-gray-500">转化率</div>
+                                <div class="text-xs text-green-600 mt-1">↑ 5%</div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 text-center">
+                                <div class="text-2xl font-bold text-purple-600 mb-1">156</div>
+                                <div class="text-xs text-gray-500">活跃线索</div>
+                                <div class="text-xs text-red-600 mt-1">↓ 3%</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6">
+                        <h4 class="font-semibold text-gray-900 mb-4">销售趋势分析</h4>
+                        <div class="bg-white rounded-lg p-4">
+                            <div class="h-32 bg-gradient-to-r from-blue-100 to-purple-100 rounded-lg flex items-end justify-center space-x-2 p-4">
+                                <div class="w-8 bg-blue-500 rounded-t" style="height: 60%"></div>
+                                <div class="w-8 bg-blue-500 rounded-t" style="height: 80%"></div>
+                                <div class="w-8 bg-blue-500 rounded-t" style="height: 45%"></div>
+                                <div class="w-8 bg-blue-500 rounded-t" style="height: 90%"></div>
+                                <div class="w-8 bg-blue-500 rounded-t" style="height: 75%"></div>
+                                <div class="w-8 bg-purple-500 rounded-t" style="height: 95%"></div>
+                                <div class="w-8 bg-purple-500 rounded-t" style="height: 85%"></div>
+                            </div>
+                            <div class="text-center mt-3 text-sm text-gray-600">过去7天销售趋势</div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button onclick="goToPage('analytics.html')" class="px-6 py-3 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200">
+                            查看详细分析
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 生成销售管理演示内容
+        function generateSalesDemo() {
+            return `
+                <div class="space-y-6">
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6">
+                        <h4 class="font-semibold text-gray-900 mb-4">销售流程管理</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-check text-white text-xs"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="font-medium text-gray-900">初次接触</div>
+                                    <div class="text-sm text-gray-500">已完成 - 建立客户联系</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-clock text-white text-xs"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="font-medium text-gray-900">需求分析</div>
+                                    <div class="text-sm text-gray-500">进行中 - 了解客户需求</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                                    <span class="text-white text-xs font-bold">3</span>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="font-medium text-gray-400">方案提案</div>
+                                    <div class="text-sm text-gray-400">待开始 - 制定解决方案</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-green-50 to-teal-50 rounded-xl p-6">
+                        <h4 class="font-semibold text-gray-900 mb-4">业绩跟踪</h4>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-white rounded-lg p-4">
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-blue-600 mb-1">85%</div>
+                                    <div class="text-sm text-gray-600">月度目标完成</div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                                        <div class="bg-blue-500 h-2 rounded-full" style="width: 85%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4">
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-green-600 mb-1">12</div>
+                                    <div class="text-sm text-gray-600">本月成交订单</div>
+                                    <div class="text-xs text-green-600 mt-1">比上月增长 20%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button onclick="goToPage('sales.html')" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200">
+                            进入销售管理
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 生成产品管理演示内容
+        function generateProductDemo() {
+            return `
+                <div class="space-y-6">
+                    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6">
+                        <h4 class="font-semibold text-gray-900 mb-4">产品库存管理</h4>
+                        <div class="space-y-3">
+                            <div class="bg-white rounded-lg p-4 flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-laptop text-blue-600"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-medium text-gray-900">智能销售系统</div>
+                                        <div class="text-sm text-gray-500">SKU: ISS-001</div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-semibold text-green-600">库存充足</div>
+                                    <div class="text-sm text-gray-500">剩余 156 套</div>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-mobile-alt text-purple-600"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-medium text-gray-900">移动端应用</div>
+                                        <div class="text-sm text-gray-500">SKU: MA-002</div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="font-semibold text-yellow-600">库存偏低</div>
+                                    <div class="text-sm text-gray-500">剩余 23 套</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6">
+                        <h4 class="font-semibold text-gray-900 mb-4">销售策略制定</h4>
+                        <div class="bg-white rounded-lg p-4">
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-600">推荐策略</span>
+                                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">AI推荐</span>
+                                </div>
+                                <div class="text-gray-900">针对企业客户推出"智能销售系统"套餐优惠，建议折扣15%，预计提升转化率25%</div>
+                                <div class="flex space-x-2 mt-3">
+                                    <button class="px-3 py-1 bg-primary text-white text-xs rounded-lg">采用策略</button>
+                                    <button class="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-lg">查看详情</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button onclick="goToPage('products.html')" class="px-6 py-3 bg-gradient-to-r from-yellow-600 to-orange-600 text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200">
+                            进入产品管理
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 生成移动端演示内容
+        function generateMobileDemo() {
+            return `
+                <div class="space-y-6">
+                    <div class="bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl p-6">
+                        <h4 class="font-semibold text-gray-900 mb-4">移动端优化</h4>
+                        <div class="flex justify-center mb-4">
+                            <div class="w-48 h-80 bg-gray-900 rounded-3xl p-2">
+                                <div class="w-full h-full bg-white rounded-2xl overflow-hidden">
+                                    <div class="bg-primary h-12 flex items-center justify-center">
+                                        <span class="text-white font-medium text-sm">IntelliShop Pro</span>
+                                    </div>
+                                    <div class="p-3 space-y-2">
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <div class="bg-blue-100 rounded-lg p-2 text-center">
+                                                <i class="fas fa-chart-line text-blue-600 text-lg mb-1"></i>
+                                                <div class="text-xs text-gray-700">数据看板</div>
+                                            </div>
+                                            <div class="bg-green-100 rounded-lg p-2 text-center">
+                                                <i class="fas fa-users text-green-600 text-lg mb-1"></i>
+                                                <div class="text-xs text-gray-700">客户管理</div>
+                                            </div>
+                                        </div>
+                                        <div class="bg-purple-100 rounded-lg p-2">
+                                            <div class="text-xs text-gray-700 mb-1">AI助手</div>
+                                            <div class="text-xs text-gray-500">为您推荐3个高价值客户</div>
+                                        </div>
+                                        <div class="space-y-1">
+                                            <div class="bg-gray-100 rounded p-2">
+                                                <div class="text-xs font-medium">张总 - 90%成交概率</div>
+                                            </div>
+                                            <div class="bg-gray-100 rounded p-2">
+                                                <div class="text-xs font-medium">李经理 - 85%成交概率</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center text-sm text-gray-600">
+                            响应式设计，完美适配各种移动设备
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6">
+                        <h4 class="font-semibold text-gray-900 mb-4">移动端特色功能</h4>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-white rounded-lg p-4 text-center">
+                                <i class="fas fa-qrcode text-primary text-2xl mb-2"></i>
+                                <div class="font-medium text-gray-900 text-sm">扫码添加客户</div>
+                                <div class="text-xs text-gray-500 mt-1">快速建档</div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 text-center">
+                                <i class="fas fa-microphone text-secondary text-2xl mb-2"></i>
+                                <div class="font-medium text-gray-900 text-sm">语音记录</div>
+                                <div class="text-xs text-gray-500 mt-1">智能转文字</div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 text-center">
+                                <i class="fas fa-map-marker-alt text-success text-2xl mb-2"></i>
+                                <div class="font-medium text-gray-900 text-sm">位置签到</div>
+                                <div class="text-xs text-gray-500 mt-1">拜访记录</div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 text-center">
+                                <i class="fas fa-bell text-warning text-2xl mb-2"></i>
+                                <div class="font-medium text-gray-900 text-sm">推送提醒</div>
+                                <div class="text-xs text-gray-500 mt-1">及时通知</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button onclick="goToPage('mobile-home.html')" class="px-6 py-3 bg-gradient-to-r from-pink-600 to-purple-600 text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200">
+                            体验移动端
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 快速导览
+        function quickTour(step) {
+            const steps = {
+                1: { page: 'login.html', name: '登录注册' },
+                2: { page: 'dashboard.html', name: '数据看板' },
+                3: { page: 'ai-brain.html', name: 'AI助手' },
+                4: { page: 'customer-profile.html', name: '客户管理' }
+            };
+            
+            const stepInfo = steps[step];
+            if (stepInfo) {
+                showToast(`正在跳转到${stepInfo.name}...`);
+                setTimeout(() => {
+                    goToPage(stepInfo.page);
+                }, 1000);
+            }
+        }
+
+        // 开始完整导览
+        function startFullTour() {
+            showToast('开始完整功能导览...');
+            setTimeout(() => {
+                goToPage('onboarding.html');
+            }, 1000);
+        }
+
+        // 页面加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            // 页面加载动画
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 0.5s ease-out';
+                document.body.style.opacity = '1';
+            }, 100);
+
+            // 显示欢迎提示
+            setTimeout(() => {
+                showToast('欢迎体验 IntelliShop Pro 功能演示');
+            }, 1000);
+
+            // 添加卡片悬停效果
+            const demoCards = document.querySelectorAll('.demo-card');
+            demoCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+
+        // 点击模态框背景关闭
+        document.getElementById('demoModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDemo();
+            }
+        });
+
+        // ESC键关闭模态框
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeDemo();
+            }
+        });
+    </script>
+</body>
+</html>

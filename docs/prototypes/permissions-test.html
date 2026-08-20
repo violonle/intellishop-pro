@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Permissions 联调测试</title>
+  <link rel="stylesheet" href="/assets/global-styles.css" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin: 24px; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; background: #fff; }
+    .card h3 { margin: 0 0 8px; font-size: 16px; }
+    .actions { display: flex; gap: 8px; margin-top: 8px; }
+    .result { margin-top: 12px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 6px; padding: 10px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; white-space: pre-wrap; }
+    .toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; }
+    input[type="text"] { padding: 6px 8px; border: 1px solid #d1d5db; border-radius: 6px; width: 320px; }
+    button { padding: 6px 10px; border: 1px solid #2563eb; background: #2563eb; color: #fff; border-radius: 6px; cursor: pointer; }
+    button.secondary { border-color: #6b7280; background: #6b7280; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Permissions 接口联调（含示例回退）</h1>
+    <div class="toolbar">
+      <input id="apiUrlInput" type="text" placeholder="可选：设置 API_URL，如 http://localhost:8080/api" />
+      <button id="setApiUrlBtn">设置 API_URL</button>
+      <button class="secondary" id="clearApiUrlBtn">清除 API_URL</button>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3>GET /permissions/enabled</h3>
+        <div class="actions">
+          <button data-action="enabled">请求</button>
+        </div>
+        <div class="result" id="enabledResult"></div>
+      </div>
+
+      <div class="card">
+        <h3>GET /permissions/resources</h3>
+        <div class="actions">
+          <button data-action="resources">请求</button>
+        </div>
+        <div class="result" id="resourcesResult"></div>
+      </div>
+
+      <div class="card">
+        <h3>GET /permissions/count/enabled</h3>
+        <div class="actions">
+          <button data-action="countEnabled">请求</button>
+        </div>
+        <div class="result" id="countEnabledResult"></div>
+      </div>
+
+      <div class="card">
+        <h3>GET /permissions/user/{userId}</h3>
+        <div class="actions">
+          <input id="userIdInput" type="text" placeholder="用户ID，例如 1001" />
+          <button data-action="byUser">请求</button>
+        </div>
+        <div class="result" id="byUserResult"></div>
+      </div>
+
+      <div class="card">
+        <h3>GET /permissions/role/{roleId}</h3>
+        <div class="actions">
+          <input id="roleIdInput" type="text" placeholder="角色ID，例如 2001" />
+          <button data-action="byRole">请求</button>
+        </div>
+        <div class="result" id="byRoleResult"></div>
+      </div>
+
+      <div class="card">
+        <h3>GET /permissions/resource/{resource}</h3>
+        <div class="actions">
+          <input id="resourceInput" type="text" placeholder="资源，例如 orders" />
+          <button data-action="byResource">请求</button>
+        </div>
+        <div class="result" id="byResourceResult"></div>
+      </div>
+
+      <div class="card">
+        <h3>GET /permissions/code/{code}</h3>
+        <div class="actions">
+          <input id="codeInput" type="text" placeholder="权限代码，例如 ORDER_QUERY" />
+          <button data-action="byCode">请求</button>
+        </div>
+        <div class="result" id="byCodeResult"></div>
+      </div>
+
+      <div class="card">
+        <h3>GET /permissions/user/{userId}/check/{permissionCode}</h3>
+        <div class="actions">
+          <input id="checkUserIdInput" type="text" placeholder="用户ID" />
+          <input id="checkPermCodeInput" type="text" placeholder="权限代码" />
+          <button data-action="checkUserPermission">请求</button>
+        </div>
+        <div class="result" id="checkUserPermissionResult"></div>
+      </div>
+
+      <div class="card">
+        <h3>POST /permissions/user/{userId}/batch-check</h3>
+        <div class="actions">
+          <input id="batchUserIdInput" type="text" placeholder="用户ID" />
+          <input id="batchCodesInput" type="text" placeholder="多个代码逗号分隔，如 ORDER_QUERY,ORDER_CREATE" />
+          <button data-action="batchCheckUserPermissions">请求</button>
+        </div>
+        <div class="result" id="batchCheckUserPermissionsResult"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 示例回退数据（与 OpenAPI 中新增示例一致）
+    const examples = {
+      enabled: [
+        { id: 101, name: '订单查询', code: 'ORDER_QUERY', resource: 'orders', status: 1 },
+        { id: 102, name: '产品管理', code: 'PRODUCT_MANAGE', resource: 'products', status: 1 }
+      ],
+      resources: ['orders', 'products', 'users'],
+      countEnabled: 42,
+      byUser: [
+        { id: 201, name: '用户管理', code: 'USER_MANAGE', resource: 'users', status: 1 },
+        { id: 202, name: '角色分配', code: 'ROLE_ASSIGN', resource: 'roles', status: 0 }
+      ],
+      byRole: [
+        { id: 301, name: '订单审批', code: 'ORDER_APPROVE', resource: 'orders', status: 1 },
+        { id: 302, name: '订单导出', code: 'ORDER_EXPORT', resource: 'orders', status: 1 }
+      ],
+      byResource: [
+        { id: 401, name: '订单查询', code: 'ORDER_QUERY', resource: 'orders', status: 1 },
+        { id: 402, name: '订单创建', code: 'ORDER_CREATE', resource: 'orders', status: 1 }
+      ],
+      byCode: { id: 501, name: '权限查看', code: 'PERMISSION_VIEW', resource: 'permissions', status: 1 },
+      check: { allowed: true },
+      batchCheck: { results: [ { code: 'ORDER_QUERY', allowed: true }, { code: 'ORDER_CREATE', allowed: false } ] }
+    };
+
+    // 支持动态设置 API_URL
+    document.getElementById('setApiUrlBtn').addEventListener('click', () => {
+      const v = document.getElementById('apiUrlInput').value.trim();
+      if (v) {
+        window.API_URL = v.replace(/\/+$/, '');
+        localStorage.setItem('API_URL', window.API_URL);
+        alert('已设置 API_URL: ' + window.API_URL);
+      }
+    });
+    document.getElementById('clearApiUrlBtn').addEventListener('click', () => {
+      localStorage.removeItem('API_URL');
+      delete window.API_URL;
+      alert('已清除 API_URL，使用默认同源 /api');
+    });
+
+    const setResult = (id, data) => {
+      const el = document.getElementById(id);
+      el.textContent = JSON.stringify(data, null, 2);
+    };
+
+    const withFallback = async (fn, fallback) => {
+      try {
+        const data = await fn();
+        return data;
+      } catch (e) {
+        console.warn('请求失败，使用示例回退:', e);
+        return fallback;
+      }
+    };
+
+    document.querySelectorAll('button[data-action]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const action = btn.getAttribute('data-action');
+        switch (action) {
+          case 'enabled': {
+            const data = await withFallback(() => api.permissions.queries.listEnabled(), examples.enabled);
+            setResult('enabledResult', data);
+            break;
+          }
+          case 'resources': {
+            const data = await withFallback(() => api.permissions.queries.listResources(), examples.resources);
+            setResult('resourcesResult', data);
+            break;
+          }
+          case 'countEnabled': {
+            const data = await withFallback(() => api.permissions.queries.countEnabled(), examples.countEnabled);
+            setResult('countEnabledResult', data);
+            break;
+          }
+          case 'byUser': {
+            const userId = document.getElementById('userIdInput').value.trim() || '1001';
+            const data = await withFallback(() => api.permissions.queries.byUser(userId), examples.byUser);
+            setResult('byUserResult', data);
+            break;
+          }
+          case 'byRole': {
+            const roleId = document.getElementById('roleIdInput').value.trim() || '2001';
+            const data = await withFallback(() => api.permissions.queries.byRole(roleId), examples.byRole);
+            setResult('byRoleResult', data);
+            break;
+          }
+          case 'byResource': {
+            const resource = document.getElementById('resourceInput').value.trim() || 'orders';
+            const data = await withFallback(() => api.permissions.queries.byResource(resource), examples.byResource);
+            setResult('byResourceResult', data);
+            break;
+          }
+          case 'byCode': {
+            const code = document.getElementById('codeInput').value.trim() || 'ORDER_QUERY';
+            const data = await withFallback(() => api.permissions.queries.byCode(code), examples.byCode);
+            setResult('byCodeResult', data);
+            break;
+          }
+          case 'checkUserPermission': {
+            const userId = document.getElementById('checkUserIdInput').value.trim() || '1001';
+            const permCode = document.getElementById('checkPermCodeInput').value.trim() || 'ORDER_QUERY';
+            const data = await withFallback(() => api.permissions.checks.checkUserPermission(userId, permCode), examples.check);
+            setResult('checkUserPermissionResult', data);
+            break;
+          }
+          case 'batchCheckUserPermissions': {
+            const userId = document.getElementById('batchUserIdInput').value.trim() || '1001';
+            const codes = (document.getElementById('batchCodesInput').value || 'ORDER_QUERY,ORDER_CREATE').split(',').map(s => s.trim()).filter(Boolean);
+            const data = await withFallback(() => api.permissions.checks.batchCheckUserPermissions(userId, codes), examples.batchCheck);
+            setResult('batchCheckUserPermissionsResult', data);
+            break;
+          }
+        }
+      });
+    });
+  </script>
+
+  <script src="/assets/js/utils.js"></script>
+  <script src="/assets/js/ui-components.js"></script>
+  <script src="/assets/js/error-handler.js"></script>
+  <script src="/assets/js/api-client.js"></script>
+</body>
+</html>

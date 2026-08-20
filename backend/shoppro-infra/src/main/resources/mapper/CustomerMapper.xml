@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shoppro.mapper.CustomerMapper">
+
+    <!-- 基础列定义 -->
+    <sql id="baseColumns">
+        id, name, phone, email, wechat, gender, age, birthday, source, level, status,
+        tags, address, company, position, annual_income, preferences, notes,
+        created_by, assigned_to, created_at, updated_at, deleted
+    </sql>
+
+    <!-- 根据关键词搜索客户 -->
+    <select id="searchByKeyword" parameterType="map" resultType="com.shoppro.entity.Customer">
+        SELECT <include refid="baseColumns" />
+        FROM customers
+        WHERE deleted = 0
+        AND (
+            name LIKE CONCAT('%', #{keyword}, '%')
+            OR phone LIKE CONCAT('%', #{keyword}, '%')
+            OR email LIKE CONCAT('%', #{keyword}, '%')
+            OR company LIKE CONCAT('%', #{keyword}, '%')
+        )
+        ORDER BY updated_at DESC
+    </select>
+
+    <!-- 根据状态查询客户 -->
+    <select id="selectByStatus" parameterType="string" resultType="com.shoppro.entity.Customer">
+        SELECT <include refid="baseColumns" />
+        FROM customers
+        WHERE deleted = 0
+        AND status = #{status}
+        ORDER BY updated_at DESC
+    </select>
+
+    <!-- 根据等级查询客户 -->
+    <select id="selectByLevel" parameterType="string" resultType="com.shoppro.entity.Customer">
+        SELECT <include refid="baseColumns" />
+        FROM customers
+        WHERE deleted = 0
+        AND level = #{level}
+        ORDER BY updated_at DESC
+    </select>
+
+    <!-- 根据来源查询客户 -->
+    <select id="selectBySource" parameterType="string" resultType="com.shoppro.entity.Customer">
+        SELECT <include refid="baseColumns" />
+        FROM customers
+        WHERE deleted = 0
+        AND source = #{source}
+        ORDER BY updated_at DESC
+    </select>
+
+    <!-- 根据分配人查询客户 -->
+    <select id="selectByAssignedTo" parameterType="long" resultType="com.shoppro.entity.Customer">
+        SELECT <include refid="baseColumns" />
+        FROM customers
+        WHERE deleted = 0
+        AND assigned_to = #{userId}
+        ORDER BY updated_at DESC
+    </select>
+
+    <!-- 查询VIP客户 -->
+    <select id="selectVIPCustomers" resultType="com.shoppro.entity.Customer">
+        SELECT <include refid="baseColumns" />
+        FROM customers
+        WHERE deleted = 0
+        AND level IN ('vip', 'diamond')
+        ORDER BY level DESC, updated_at DESC
+    </select>
+
+    <!-- 查询活跃客户 -->
+    <select id="selectActiveCustomers" resultType="com.shoppro.entity.Customer">
+        SELECT <include refid="baseColumns" />
+        FROM customers
+        WHERE deleted = 0
+        AND status = 'active'
+        ORDER BY updated_at DESC
+    </select>
+
+    <!-- 查询流失客户 -->
+    <select id="selectLostCustomers" resultType="com.shoppro.entity.Customer">
+        SELECT <include refid="baseColumns" />
+        FROM customers
+        WHERE deleted = 0
+        AND status = 'lost'
+        ORDER BY updated_at DESC
+    </select>
+
+    <!-- 检查手机号是否存在 -->
+    <select id="countByPhone" parameterType="map" resultType="long">
+        SELECT COUNT(1)
+        FROM customers
+        WHERE deleted = 0
+        AND phone = #{phone}
+        <if test="excludeId != null">
+            AND id != #{excludeId}
+        </if>
+    </select>
+
+    <!-- 检查邮箱是否存在 -->
+    <select id="countByEmail" parameterType="map" resultType="long">
+        SELECT COUNT(1)
+        FROM customers
+        WHERE deleted = 0
+        AND email = #{email}
+        <if test="excludeId != null">
+            AND id != #{excludeId}
+        </if>
+    </select>
+
+    <!-- 按状态统计客户数 -->
+    <select id="countByStatus" resultType="map">
+        SELECT status, COUNT(1) as count
+        FROM customers
+        WHERE deleted = 0
+        GROUP BY status
+    </select>
+
+    <!-- 按等级统计客户数 -->
+    <select id="countByLevel" resultType="map">
+        SELECT level, COUNT(1) as count
+        FROM customers
+        WHERE deleted = 0
+        GROUP BY level
+    </select>
+
+    <!-- 按来源统计客户数 -->
+    <select id="countBySource" resultType="map">
+        SELECT source, COUNT(1) as count
+        FROM customers
+        WHERE deleted = 0
+        GROUP BY source
+    </select>
+
+    <!-- 获取总客户数 -->
+    <select id="selectTotalCount" resultType="long">
+        SELECT COUNT(1)
+        FROM customers
+        WHERE deleted = 0
+    </select>
+
+    <!-- 获取本周新增客户数 -->
+    <select id="selectWeeklyNewCount" resultType="long">
+        SELECT COUNT(1)
+        FROM customers
+        WHERE deleted = 0
+        AND created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+    </select>
+
+    <!-- 获取平均客户价值 -->
+    <select id="selectAverageCustomerValue" resultType="map">
+        SELECT
+            AVG(annual_income) as avgIncome,
+            MIN(annual_income) as minIncome,
+            MAX(annual_income) as maxIncome
+        FROM customers
+        WHERE deleted = 0
+        AND annual_income IS NOT NULL
+        AND annual_income > 0
+    </select>
+
+    <!-- 查询客户360视图数据 -->
+    <select id="selectCustomerDetail" parameterType="long" resultType="com.shoppro.entity.Customer">
+        SELECT <include refid="baseColumns" />
+        FROM customers
+        WHERE deleted = 0
+        AND id = #{id}
+    </select>
+
+    <!-- 批量查询客户 -->
+    <select id="selectBatchByIds" parameterType="list" resultType="com.shoppro.entity.Customer">
+        SELECT <include refid="baseColumns" />
+        FROM customers
+        WHERE deleted = 0
+        AND id IN
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <!-- 软删除客户 -->
+    <update id="softDeleteById" parameterType="long">
+        UPDATE customers
+        SET deleted = 1, updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- 批量软删除客户 -->
+    <update id="softDeleteBatch" parameterType="list">
+        UPDATE customers
+        SET deleted = 1, updated_at = NOW()
+        WHERE id IN
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </update>
+
+    <!-- 更新客户分配 -->
+    <update id="updateAssignedTo" parameterType="map">
+        UPDATE customers
+        SET assigned_to = #{userId}, updated_at = NOW()
+        WHERE id = #{customerId}
+        AND deleted = 0
+    </update>
+
+    <!-- 批量更新客户分配 -->
+    <update id="updateAssignedToBatch" parameterType="map">
+        UPDATE customers
+        SET assigned_to = #{userId}, updated_at = NOW()
+        WHERE id IN
+        <foreach collection="customerIds" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        AND deleted = 0
+    </update>
+
+    <!-- 更新客户等级 -->
+    <update id="updateCustomerLevel" parameterType="map">
+        UPDATE customers
+        SET level = #{newLevel}, updated_at = NOW()
+        WHERE id = #{customerId}
+        AND deleted = 0
+    </update>
+
+    <!-- 更新客户状态 -->
+    <update id="updateCustomerStatus" parameterType="map">
+        UPDATE customers
+        SET status = #{status}, updated_at = NOW()
+        WHERE id = #{customerId}
+        AND deleted = 0
+    </update>
+
+</mapper>

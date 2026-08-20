@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>产品图片详情 - 图片展示</title>
+    <link rel="stylesheet" href="../assets/global-styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .image-viewer {
+            max-height: 70vh;
+            object-fit: contain;
+        }
+        
+        .thumbnail {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .thumbnail:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .thumbnail.active {
+            border: 3px solid #3B82F6;
+            transform: scale(1.05);
+        }
+        
+        .zoom-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+        
+        .image-container {
+            position: relative;
+            overflow: hidden;
+            cursor: grab;
+        }
+        
+        .image-container:active {
+            cursor: grabbing;
+        }
+        
+        .image-container img {
+            transition: transform 0.3s ease;
+        }
+        
+        .fullscreen-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .fullscreen-image {
+            max-width: 95vw;
+            max-height: 95vh;
+            object-fit: contain;
+        }
+        
+        .nav-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 20;
+        }
+        
+        .nav-button:hover {
+            background: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .nav-button.prev {
+            left: 20px;
+        }
+        
+        .nav-button.next {
+            right: 20px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 顶部导航 -->
+    <div class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <button onclick="history.back()" class="mr-4 p-2 rounded-lg hover:bg-gray-100">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                    </button>
+                    <h1 class="text-xl font-semibold text-gray-900" id="pageTitle">奥迪A6L 外观展示</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="shareImage()" class="p-2 rounded-lg hover:bg-gray-100" title="分享">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
+                        </svg>
+                    </button>
+                    <button onclick="downloadImage()" class="p-2 rounded-lg hover:bg-gray-100" title="下载">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <!-- 主图展示区域 -->
+            <div class="lg:col-span-3">
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <!-- 图片查看器 -->
+                    <div class="relative">
+                        <div class="image-container bg-gray-100 flex items-center justify-center" style="min-height: 500px;">
+                            <img id="mainImage" src="" alt="产品图片" class="image-viewer w-full h-auto" style="display: none;">
+                            <div id="imagePlaceholder" class="text-center">
+                                <div class="w-24 h-24 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <span class="text-white text-4xl">🚗</span>
+                                </div>
+                                <p class="text-gray-600 text-lg">奥迪A6L 外观展示</p>
+                                <p class="text-gray-400 text-sm mt-2">豪华商务轿车，彰显尊贵品质</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 缩放控制 -->
+                        <div class="zoom-controls">
+                            <div class="bg-white rounded-lg shadow-lg p-2 flex space-x-2">
+                                <button onclick="zoomOut()" class="p-2 hover:bg-gray-100 rounded" title="缩小">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7"></path>
+                                    </svg>
+                                </button>
+                                <button onclick="resetZoom()" class="p-2 hover:bg-gray-100 rounded text-xs" title="重置">
+                                    1:1
+                                </button>
+                                <button onclick="zoomIn()" class="p-2 hover:bg-gray-100 rounded" title="放大">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path>
+                                    </svg>
+                                </button>
+                                <button onclick="toggleFullscreen()" class="p-2 hover:bg-gray-100 rounded" title="全屏">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- 导航按钮 -->
+                        <button class="nav-button prev" onclick="previousImage()" title="上一张">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                        </button>
+                        <button class="nav-button next" onclick="nextImage()" title="下一张">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <!-- 图片信息 -->
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h2 class="text-xl font-semibold text-gray-900" id="imageTitle">奥迪A6L 外观展示</h2>
+                                <p class="text-gray-600 mt-1" id="imageDescription">豪华商务轿车，彰显尊贵品质</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-gray-500">图片 <span id="currentIndex">1</span> / <span id="totalImages">8</span></p>
+                                <p class="text-sm text-gray-500 mt-1">高清原图</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 图片标签 -->
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">轿车系列</span>
+                            <span class="px-3 py-1 bg-gray-100 text-gray-800 text-sm rounded-full">外观展示</span>
+                            <span class="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full">高清图片</span>
+                        </div>
+                        
+                        <!-- 操作按钮 -->
+                        <div class="flex space-x-4">
+                            <button onclick="viewConfiguration()" class="flex-1 bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+                                查看详细配置
+                            </button>
+                            <button onclick="contactSales()" class="flex-1 bg-gray-100 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-200 transition-colors">
+                                联系销售
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 缩略图列表 -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-sm p-4">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">图片列表</h3>
+                    <div class="space-y-3" id="thumbnailList">
+                        <!-- 缩略图将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+                
+                <!-- 相关推荐 -->
+                <div class="bg-white rounded-xl shadow-sm p-4 mt-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">相关推荐</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                <span class="text-green-600">🚙</span>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-900">奥迪Q7 外观</p>
+                                <p class="text-xs text-gray-500">12张图片</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
+                            <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                                <span class="text-red-600">🪑</span>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-900">豪华内饰</p>
+                                <p class="text-xs text-gray-500">15张图片</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
+                            <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                <span class="text-indigo-600">🔍</span>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-900">工艺细节</p>
+                                <p class="text-xs text-gray-500">20张图片</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 全屏查看覆盖层 -->
+    <div class="fullscreen-overlay" id="fullscreenOverlay">
+        <img id="fullscreenImage" src="" alt="全屏图片" class="fullscreen-image">
+        <button onclick="toggleFullscreen()" class="absolute top-4 right-4 text-white hover:text-gray-300 text-2xl">
+            ✕
+        </button>
+    </div>
+
+    <script>
+        // 模拟图片数据
+        const imageData = {
+            'sedan-1': {
+                title: '奥迪A6L 外观展示',
+                description: '豪华商务轿车，彰显尊贵品质',
+                images: [
+                    { id: 1, title: '正面外观', description: '经典前脸设计' },
+                    { id: 2, title: '侧面外观', description: '流线型车身' },
+                    { id: 3, title: '后面外观', description: '尾部设计' },
+                    { id: 4, title: '车头细节', description: '大灯设计' },
+                    { id: 5, title: '车轮细节', description: '轮毂设计' },
+                    { id: 6, title: '内饰概览', description: '豪华内饰' },
+                    { id: 7, title: '仪表盘', description: '数字仪表' },
+                    { id: 8, title: '座椅细节', description: '真皮座椅' }
+                ]
+            }
+        };
+
+        let currentImageIndex = 0;
+        let currentZoom = 1;
+        let currentData = null;
+
+        // 初始化页面
+        function initPage() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const imageId = urlParams.get('id') || 'sedan-1';
+            currentData = imageData[imageId];
+            
+            if (currentData) {
+                document.getElementById('pageTitle').textContent = currentData.title;
+                document.getElementById('imageTitle').textContent = currentData.title;
+                document.getElementById('imageDescription').textContent = currentData.description;
+                document.getElementById('totalImages').textContent = currentData.images.length;
+                
+                generateThumbnails();
+                showImage(0);
+            }
+        }
+
+        // 生成缩略图列表
+        function generateThumbnails() {
+            const thumbnailList = document.getElementById('thumbnailList');
+            thumbnailList.innerHTML = '';
+            
+            currentData.images.forEach((image, index) => {
+                const thumbnail = document.createElement('div');
+                thumbnail.className = `thumbnail p-3 rounded-lg border-2 border-gray-200 ${index === 0 ? 'active' : ''}`;
+                thumbnail.onclick = () => showImage(index);
+                
+                thumbnail.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <span class="text-blue-600 text-sm">${index + 1}</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900">${image.title}</p>
+                            <p class="text-xs text-gray-500">${image.description}</p>
+                        </div>
+                    </div>
+                `;
+                
+                thumbnailList.appendChild(thumbnail);
+            });
+        }
+
+        // 显示指定图片
+        function showImage(index) {
+            if (!currentData || index < 0 || index >= currentData.images.length) return;
+            
+            currentImageIndex = index;
+            const image = currentData.images[index];
+            
+            // 更新缩略图状态
+            document.querySelectorAll('.thumbnail').forEach((thumb, i) => {
+                thumb.classList.toggle('active', i === index);
+            });
+            
+            // 更新主图信息
+            document.getElementById('imageTitle').textContent = image.title;
+            document.getElementById('imageDescription').textContent = image.description;
+            document.getElementById('currentIndex').textContent = index + 1;
+            
+            // 显示占位符（实际项目中这里会加载真实图片）
+            document.getElementById('imagePlaceholder').style.display = 'block';
+            document.getElementById('mainImage').style.display = 'none';
+            
+            resetZoom();
+        }
+
+        // 上一张图片
+        function previousImage() {
+            const newIndex = currentImageIndex > 0 ? currentImageIndex - 1 : currentData.images.length - 1;
+            showImage(newIndex);
+        }
+
+        // 下一张图片
+        function nextImage() {
+            const newIndex = currentImageIndex < currentData.images.length - 1 ? currentImageIndex + 1 : 0;
+            showImage(newIndex);
+        }
+
+        // 缩放功能
+        function zoomIn() {
+            currentZoom = Math.min(currentZoom * 1.2, 3);
+            applyZoom();
+        }
+
+        function zoomOut() {
+            currentZoom = Math.max(currentZoom / 1.2, 0.5);
+            applyZoom();
+        }
+
+        function resetZoom() {
+            currentZoom = 1;
+            applyZoom();
+        }
+
+        function applyZoom() {
+            const mainImage = document.getElementById('mainImage');
+            mainImage.style.transform = `scale(${currentZoom})`;
+        }
+
+        // 全屏功能
+        function toggleFullscreen() {
+            const overlay = document.getElementById('fullscreenOverlay');
+            const fullscreenImage = document.getElementById('fullscreenImage');
+            
+            if (overlay.style.display === 'flex') {
+                overlay.style.display = 'none';
+            } else {
+                overlay.style.display = 'flex';
+                // 在实际项目中，这里会设置真实的图片源
+            }
+        }
+
+        // 查看详细配置
+        function viewConfiguration() {
+            window.location.href = 'product-config-detail.html';
+        }
+
+        // 联系销售
+        function contactSales() {
+            alert('联系销售功能');
+        }
+
+        // 分享图片
+        function shareImage() {
+            if (navigator.share) {
+                navigator.share({
+                    title: currentData.title,
+                    text: currentData.description,
+                    url: window.location.href
+                });
+            } else {
+                // 复制链接到剪贴板
+                navigator.clipboard.writeText(window.location.href);
+                alert('链接已复制到剪贴板');
+            }
+        }
+
+        // 下载图片
+        function downloadImage() {
+            alert('下载功能（实际项目中会下载当前图片）');
+        }
+
+        // 键盘导航
+        document.addEventListener('keydown', function(e) {
+            switch(e.key) {
+                case 'ArrowLeft':
+                    previousImage();
+                    break;
+                case 'ArrowRight':
+                    nextImage();
+                    break;
+                case 'Escape':
+                    if (document.getElementById('fullscreenOverlay').style.display === 'flex') {
+                        toggleFullscreen();
+                    }
+                    break;
+            }
+        });
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>

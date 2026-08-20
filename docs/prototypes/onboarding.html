@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新用户引导 - IntelliShop Pro</title>
+    <link rel="stylesheet" href="../assets/global-styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4640DE',
+                        secondary: '#8B5CF6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .slide-enter {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        
+        .slide-active {
+            transform: translateX(0);
+            opacity: 1;
+            transition: all 0.5s ease-out;
+        }
+        
+        .slide-exit {
+            transform: translateX(-100%);
+            opacity: 0;
+            transition: all 0.5s ease-out;
+        }
+        
+        .progress-bar {
+            transition: width 0.3s ease-out;
+        }
+        
+        .feature-card {
+            transition: all 0.3s ease-out;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .floating-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-white to-purple-50 min-h-screen overflow-hidden">
+    <!-- 进度条 -->
+    <div class="fixed top-0 left-0 w-full h-1 bg-gray-200 z-50">
+        <div id="progressBar" class="progress-bar h-full bg-gradient-to-r from-primary to-secondary" style="width: 20%"></div>
+    </div>
+
+    <!-- 跳过按钮 -->
+    <button id="skipBtn" onclick="skipOnboarding()" class="fixed top-4 right-4 z-50 text-gray-500 hover:text-gray-700 transition-colors">
+        <span class="text-sm">跳过引导</span>
+        <i class="fas fa-times ml-2"></i>
+    </button>
+
+    <!-- 引导步骤容器 -->
+    <div id="onboardingContainer" class="min-h-screen flex items-center justify-center px-4">
+        
+        <!-- 步骤1: 欢迎 -->
+        <div id="step1" class="onboarding-step slide-active max-w-md w-full text-center">
+            <div class="floating-animation mb-8">
+                <div class="w-24 h-24 mx-auto bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-rocket text-4xl text-primary"></i>
+                </div>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">欢迎使用 IntelliShop Pro</h1>
+            <p class="text-gray-600 mb-8 leading-relaxed">
+                智能销售管理系统，让您的销售工作更高效、更智能。
+                <br>让我们用几分钟时间了解主要功能。
+            </p>
+            <button onclick="nextStep()" class="w-full bg-gradient-to-r from-primary to-secondary text-white py-3 px-6 rounded-xl font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200">
+                开始体验
+                <i class="fas fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+
+        <!-- 步骤2: AI智能助手 -->
+        <div id="step2" class="onboarding-step slide-enter max-w-md w-full text-center">
+            <div class="floating-animation mb-8">
+                <div class="w-24 h-24 mx-auto bg-gradient-to-br from-purple-100 to-blue-100 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-brain text-4xl text-purple-600"></i>
+                </div>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">AI智能助手</h2>
+            <p class="text-gray-600 mb-6 leading-relaxed">
+                强大的AI引擎为您提供：
+            </p>
+            <div class="bg-white rounded-xl p-6 shadow-sm mb-6">
+                <div class="space-y-4 text-left">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-comments text-primary w-5"></i>
+                        <span class="text-sm text-gray-700">智能话术推荐</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-user-chart text-secondary w-5"></i>
+                        <span class="text-sm text-gray-700">用户画像分析</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-chart-line text-success w-5"></i>
+                        <span class="text-sm text-gray-700">销售行为分析</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-database text-warning w-5"></i>
+                        <span class="text-sm text-gray-700">数据统计分析</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex space-x-3">
+                <button onclick="prevStep()" class="flex-1 bg-gray-100 text-gray-700 py-3 px-6 rounded-xl font-medium hover:bg-gray-200 transition-colors">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    上一步
+                </button>
+                <button onclick="nextStep()" class="flex-1 bg-gradient-to-r from-primary to-secondary text-white py-3 px-6 rounded-xl font-medium hover:shadow-lg transition-all duration-200">
+                    下一步
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 步骤3: 客户管理 -->
+        <div id="step3" class="onboarding-step slide-enter max-w-md w-full text-center">
+            <div class="floating-animation mb-8">
+                <div class="w-24 h-24 mx-auto bg-gradient-to-br from-green-100 to-teal-100 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-users text-4xl text-green-600"></i>
+                </div>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">客户管理</h2>
+            <p class="text-gray-600 mb-6 leading-relaxed">
+                全方位的客户管理功能：
+            </p>
+            <div class="grid grid-cols-2 gap-3 mb-6">
+                <div class="feature-card bg-white rounded-lg p-4 shadow-sm">
+                    <i class="fas fa-address-book text-primary text-xl mb-2"></i>
+                    <div class="text-xs text-gray-700">客户档案</div>
+                </div>
+                <div class="feature-card bg-white rounded-lg p-4 shadow-sm">
+                    <i class="fas fa-chart-pie text-secondary text-xl mb-2"></i>
+                    <div class="text-xs text-gray-700">用户画像</div>
+                </div>
+                <div class="feature-card bg-white rounded-lg p-4 shadow-sm">
+                    <i class="fas fa-tasks text-success text-xl mb-2"></i>
+                    <div class="text-xs text-gray-700">跟进记录</div>
+                </div>
+                <div class="feature-card bg-white rounded-lg p-4 shadow-sm">
+                    <i class="fas fa-bell text-warning text-xl mb-2"></i>
+                    <div class="text-xs text-gray-700">智能提醒</div>
+                </div>
+            </div>
+            <div class="flex space-x-3">
+                <button onclick="prevStep()" class="flex-1 bg-gray-100 text-gray-700 py-3 px-6 rounded-xl font-medium hover:bg-gray-200 transition-colors">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    上一步
+                </button>
+                <button onclick="nextStep()" class="flex-1 bg-gradient-to-r from-primary to-secondary text-white py-3 px-6 rounded-xl font-medium hover:shadow-lg transition-all duration-200">
+                    下一步
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 步骤4: 数据分析 -->
+        <div id="step4" class="onboarding-step slide-enter max-w-md w-full text-center">
+            <div class="floating-animation mb-8">
+                <div class="w-24 h-24 mx-auto bg-gradient-to-br from-orange-100 to-red-100 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-chart-bar text-4xl text-orange-600"></i>
+                </div>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">数据分析</h2>
+            <p class="text-gray-600 mb-6 leading-relaxed">
+                深度数据洞察，助力决策：
+            </p>
+            <div class="bg-white rounded-xl p-6 shadow-sm mb-6">
+                <div class="grid grid-cols-2 gap-4 text-center">
+                    <div>
+                        <div class="text-2xl font-bold text-primary mb-1">85%</div>
+                        <div class="text-xs text-gray-600">转化率提升</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-secondary mb-1">3.2x</div>
+                        <div class="text-xs text-gray-600">效率提升</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-success mb-1">24/7</div>
+                        <div class="text-xs text-gray-600">智能监控</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-warning mb-1">100+</div>
+                        <div class="text-xs text-gray-600">分析维度</div>
+                    </div>
+                </div>
+            </div>
+            <div class="flex space-x-3">
+                <button onclick="prevStep()" class="flex-1 bg-gray-100 text-gray-700 py-3 px-6 rounded-xl font-medium hover:bg-gray-200 transition-colors">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    上一步
+                </button>
+                <button onclick="nextStep()" class="flex-1 bg-gradient-to-r from-primary to-secondary text-white py-3 px-6 rounded-xl font-medium hover:shadow-lg transition-all duration-200">
+                    下一步
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 步骤5: 开始使用 -->
+        <div id="step5" class="onboarding-step slide-enter max-w-md w-full text-center">
+            <div class="floating-animation mb-8">
+                <div class="w-24 h-24 mx-auto bg-gradient-to-br from-green-100 to-blue-100 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-flag-checkered text-4xl text-green-600"></i>
+                </div>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">准备就绪！</h2>
+            <p class="text-gray-600 mb-6 leading-relaxed">
+                恭喜您完成了新手引导！<br>
+                现在可以开始使用 IntelliShop Pro 的强大功能了。
+            </p>
+            <div class="bg-white rounded-xl p-6 shadow-sm mb-6">
+                <h3 class="font-semibold text-gray-900 mb-3">推荐开始：</h3>
+                <div class="space-y-3">
+                    <button onclick="goToPage('dashboard.html')" class="w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-100">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-chart-line text-primary"></i>
+                            <div>
+                                <div class="font-medium text-sm">查看数据看板</div>
+                                <div class="text-xs text-gray-500">了解业务概况</div>
+                            </div>
+                        </div>
+                    </button>
+                    <button onclick="goToPage('ai-brain.html')" class="w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-100">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-brain text-secondary"></i>
+                            <div>
+                                <div class="font-medium text-sm">体验AI助手</div>
+                                <div class="text-xs text-gray-500">获取智能建议</div>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="flex space-x-3">
+                <button onclick="prevStep()" class="flex-1 bg-gray-100 text-gray-700 py-3 px-6 rounded-xl font-medium hover:bg-gray-200 transition-colors">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    上一步
+                </button>
+                <button onclick="finishOnboarding()" class="flex-1 bg-gradient-to-r from-success to-primary text-white py-3 px-6 rounded-xl font-medium hover:shadow-lg transition-all duration-200">
+                    开始使用
+                    <i class="fas fa-rocket ml-2"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 步骤指示器 -->
+    <div class="fixed bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
+        <div id="dot1" class="w-3 h-3 rounded-full bg-primary transition-all duration-300"></div>
+        <div id="dot2" class="w-3 h-3 rounded-full bg-gray-300 transition-all duration-300"></div>
+        <div id="dot3" class="w-3 h-3 rounded-full bg-gray-300 transition-all duration-300"></div>
+        <div id="dot4" class="w-3 h-3 rounded-full bg-gray-300 transition-all duration-300"></div>
+        <div id="dot5" class="w-3 h-3 rounded-full bg-gray-300 transition-all duration-300"></div>
+    </div>
+
+    <!-- Toast 提示 -->
+    <div id="toast" class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg shadow-lg p-4 translate-y-[-100px] opacity-0 transition-all duration-300 z-50">
+        <div class="flex items-center space-x-3">
+            <div class="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center">
+                <i class="fas fa-info text-primary text-xs"></i>
+            </div>
+            <span id="toastMessage" class="text-sm text-gray-700"></span>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 5;
+
+        // 显示提示信息
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            toast.classList.remove('translate-y-[-100px]', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-[-100px]', 'opacity-0');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 3000);
+        }
+
+        // 更新进度条
+        function updateProgress() {
+            const progressBar = document.getElementById('progressBar');
+            const progress = (currentStep / totalSteps) * 100;
+            progressBar.style.width = progress + '%';
+        }
+
+        // 更新步骤指示器
+        function updateDots() {
+            for (let i = 1; i <= totalSteps; i++) {
+                const dot = document.getElementById(`dot${i}`);
+                if (i === currentStep) {
+                    dot.classList.remove('bg-gray-300');
+                    dot.classList.add('bg-primary');
+                } else if (i < currentStep) {
+                    dot.classList.remove('bg-gray-300');
+                    dot.classList.add('bg-success');
+                } else {
+                    dot.classList.remove('bg-primary', 'bg-success');
+                    dot.classList.add('bg-gray-300');
+                }
+            }
+        }
+
+        // 显示指定步骤
+        function showStep(stepNumber) {
+            // 隐藏所有步骤
+            for (let i = 1; i <= totalSteps; i++) {
+                const step = document.getElementById(`step${i}`);
+                step.classList.remove('slide-active');
+                step.classList.add('slide-enter');
+                step.style.display = 'none';
+            }
+
+            // 显示当前步骤
+            setTimeout(() => {
+                const currentStepEl = document.getElementById(`step${stepNumber}`);
+                currentStepEl.style.display = 'block';
+                setTimeout(() => {
+                    currentStepEl.classList.remove('slide-enter');
+                    currentStepEl.classList.add('slide-active');
+                }, 50);
+            }, 250);
+
+            updateProgress();
+            updateDots();
+        }
+
+        // 下一步
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                showStep(currentStep);
+                showToast(`步骤 ${currentStep}/${totalSteps}`);
+            }
+        }
+
+        // 上一步
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+                showToast(`步骤 ${currentStep}/${totalSteps}`);
+            }
+        }
+
+        // 跳过引导
+        function skipOnboarding() {
+            if (confirm('确定要跳过新手引导吗？您可以稍后在帮助中心重新查看。')) {
+                showToast('正在跳转到主页...');
+                setTimeout(() => {
+                    window.location.href = '../index.html';
+                }, 1000);
+            }
+        }
+
+        // 完成引导
+        function finishOnboarding() {
+            showToast('欢迎使用 IntelliShop Pro！');
+            // 保存引导完成状态
+            localStorage.setItem('onboardingCompleted', 'true');
+            setTimeout(() => {
+                window.location.href = './dashboard.html';
+            }, 1500);
+        }
+
+        // 跳转到指定页面
+        function goToPage(page) {
+            showToast('正在跳转...');
+            setTimeout(() => {
+                window.location.href = './' + page;
+            }, 500);
+        }
+
+        // 键盘导航
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextStep();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevStep();
+            } else if (e.key === 'Escape') {
+                skipOnboarding();
+            }
+        });
+
+        // 页面加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查是否已完成引导
+            if (localStorage.getItem('onboardingCompleted') === 'true') {
+                if (confirm('您已经完成过新手引导，是否直接进入主页？')) {
+                    window.location.href = './dashboard.html';
+                    return;
+                }
+            }
+
+            // 初始化页面
+            updateProgress();
+            updateDots();
+            
+            // 页面加载动画
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 0.5s ease-out';
+                document.body.style.opacity = '1';
+            }, 100);
+
+            // 显示欢迎提示
+            setTimeout(() => {
+                showToast('使用方向键或点击按钮导航');
+            }, 1000);
+        });
+
+        // 触摸手势支持（移动端）
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    // 向左滑动 - 下一步
+                    nextStep();
+                } else {
+                    // 向右滑动 - 上一步
+                    prevStep();
+                }
+            }
+        }
+    </script>
+</body>
+</html>

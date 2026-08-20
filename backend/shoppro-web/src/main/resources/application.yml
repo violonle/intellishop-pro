@@ -1,0 +1,245 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: shoppro-backend
+    
+  profiles:
+    active: dev
+    
+  # 数据库配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3307}/shoppro_db?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:shoppro}
+    password: ${DB_PASSWORD}
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      idle-timeout: 600000
+      connection-timeout: 30000
+      max-lifetime: 1800000
+    sql:
+      init:
+        mode: always
+        schema-locations: classpath:db/init.sql
+      
+  # Redis配置
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+    timeout: 5000ms
+    jedis:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+        max-wait: -1ms
+        
+  # JSON配置
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    default-property-inclusion: non_null
+    
+  # 文件上传配置
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
+      
+  # 邮件配置
+  mail:
+    host: smtp.qq.com
+    port: 587
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  # AI配置
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:sk-placeholder}
+      base-url: ${OPENAI_BASE_URL:https://api.openai.com}
+      chat:
+        options:
+          model: gpt-3.5-turbo
+
+# Actuator配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: never
+
+# MyBatis Plus配置
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.shoppro.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# JWT配置
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: 86400000  # 24小时
+  header: Authorization
+  prefix: Bearer
+  
+# AI配置
+ai:
+  enabled: true
+  model:
+    version: v2.1
+    prediction:
+      success-threshold: 0.7
+    recommendation:
+      max-results: 10
+
+# 文件存储配置
+file:
+  upload:
+    path: ${FILE_UPLOAD_PATH:/data/shoppro/uploads/}
+    url-prefix: ${FILE_URL_PREFIX:/api/files/}
+    allowed-types: jpg,jpeg,png,gif,pdf,doc,docx,xls,xlsx,ppt,pptx,txt
+    max-size: 10485760  # 10MB
+  storage:
+    type: local
+
+# 云存储配置
+cloud:
+  storage:
+    provider: ${CLOUD_STORAGE_PROVIDER:local}
+    aliyun:
+      endpoint: ${ALIYUN_OSS_ENDPOINT:oss-cn-hangzhou.aliyuncs.com}
+      access-key-id: ${ALIYUN_ACCESS_KEY_ID:}
+      access-key-secret: ${ALIYUN_ACCESS_KEY_SECRET:}
+      bucket-name: ${ALIYUN_OSS_BUCKET:shoppro-bucket}
+      base-url: ${ALIYUN_OSS_BASE_URL:}
+    aws:
+      region: ${AWS_S3_REGION:ap-east-1}
+      access-key-id: ${AWS_ACCESS_KEY_ID:}
+      secret-access-key: ${AWS_SECRET_ACCESS_KEY:}
+      bucket-name: ${AWS_S3_BUCKET:shoppro-bucket}
+      endpoint: ${AWS_S3_ENDPOINT:}
+    tencent:
+      region: ${TENCENT_COS_REGION:ap-guangzhou}
+      secret-id: ${TENCENT_SECRET_ID:}
+      secret-key: ${TENCENT_SECRET_KEY:}
+      bucket-name: ${TENCENT_COS_BUCKET:shoppro-bucket}
+      bucket-url: ${TENCENT_COS_URL:}
+
+# 速率限制配置
+rate-limit:
+  enabled: ${RATE_LIMIT_ENABLED:true}
+  requests-per-minute: ${RATE_LIMIT_REQUESTS_PER_MINUTE:60}
+
+# 短信服务配置
+sms:
+  provider: ${SMS_PROVIDER:aliyun}
+  verification:
+    code-length: 6
+    code-expire-minutes: 5
+  aliyun:
+    access-key-id: ${ALIYUN_ACCESS_KEY_ID:}
+    access-key-secret: ${ALIYUN_ACCESS_KEY_SECRET:}
+    sign-name: ${ALIYUN_SMS_SIGN_NAME:}
+    template-code: ${ALIYUN_SMS_TEMPLATE_CODE:}
+    
+# 系统配置
+system:
+  name: ShopPro AI智能SCRM系统
+  version: 1.0.0
+  description: 基于AI的智能客户关系管理系统
+  contact:
+    name: ShopPro Team
+    email: support@shoppro.com
+    url: https://www.shoppro.com
+    
+# 日志配置
+logging:
+  level:
+    com.shoppro: info
+    org.springframework.security: warn
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx"
+  file:
+    name: logs/app.log
+    
+# Swagger配置
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    url: /api/v3/api-docs
+    config-url: /api/v3/api-docs/swagger-config
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  show-actuator: false
+
+---
+# 开发环境配置
+spring:
+  config:
+    activate:
+      on-profile: dev
+  main:
+    allow-bean-definition-overriding: true
+
+slim:
+  api:
+    enabled: true
+
+logging:
+  level:
+    root: INFO
+    com.shoppro: DEBUG
+  file:
+    name: logs/app.log
+
+---
+# 生产环境配置  
+spring:
+  config:
+    activate:
+      on-profile: prod
+      
+  # 生产环境数据库配置
+  datasource:
+    url: jdbc:mysql://prod-mysql:3306/shoppro_db?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=true
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    
+  # 生产环境Redis配置
+  redis:
+    host: prod-redis
+    password: ${REDIS_PASSWORD}
+    
+logging:
+  level:
+    root: WARN
+    com.shoppro: INFO
+  file:
+    name: /var/log/shoppro/application.log

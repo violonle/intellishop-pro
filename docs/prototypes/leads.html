@@ -1,0 +1,1756 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>线索管理 - IntelliSHop Pro</title>
+    <link rel="stylesheet" href="../assets/global-styles.css">
+    <link rel="stylesheet" href="../assets/css/ui-components.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4640DE',
+                        secondary: '#7C3AED',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+        
+        .slide-up {
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen">
+        <!-- 顶部头部 -->
+        <div class="bg-white px-4 py-4 border-b border-gray-100 shadow-sm">
+            <div class="flex items-center justify-between">
+                <h1 class="text-xl font-semibold text-gray-900">🎯 线索客户</h1>
+                <div class="flex items-center space-x-2">
+                    <button onclick="showAddRecordModal()" class="px-3 py-1.5 bg-primary text-white rounded-lg text-sm hover:bg-primary/90 transition-colors">
+                        添加记录
+                    </button>
+                    <button onclick="toggleSearch()" class="p-2 text-gray-600 hover:text-primary">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </button>
+                    <button onclick="toggleFilter()" class="p-2 text-gray-600 hover:text-primary">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 线索/客户切换标签页 -->
+        <div class="bg-white px-4 py-3 border-b border-gray-100">
+            <div class="relative w-full h-8 bg-white rounded-[20px] shadow-lg flex items-center" style="box-shadow: 0px 16px 60px 0px rgba(27, 31, 68, 0.08);">
+                <button id="leadsTab" class="flex-1 h-full flex items-center justify-center text-xs font-bold text-white shadow-sm transition-all duration-300 rounded-[20px]" style="background: #4640DE;" onclick="switchTab('leads')">📋 线索管理</button>
+                <button id="customersTab" class="flex-1 h-full flex items-center justify-center text-xs font-medium text-gray-400 hover:text-gray-600 transition-all rounded-[20px]" onclick="switchTab('customers')">
+                    👥 客户管理
+                </button>
+            </div>
+        </div>
+
+        <!-- 筛选标签 -->
+        <div class="px-4 py-3 bg-white border-b border-gray-100 shadow-sm">
+            <!-- 线索筛选标签 -->
+            <div id="leadsFilters" class="flex space-x-2 overflow-x-auto scrollbar-hide" onmousedown="startDrag(event)" onmousemove="drag(event)" onmouseup="endDrag()" onmouseleave="endDrag()">
+                <button onclick="filterLeads('all')" class="flex-shrink-0 px-3 py-1.5 bg-primary text-white rounded-full text-xs font-medium border border-primary">
+                    全部
+                </button>
+                <button onclick="filterLeads('high-priority')" class="flex-shrink-0 px-3 py-1.5 bg-gray-50 text-gray-700 rounded-full text-xs font-medium border hover:border-primary transition-colors">
+                    高优先级
+                </button>
+                <button onclick="filterLeads('today-followup')" class="flex-shrink-0 px-3 py-1.5 bg-gray-50 text-gray-700 rounded-full text-xs font-medium border hover:border-primary transition-colors">
+                    今日跟进
+                </button>
+                <button onclick="filterLeads('unassigned')" class="flex-shrink-0 px-3 py-1.5 bg-gray-50 text-gray-700 rounded-full text-xs font-medium border hover:border-primary transition-colors">
+                    待分配
+                </button>
+                <button onclick="filterLeads('closed')" class="flex-shrink-0 px-3 py-1.5 bg-gray-50 text-gray-700 rounded-full text-xs font-medium border hover:border-primary transition-colors">
+                    已成交
+                </button>
+            </div>
+            
+            <!-- 客户筛选标签 -->
+            <div id="customersFilters" class="hidden flex space-x-2 overflow-x-auto scrollbar-hide" onmousedown="startDrag(event)" onmousemove="drag(event)" onmouseup="endDrag()" onmouseleave="endDrag()">
+                <button onclick="filterCustomers('all')" class="flex-shrink-0 px-3 py-1.5 bg-primary text-white rounded-full text-xs font-medium border border-primary">
+                    全部
+                </button>
+                <button onclick="filterCustomers('vip')" class="flex-shrink-0 px-3 py-1.5 bg-gray-50 text-gray-700 rounded-full text-xs font-medium border hover:border-primary transition-colors">
+                    VIP客户
+                </button>
+                <button onclick="filterCustomers('active')" class="flex-shrink-0 px-3 py-1.5 bg-gray-50 text-gray-700 rounded-full text-xs font-medium border hover:border-primary transition-colors">
+                    活跃客户
+                </button>
+                <button onclick="filterCustomers('inactive')" class="flex-shrink-0 px-3 py-1.5 bg-gray-50 text-gray-700 rounded-full text-xs font-medium border hover:border-primary transition-colors">
+                    沉睡客户
+                </button>
+                <button onclick="filterCustomers('high-value')" class="flex-shrink-0 px-3 py-1.5 bg-gray-50 text-gray-700 rounded-full text-xs font-medium border hover:border-primary transition-colors">
+                    高价值
+                </button>
+                <button onclick="filterCustomers('recent-purchase')" class="flex-shrink-0 px-3 py-1.5 bg-gray-50 text-gray-700 rounded-full text-xs font-medium border hover:border-primary transition-colors">
+                    近期购买
+                </button>
+            </div>
+        </div>
+
+        <!-- 搜索栏 -->
+        <div class="px-4 py-4">
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </div>
+                <input type="text" placeholder="Search" class="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+            </div>
+        </div>
+
+        <!-- AI智能分析卡片 -->
+        <div class="px-4 pb-4">
+            <!-- 线索AI分析 -->
+            <div id="leadsAI" class="ai-insight">
+                <div class="ai-insight-title">
+                    AI线索分析
+                    <div class="ai-badge">实时分析</div>
+                </div>
+                <div id="leads-ai-content" class="ai-insight-content">
+                    正在分析线索数据...
+                </div>
+                <div class="mt-3">
+                    <button onclick="refreshLeadsAI()" class="btn btn-primary btn-sm">
+                        刷新分析 🔄
+                    </button>
+                    <button onclick="showLeadsAnalysisDetail()" class="btn btn-default btn-sm ml-2">
+                        查看详细报告
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 客户AI分析 -->
+            <div id="customersAI" class="hidden bg-primary rounded-xl p-4 text-white border border-primary/20 shadow-sm">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="font-semibold">👥 AI用户画像</h3>
+                    <span class="text-xs bg-white bg-opacity-20 px-2 py-1 rounded-full border border-white border-opacity-20">实时更新</span>
+                </div>
+                <p class="text-xs opacity-90 mb-3">本月新增VIP客户3位，客户满意度95%，建议重点维护王女士等高价值客户</p>
+                <div class="flex space-x-2">
+                    <button onclick="showCustomerInsights()" class="bg-white bg-opacity-20 text-white px-3 py-1.5 rounded-lg text-xs border border-white border-opacity-20 hover:bg-opacity-30 transition-colors">
+                        查看客户洞察
+                    </button>
+                    <a href="customer-list.html" class="bg-white bg-opacity-20 text-white px-3 py-1.5 rounded-lg text-xs border border-white border-opacity-20 hover:bg-opacity-30 transition-colors inline-block">
+                        完整客户列表
+                    </a>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- 线索列表 -->
+        <div id="leadsList" class="px-4 pb-4 pt-4 space-y-3">
+            <!-- 线索项 1 - 高优先级 -->
+            <div class="bg-white rounded-xl p-4 border-l-4 border-danger shadow-sm border" data-lead-id="1" data-lead-name="李先生">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center space-x-3">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face" 
+                             alt="客户头像" class="w-12 h-12 rounded-full">
+                        <div>
+                            <h4 class="font-semibold text-gray-900">李先生</h4>
+                            <p class="text-sm text-gray-500">来源：官网咨询</p>
+                            <p class="text-xs text-gray-400">2小时前</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="inline-block px-2 py-1 bg-danger/10 text-danger text-xs rounded-full mb-1">高优先级</span>
+                        <p class="text-sm font-medium text-primary">成交概率: 85%</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-3 text-xs">
+                    <div>
+                        <span class="text-gray-500">意向车型:</span>
+                        <span class="font-medium text-gray-900">宝马X5</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">预算范围:</span>
+                        <span class="font-medium text-gray-900">50万</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">联系电话:</span>
+                        <span class="font-medium text-gray-900">138****8888</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">所在地区:</span>
+                        <span class="font-medium text-gray-900">北京朝阳</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">价格敏感型</span>
+                    <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">配置优先</span>
+                    <span class="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">决策快速</span>
+                </div>
+
+                <div class="ai-score ai-score-high mb-2">
+                    成交概率评分: 85
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div class="flex space-x-2 flex-wrap" data-action-buttons>
+                        <button onclick="predictLeadSuccess(1)" class="px-3 py-1.5 bg-primary text-white rounded-lg text-xs border border-primary hover:bg-primary/90 transition-colors">🤖 AI预测</button>
+                        <button onclick="getLeadRecommendations(1)" class="px-3 py-1.5 bg-purple-500 text-white rounded-lg text-xs border border-purple-500 hover:bg-purple-600 transition-colors">智能话术</button>
+                        <a href="follow-up-action.html?id=1" class="px-3 py-1.5 bg-success text-white rounded-lg text-xs border border-success hover:bg-success/90 transition-colors inline-block">立即跟进</a>
+                        <a href="lead-detail.html?id=1" class="px-3 py-1.5 bg-gray-50 text-gray-700 rounded-lg text-xs border hover:border-primary transition-colors inline-block">查看详情</a>
+                    </div>
+                    <div class="text-xs text-gray-500" data-assign-status>
+                        分配给: 张经理
+                    </div>
+                </div>
+            </div>
+
+            <!-- 线索项 2 - 中优先级 -->
+            <div class="bg-white rounded-xl p-4 border-l-4 border-warning shadow-sm border">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center space-x-3">
+                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=50&h=50&fit=crop&crop=face" 
+                             alt="客户头像" class="w-12 h-12 rounded-full">
+                        <div>
+                            <h4 class="font-semibold text-gray-900">王女士</h4>
+                            <p class="text-sm text-gray-500">来源：抖音广告</p>
+                            <p class="text-xs text-gray-400">5小时前</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="inline-block px-2 py-1 bg-warning/10 text-warning text-xs rounded-full mb-1">中优先级</span>
+                        <p class="text-sm font-medium text-primary">成交概率: 72%</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-3 text-xs">
+                    <div>
+                        <span class="text-gray-500">意向车型:</span>
+                        <span class="font-medium text-gray-900">奔驰C级</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">预算范围:</span>
+                        <span class="font-medium text-gray-900">35万</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">联系电话:</span>
+                        <span class="font-medium text-gray-900">139****6666</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">所在地区:</span>
+                        <span class="font-medium text-gray-900">上海浦东</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">品牌忠诚</span>
+                    <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">外观重视</span>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div class="flex space-x-2">
+                        <a href="follow-up-action.html?id=2" class="px-3 py-1.5 bg-primary text-white rounded-lg text-xs border border-primary hover:bg-primary/90 transition-colors inline-block">立即跟进</a>
+                        <a href="lead-detail.html?id=2" class="px-3 py-1.5 bg-gray-50 text-gray-700 rounded-lg text-xs border hover:border-primary transition-colors inline-block">查看详情</a>
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        分配给: 李销售
+                    </div>
+                </div>
+            </div>
+
+            <!-- 线索项 3 - 高优先级 -->
+            <div class="bg-white rounded-xl p-4 border-l-4 border-danger shadow-sm border">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center space-x-3">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=50&h=50&fit=crop&crop=face" 
+                             alt="客户头像" class="w-12 h-12 rounded-full">
+                        <div>
+                            <h4 class="font-semibold text-gray-900">张总</h4>
+                            <p class="text-sm text-gray-500">来源：朋友推荐</p>
+                            <p class="text-xs text-gray-400">1天前</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="inline-block px-2 py-1 bg-danger/10 text-danger text-xs rounded-full mb-1">高优先级</span>
+                        <p class="text-sm font-medium text-primary">成交概率: 90%</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-3 text-xs">
+                    <div>
+                        <span class="text-gray-500">意向车型:</span>
+                        <span class="font-medium text-gray-900">奥迪A6L</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">预算范围:</span>
+                        <span class="font-medium text-gray-900">45万</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">联系电话:</span>
+                        <span class="font-medium text-gray-900">136****9999</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">所在地区:</span>
+                        <span class="font-medium text-gray-900">深圳南山</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">商务需求</span>
+                    <span class="px-2 py-1 bg-warning/10 text-warning text-xs rounded-full">品质优先</span>
+                    <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">急需用车</span>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div class="flex space-x-2">
+                        <a href="follow-up-action.html?id=3" class="px-3 py-1.5 bg-primary text-white rounded-lg text-xs border border-primary hover:bg-primary/90 transition-colors inline-block">立即跟进</a>
+                        <a href="lead-detail.html?id=3" class="px-3 py-1.5 bg-gray-50 text-gray-700 rounded-lg text-xs border hover:border-primary transition-colors inline-block">查看详情</a>
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        分配给: 王主管
+                    </div>
+                </div>
+            </div>
+
+            <!-- 线索项 4 - 待分配 -->
+            <div class="bg-white rounded-xl p-4 border-l-4 border-gray-400 shadow-sm border" data-lead-id="4" data-lead-name="陈小姐">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center space-x-3">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=50&h=50&fit=crop&crop=face" 
+                             alt="客户头像" class="w-12 h-12 rounded-full">
+                        <div>
+                            <h4 class="font-semibold text-gray-900">陈小姐</h4>
+                            <p class="text-sm text-gray-500">来源：微信小程序</p>
+                            <p class="text-xs text-gray-400">30分钟前</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="inline-block px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full mb-1">待分配</span>
+                        <p class="text-sm font-medium text-primary">成交概率: 待评估</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-3 text-xs">
+                    <div>
+                        <span class="text-gray-500">意向车型:</span>
+                        <span class="font-medium text-gray-900">特斯拉Model 3</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">预算范围:</span>
+                        <span class="font-medium text-gray-900">30万</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">联系电话:</span>
+                        <span class="font-medium text-gray-900">158****7777</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">所在地区:</span>
+                        <span class="font-medium text-gray-900">杭州西湖</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">新能源偏好</span>
+                    <span class="px-2 py-1 bg-secondary/10 text-secondary text-xs rounded-full">科技感重视</span>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div class="flex space-x-2">
+                        <button onclick="showAutoAssignModal(this)" class="px-3 py-1.5 bg-warning text-white rounded-lg text-xs border border-warning hover:bg-warning/90 transition-colors">智能分配</button>
+                        <button onclick="showManualAssignModal(this)" class="px-3 py-1.5 bg-gray-50 text-gray-700 rounded-lg text-xs border hover:border-primary transition-colors">手动分配</button>
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        等待分配
+                    </div>
+                </div>
+            </div>
+
+            <!-- 线索项 5 - 低优先级 -->
+            <div class="bg-white rounded-xl p-4 border-l-4 border-primary shadow-sm border">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center space-x-3">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50&h=50&fit=crop&crop=face" 
+                             alt="客户头像" class="w-12 h-12 rounded-full">
+                        <div>
+                            <h4 class="font-semibold text-gray-900">刘先生</h4>
+                            <p class="text-sm text-gray-500">来源：展厅到访</p>
+                            <p class="text-xs text-gray-400">3天前</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="inline-block px-2 py-1 bg-primary/10 text-primary text-xs rounded-full mb-1">低优先级</span>
+                        <p class="text-sm font-medium text-primary">成交概率: 45%</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-3 text-xs">
+                    <div>
+                        <span class="text-gray-500">意向车型:</span>
+                        <span class="font-medium text-gray-900">大众帕萨特</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">预算范围:</span>
+                        <span class="font-medium text-gray-900">25万</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">联系电话:</span>
+                        <span class="font-medium text-gray-900">137****5555</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">所在地区:</span>
+                        <span class="font-medium text-gray-900">广州天河</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="px-2 py-1 bg-warning/10 text-warning text-xs rounded-full">实用主义</span>
+                    <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">性价比重视</span>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div class="flex space-x-2">
+                        <a href="follow-up-action.html?id=4" class="px-3 py-1.5 bg-primary text-white rounded-lg text-xs border border-primary hover:bg-primary/90 transition-colors inline-block">立即跟进</a>
+                        <a href="lead-detail.html?id=4" class="px-3 py-1.5 bg-gray-50 text-gray-700 rounded-lg text-xs border hover:border-primary transition-colors inline-block">查看详情</a>
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        分配给: 赵销售
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 客户列表 -->
+        <div id="customersList" class="hidden px-4 pb-4 pt-4 space-y-3">
+            <!-- 客户项 1 - VIP客户 -->
+            <div class="bg-white rounded-xl p-4 border-l-4 border-warning shadow-sm border">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center space-x-3">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face" 
+                             alt="客户头像" class="w-12 h-12 rounded-full">
+                        <div>
+                            <h4 class="font-semibold text-gray-900">李先生</h4>
+                            <p class="text-sm text-gray-500">VIP客户 · 已购车</p>
+                            <p class="text-xs text-gray-400">最近联系：1天前</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="inline-block px-2 py-1 bg-warning/10 text-warning text-xs rounded-full mb-1">VIP</span>
+                        <p class="text-sm font-medium text-primary">客户价值: 高</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-3 text-xs">
+                    <div>
+                        <span class="text-gray-500">购买车型:</span>
+                        <span class="font-medium text-gray-900">宝马X5</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">购买时间:</span>
+                        <span class="font-medium text-gray-900">2024年1月</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">联系电话:</span>
+                        <span class="font-medium text-gray-900">138****8888</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">所在地区:</span>
+                        <span class="font-medium text-gray-900">北京朝阳</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">满意度高</span>
+                    <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">推荐意愿强</span>
+                    <span class="px-2 py-1 bg-warning/10 text-warning text-xs rounded-full">复购潜力</span>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div class="flex space-x-2">
+                        <button onclick="showConvertToCustomerModal()" class="px-3 py-1.5 bg-primary text-white rounded-lg text-xs border border-primary hover:bg-primary/90 transition-colors">客户维护</button>
+                        <a href="customer-detail.html?id=1" class="px-3 py-1.5 bg-gray-50 text-gray-700 rounded-lg text-xs border hover:border-primary transition-colors inline-block">查看详情</a>
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        负责人: 张经理
+                    </div>
+                </div>
+            </div>
+
+            <!-- 客户项 2 - 活跃客户 -->
+            <div class="bg-white rounded-xl p-4 border-l-4 border-primary shadow-sm border">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center space-x-3">
+                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=50&h=50&fit=crop&crop=face" 
+                             alt="客户头像" class="w-12 h-12 rounded-full">
+                        <div>
+                            <h4 class="font-semibold text-gray-900">王女士</h4>
+                            <p class="text-sm text-gray-500">活跃客户 · 已购车</p>
+                            <p class="text-xs text-gray-400">最近联系：3天前</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="inline-block px-2 py-1 bg-primary/10 text-primary text-xs rounded-full mb-1">活跃</span>
+                        <p class="text-sm font-medium text-primary">客户价值: 中</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-3 text-xs">
+                    <div>
+                        <span class="text-gray-500">购买车型:</span>
+                        <span class="font-medium text-gray-900">奔驰C级</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">购买时间:</span>
+                        <span class="font-medium text-gray-900">2023年12月</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">联系电话:</span>
+                        <span class="font-medium text-gray-900">139****6666</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">所在地区:</span>
+                        <span class="font-medium text-gray-900">上海浦东</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">服务满意</span>
+                    <span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">按时保养</span>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div class="flex space-x-2">
+                        <button onclick="showAddFollowUpModal()" class="px-3 py-1.5 bg-primary text-white rounded-lg text-xs border border-primary hover:bg-primary/90 transition-colors">定期回访</button>
+                        <a href="customer-detail.html?id=2" class="px-3 py-1.5 bg-gray-50 text-gray-700 rounded-lg text-xs border hover:border-primary transition-colors inline-block">查看详情</a>
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        负责人: 李销售
+                    </div>
+                </div>
+            </div>
+
+            <!-- 客户项 3 - 沉睡客户 -->
+            <div class="bg-white rounded-xl p-4 border-l-4 border-gray-300 shadow-sm border">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center space-x-3">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50&h=50&fit=crop&crop=face" 
+                             alt="客户头像" class="w-12 h-12 rounded-full">
+                        <div>
+                            <h4 class="font-semibold text-gray-900">刘先生</h4>
+                            <p class="text-sm text-gray-500">沉睡客户 · 已购车</p>
+                            <p class="text-xs text-gray-400">最近联系：30天前</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="inline-block px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full mb-1">沉睡</span>
+                        <p class="text-sm font-medium text-gray-600">客户价值: 待激活</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-3 text-xs">
+                    <div>
+                        <span class="text-gray-500">购买车型:</span>
+                        <span class="font-medium text-gray-900">大众帕萨特</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">购买时间:</span>
+                        <span class="font-medium text-gray-900">2023年6月</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">联系电话:</span>
+                        <span class="font-medium text-gray-900">137****5555</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">所在地区:</span>
+                        <span class="font-medium text-gray-900">广州天河</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">需要激活</span>
+                    <span class="px-2 py-1 bg-warning/10 text-warning text-xs rounded-full">保养提醒</span>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div class="flex space-x-2">
+                        <button onclick="goToFollowUpAction()" class="px-3 py-1.5 bg-warning text-white rounded-lg text-xs border border-warning hover:bg-warning/90 transition-colors">重新激活</button>
+                        <a href="customer-detail.html?id=3" class="px-3 py-1.5 bg-gray-50 text-gray-700 rounded-lg text-xs border hover:border-primary transition-colors inline-block">查看详情</a>
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        负责人: 赵销售
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 浮动添加按钮 -->
+        <a id="addLeadBtn" href="lead-form.html" class="fixed bottom-20 right-4 w-14 h-14 bg-primary text-white rounded-full shadow-lg border border-primary/20 flex items-center justify-center hover:bg-primary/90 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+            </svg>
+        </a>
+        
+
+    </div>
+
+
+
+    <!-- 添加记录弹出面板 -->
+    <div id="addRecordModal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0" onclick="hideAddRecordModal()"></div>
+        <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl slide-up">
+            <div class="p-4 border-b border-gray-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-900">添加记录</h3>
+                    <button onclick="hideAddRecordModal()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-4 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">标题</label>
+                    <input type="text" id="recordTitle" placeholder="请输入记录标题" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+    </div>
+
+    <!-- 加载JavaScript库 -->
+    <script src="../assets/js/error-handler.js"></script>
+    <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/ui-components.js"></script>
+    <script src="../assets/js/api-client.js"></script>
+    <script src="../assets/js/leads-api.js"></script>
+    <script src="../assets/js/leads-integration.js"></script>
+    <!-- 第三阶段诊断和监控脚本 -->
+    <script src="../assets/js/phase3-test-diagnostics.js"></script>
+    <script src="../assets/js/phase3-test-dashboard.js"></script>
+    
+    <script>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">内容</label>
+                    <textarea id="recordContent" rows="4" placeholder="请输入详细内容..." 
+                              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-3">跟进方式</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <!-- 第一行 -->
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="followupMethod" value="phone" class="w-4 h-4 text-primary border-gray-300 focus:ring-primary">
+                            <span class="text-sm text-gray-700">电话/短信</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="followupMethod" value="wechat" class="w-4 h-4 text-primary border-gray-300 focus:ring-primary">
+                            <span class="text-sm text-gray-700">微信</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="followupMethod" value="weibo" class="w-4 h-4 text-primary border-gray-300 focus:ring-primary">
+                            <span class="text-sm text-gray-700">微博</span>
+                        </label>
+                        <!-- 第二行 -->
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="followupMethod" value="douyin" class="w-4 h-4 text-primary border-gray-300 focus:ring-primary">
+                            <span class="text-sm text-gray-700">抖音/头条</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="followupMethod" value="xiaohongshu" class="w-4 h-4 text-primary border-gray-300 focus:ring-primary">
+                            <span class="text-sm text-gray-700">小红书</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="followupMethod" value="other" class="w-4 h-4 text-primary border-gray-300 focus:ring-primary">
+                            <span class="text-sm text-gray-700">其它</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-3 pt-2">
+                    <button onclick="hideAddRecordModal()" 
+                            class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                        取消
+                    </button>
+                    <button onclick="saveRecord()" 
+                            class="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
+                        保存记录
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 自动分配弹窗 -->
+    <div id="autoAssignModal" class="fixed inset-0 z-50 hidden">
+        <!-- 背景遮罩 -->
+        <div class="modal-overlay bg-black bg-opacity-50 backdrop-blur-sm" onclick="hideAutoAssignModal()"></div>
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-2xl shadow-xl max-w-md w-full transform transition-all slide-up">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">智能分配线索</h3>
+                        <button onclick="hideAutoAssignModal()" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <div class="bg-blue-50 rounded-lg p-4 mb-4">
+                            <div class="flex items-center mb-2">
+                                <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                </svg>
+                                <span class="font-medium text-blue-900">智能匹配规则</span>
+                            </div>
+                            <ul class="text-sm text-blue-800 space-y-1">
+                                <li>• 根据销售人员工作量自动分配</li>
+                                <li>• 优先分配给专业对口的销售</li>
+                                <li>• 考虑地区匹配度</li>
+                                <li>• 平衡团队业绩分布</li>
+                            </ul>
+                        </div>
+                        
+                        <div id="autoAssignResult" class="hidden">
+                            <div class="bg-green-50 rounded-lg p-4">
+                                <div class="flex items-center mb-2">
+                                    <svg class="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <span class="font-medium text-green-900">推荐分配结果</span>
+                                </div>
+                                <div class="text-sm text-green-800">
+                                    <p>推荐分配给：<span id="recommendedSales" class="font-semibold"></span></p>
+                                    <p class="mt-1">匹配度：<span id="matchScore" class="font-semibold"></span></p>
+                                    <p class="mt-1">理由：<span id="assignReason"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-3">
+                        <button onclick="hideAutoAssignModal()" 
+                                class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                            取消
+                        </button>
+                        <button onclick="executeAutoAssign()" 
+                                class="flex-1 px-4 py-2 bg-warning text-white rounded-lg hover:bg-warning/90 transition-colors">
+                            开始智能分配
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 手动分配弹窗 -->
+    <div id="manualAssignModal" class="fixed inset-0 z-50 hidden">
+        <!-- 背景遮罩 -->
+        <div class="modal-overlay bg-black bg-opacity-50 backdrop-blur-sm" onclick="hideManualAssignModal()"></div>
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-2xl shadow-xl max-w-md w-full transform transition-all slide-up">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">手动分配线索</h3>
+                        <button onclick="hideManualAssignModal()" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-3">选择销售人员</label>
+                        <div class="space-y-2 max-h-60 overflow-y-auto">
+                            <div class="sales-option border border-gray-200 rounded-lg p-3 cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors" 
+                                 data-sales-id="1" data-sales-name="张销售" onclick="selectSales(this)">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" 
+                                             alt="张销售" class="w-8 h-8 rounded-full">
+                                        <div>
+                                            <p class="font-medium text-gray-900">张销售</p>
+                                            <p class="text-xs text-gray-500">豪华车专家 · 5年经验</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-xs text-gray-500">当前线索</p>
+                                        <p class="text-sm font-medium text-primary">8个</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="sales-option border border-gray-200 rounded-lg p-3 cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors" 
+                                 data-sales-id="2" data-sales-name="李销售" onclick="selectSales(this)">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" 
+                                             alt="李销售" class="w-8 h-8 rounded-full">
+                                        <div>
+                                            <p class="font-medium text-gray-900">李销售</p>
+                                            <p class="text-xs text-gray-500">新能源专家 · 3年经验</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-xs text-gray-500">当前线索</p>
+                                        <p class="text-sm font-medium text-primary">5个</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="sales-option border border-gray-200 rounded-lg p-3 cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors" 
+                                 data-sales-id="3" data-sales-name="王销售" onclick="selectSales(this)">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face" 
+                                             alt="王销售" class="w-8 h-8 rounded-full">
+                                        <div>
+                                            <p class="font-medium text-gray-900">王销售</p>
+                                            <p class="text-xs text-gray-500">经济型车专家 · 4年经验</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-xs text-gray-500">当前线索</p>
+                                        <p class="text-sm font-medium text-primary">6个</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="sales-option border border-gray-200 rounded-lg p-3 cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors" 
+                                 data-sales-id="4" data-sales-name="赵销售" onclick="selectSales(this)">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <img src="https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=40&h=40&fit=crop&crop=face" 
+                                             alt="赵销售" class="w-8 h-8 rounded-full">
+                                        <div>
+                                            <p class="font-medium text-gray-900">赵销售</p>
+                                            <p class="text-xs text-gray-500">SUV专家 · 6年经验</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-xs text-gray-500">当前线索</p>
+                                        <p class="text-sm font-medium text-primary">7个</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">分配备注（可选）</label>
+                            <textarea id="assignNote" rows="2" placeholder="请输入分配备注..." 
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-sm"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-3">
+                        <button onclick="hideManualAssignModal()" 
+                                class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                            取消
+                        </button>
+                        <button onclick="executeManualAssign()" 
+                                class="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
+                            确认分配
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 所有JavaScript函数合并到页面底部 -->
+    <script>
+        // 全局变量
+        let isDragging = false;
+        let startX;
+        let scrollLeft;
+        let dragElement;
+        let currentAssignButton = null;
+        let selectedSalesId = null;
+        let selectedSalesName = null;
+        let currentLeads = [];  // 当前线索列表
+        let currentCustomers = [];  // 当前客户列表
+        let currentLeadId = null;  // 当前操作的线索ID
+        let currentTab = 'leads';  // 当前选中的tab
+
+        // 拖拽功能
+        function startDrag(e) {
+            isDragging = true;
+            dragElement = e.currentTarget;
+            startX = e.pageX - dragElement.offsetLeft;
+            scrollLeft = dragElement.scrollLeft;
+            dragElement.style.cursor = 'grabbing';
+        }
+
+        function drag(e) {
+            if (!isDragging) return;
+            e.preventDefault();
+            const x = e.pageX - dragElement.offsetLeft;
+            const walk = (x - startX) * 2;
+            dragElement.scrollLeft = scrollLeft - walk;
+        }
+
+        function endDrag() {
+            isDragging = false;
+            if (dragElement) {
+                dragElement.style.cursor = 'grab';
+                dragElement = null;
+            }
+        }
+
+        // 改为UI显示分配给 => function showAutoAssignModal(button) {
+            currentAssignButton = button;
+            // 从按鐐所在的容器提取lead ID
+            const leadContainer = button.closest('[data-lead-id]');
+            if (leadContainer) {
+                currentLeadId = leadContainer.dataset.leadId;
+            }
+            document.getElementById('autoAssignModal').classList.remove('hidden');
+            document.getElementById('autoAssignResult').classList.add('hidden');
+        }
+        }
+
+        // 隐藏自动分配弹窗
+        function hideAutoAssignModal() {
+            document.getElementById('autoAssignModal').classList.add('hidden');
+            currentAssignButton = null;
+        }
+
+        // 执行自动分配
+        async function executeAutoAssign() {
+            if (!currentLeadId) {
+                UI.showMessage('无法识别要分配的线索', 'error');
+                return;
+            }
+
+            UI.showLoading('正在进行智能分配...');
+            
+            try {
+                // 调用AI推荐分配接口
+                const result = await api.aiAdvanced.getRecommendations(
+                    currentLeadId,
+                    'sales_assignment',
+                    1,
+                    []
+                );
+                
+                const recommendation = result.recommendations?.[0];
+                if (!recommendation) {
+                    UI.showMessage('暂无推荐分配方案', 'warning');
+                    return;
+                }
+                
+                const bestSales = {
+                    id: recommendation.user_id || recommendation.id,
+                    name: recommendation.name || '推荐销售',
+                    score: Math.round(recommendation.score * 100)
+                };
+
+                // 显示推荐结果
+                document.getElementById('recommendedSales').textContent = bestSales.name;
+                document.getElementById('matchScore').textContent = bestSales.score + '%';
+                document.getElementById('assignReason').textContent = 
+                    recommendation.reason || '综合匹配度最高';
+                
+                document.getElementById('autoAssignResult').classList.remove('hidden');
+
+                // 2秒后自动执行分配
+                setTimeout(() => {
+                    executeAssignLead(bestSales.id, bestSales.name, '智能分配');
+                    hideAutoAssignModal();
+                }, 2000);
+                
+            } catch (error) {
+                UI.showMessage('智能分配失败: ' + error.message, 'error');
+                console.error('自动分配错误:', error);
+            } finally {
+                UI.hideLoading();
+            }
+        }
+
+        // 显示手动分配弹窗
+        function showManualAssignModal(button) {
+            currentAssignButton = button;
+            // 从按钮所在的容器提取lead ID
+            const leadContainer = button.closest('[data-lead-id]');
+            if (leadContainer) {
+                currentLeadId = leadContainer.dataset.leadId;
+            }
+            document.getElementById('manualAssignModal').classList.remove('hidden');
+            // 重置选择状态
+            document.querySelectorAll('.sales-option').forEach(option => {
+                option.classList.remove('border-primary', 'bg-primary/10');
+                option.classList.add('border-gray-200');
+            });
+            selectedSalesId = null;
+            selectedSalesName = null;
+        }
+
+        // 隐藏手动分配弹窗
+        function hideManualAssignModal() {
+            document.getElementById('manualAssignModal').classList.add('hidden');
+            currentAssignButton = null;
+            document.getElementById('assignNote').value = '';
+        }
+
+        // 选择销售人员
+        function selectSales(element) {
+            // 重置所有选项
+            document.querySelectorAll('.sales-option').forEach(option => {
+                option.classList.remove('border-primary', 'bg-primary/10');
+                option.classList.add('border-gray-200');
+            });
+            
+            // 选中当前选项
+            element.classList.remove('border-gray-200');
+            element.classList.add('border-primary', 'bg-primary/10');
+            
+            selectedSalesId = element.dataset.salesId;
+            selectedSalesName = element.dataset.salesName;
+        }
+
+        // 执行手动分配
+        async function executeManualAssign() {
+            if (!selectedSalesId) {
+                UI.showMessage('请选择要分配的销售人员', 'warning');
+                return;
+            }
+            
+            const note = document.getElementById('assignNote').value;
+            await executeAssignLead(selectedSalesId, selectedSalesName, '手动分配', note);
+            hideManualAssignModal();
+        }
+
+        // 执行线索分配的API调用
+        async function executeAssignLead(salesId, salesName, assignType, note = '') {
+            if (!currentLeadId) {
+                UI.showMessage('无法识别线索ID', 'error');
+                return;
+            }
+            
+            UI.showLoading('正在分配线索...');
+            
+            try {
+                // 调用API将线索分配给销售
+                const assignResult = await api.leads.assign(currentLeadId, salesId);
+                
+                // 更新UI显示
+                const leadContainer = document.querySelector(`[data-lead-id="${currentLeadId}"]`);
+                if (leadContainer) {
+                    const statusDiv = leadContainer.querySelector('[data-assign-status]');
+                    if (statusDiv) {
+                        statusDiv.textContent = `分配给: ${salesName}`;
+                        statusDiv.classList.remove('text-gray-500');
+                        statusDiv.classList.add('text-green-600');
+                    }
+                    
+                    const buttonContainer = leadContainer.querySelector('[data-action-buttons]');
+                    if (buttonContainer) {
+                        buttonContainer.innerHTML = `
+                            <a href="follow-up-action.html?leadId=${currentLeadId}" class="px-3 py-1.5 bg-primary text-white rounded-lg text-xs border border-primary hover:bg-primary/90 transition-colors inline-block">立即跟进</a>
+                            <a href="lead-detail.html?id=${currentLeadId}" class="px-3 py-1.5 bg-gray-50 text-gray-700 rounded-lg text-xs border hover:border-primary transition-colors inline-block">查看详情</a>
+                        `;
+                    }
+                }
+                
+                UI.showMessage(`线索已成功${assignType}给${salesName}`, 'success');
+                
+                // 记录分配日志
+                console.log('线索分配记录：', {
+                    leadId: currentLeadId,
+                    assignType,
+                    salesId,
+                    salesName,
+                    note,
+                    timestamp: new Date().toLocaleString(),
+                    result: assignResult
+                });
+                
+                // 刊新加载线索列表
+                setTimeout(() => loadLeadsData(), 1000);
+                
+            } catch (error) {
+                UI.showMessage('分配失败: ' + error.message, 'error');
+                console.error('线索分配错误:', error);
+            } finally {
+                UI.hideLoading();
+            }
+        }
+
+        // ===== 重新编写的三个按钮功能 =====
+        
+        // 客户维护按钮功能
+        function showConvertToCustomerModal() {
+            console.log('客户维护功能被调用');
+            
+            // 创建弹出面板HTML
+            const modalHTML = `
+                <div id="convertToCustomerModal" class="fixed inset-0 z-50 hidden">
+                    <div class="modal-overlay fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm" onclick="hideConvertToCustomerModal()"></div>
+                    <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-8 transform translate-y-full transition-transform duration-300 ease-out slide-up shadow-2xl">
+                        <div class="w-full">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold text-gray-900">🎉 转为客户</h3>
+                                <button onclick="hideConvertToCustomerModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <div class="text-center py-6">
+                                <div class="w-20 h-20 bg-gradient-to-r from-green-400 to-green-500 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
+                                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </div>
+                                <h4 class="text-xl font-bold text-gray-900 mb-3">🎊 转换成功！</h4>
+                                <p class="text-gray-600 mb-2">该线索已成功转为客户</p>
+                                <p class="text-sm text-gray-500 mb-4">现在可以进行客户维护和后续服务</p>
+                                
+                                <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                                    <div class="text-left space-y-2">
+                                        <div class="flex items-center text-green-700">
+                                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span class="text-sm">线索已转为正式客户</span>
+                                        </div>
+                                        <div class="flex items-center text-green-700">
+                                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span class="text-sm">客户档案已自动创建</span>
+                                        </div>
+                                        <div class="flex items-center text-green-700">
+                                            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span class="text-sm">后续服务流程已启动</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex space-x-3">
+                                <button onclick="hideConvertToCustomerModal()" class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                                    关闭
+                                </button>
+                                <button onclick="window.location.href='customer-detail.html?id=new'" class="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                                    查看客户详情
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 添加到页面
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // 显示弹出面板
+            const modal = document.getElementById('convertToCustomerModal');
+            modal.classList.remove('hidden');
+        }
+
+        // 隐藏转为客户弹出面板
+        function hideConvertToCustomerModal() {
+            const modal = document.getElementById('convertToCustomerModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // 定期回访按钮功能
+        function showAddFollowUpModal() {
+            console.log('定期回访功能被调用');
+            
+            // 获取当前时间，用于设置下次回访时间
+            const now = new Date();
+            const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+            const nextWeekStr = nextWeek.toLocaleDateString();
+            
+            // 创建弹出面板HTML
+            const modalHTML = `
+                <div id="addFollowUpModal" class="fixed inset-0 z-50 hidden">
+                    <div class="modal-overlay fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm" onclick="hideAddFollowUpModal()"></div>
+                    <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-8 transform translate-y-full transition-transform duration-300 ease-out slide-up shadow-2xl">
+                        <div class="w-full">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold text-gray-900">📞 添加跟进记录</h3>
+                                <button onclick="hideAddFollowUpModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">跟进类型</label>
+                                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                        <option value="phone">📞 电话沟通</option>
+                                        <option value="email">📧 邮件联系</option>
+                                        <option value="meeting">🤝 面谈会议</option>
+                                        <option value="visit">🏢 上门拜访</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">计划时间</label>
+                                    <input type="date" value="${nextWeekStr}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">跟进内容</label>
+                                    <textarea rows="4" placeholder="请输入跟进内容和要点..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none">了解客户需求变化，询问产品使用情况，收集客户反馈意见，推荐相关产品服务</textarea>
+                                </div>
+                                
+                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                    <h4 class="font-medium text-blue-900 mb-2">📝 跟进要点提醒</h4>
+                                    <ul class="text-sm text-blue-700 space-y-1">
+                                        <li>• 询问产品使用情况</li>
+                                        <li>• 了解新的需求变化</li>
+                                        <li>• 收集客户反馈意见</li>
+                                        <li>• 推荐相关产品服务</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="flex space-x-3 mt-6">
+                                <button onclick="hideAddFollowUpModal()" class="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                                    取消
+                                </button>
+                                <button onclick="confirmAddFollowUp()" class="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                                    确认添加
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 添加到页面
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // 显示弹出面板
+            const modal = document.getElementById('addFollowUpModal');
+            modal.classList.remove('hidden');
+        }
+
+        // 隐藏添加跟进记录弹出面板
+        function hideAddFollowUpModal() {
+            const modal = document.getElementById('addFollowUpModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // 确认添加跟进记录
+        function confirmAddFollowUp() {
+            // 这里可以添加保存跟进记录的逻辑
+            alert('📞 跟进记录已成功添加！\n\n系统将在指定时间提醒您进行跟进。');
+            hideAddFollowUpModal();
+        }
+
+        // 重新激活按钮功能
+        function goToFollowUpAction() {
+            console.log('重新激活功能被调用');
+            
+            const message = `🔄 客户重新激活计划
+            
+🎯 激活策略：
+• 发送个性化关怀信息
+• 提供专属优惠方案
+• 邀请参加产品体验活动
+• 安排专人一对一沟通
+
+📊 预期效果：
+• 重新唤起客户兴趣
+• 提升客户活跃度
+• 增加转化可能性
+• 改善客户关系
+
+⏰ 执行时间：立即开始
+👤 负责人：当前用户`;
+
+            alert(message);
+            
+            // 询问具体激活方式
+            const actions = [
+                '发送关怀短信',
+                '拨打电话沟通', 
+                '发送邮件邀请',
+                '安排上门拜访'
+            ];
+            
+            const choice = prompt(`请选择激活方式（输入数字）：
+1. ${actions[0]}
+2. ${actions[1]}
+3. ${actions[2]}
+4. ${actions[3]}`);
+            
+            const choiceNum = parseInt(choice);
+            if (choiceNum >= 1 && choiceNum <= 4) {
+                alert(`✅ 已选择：${actions[choiceNum - 1]}\n\n系统将自动执行该激活方案，请关注后续反馈结果。`);
+            }
+        }
+
+        // 切换搜索功能
+        function toggleSearch() {
+            const searchInput = document.querySelector('input[type="text"][placeholder="Search"]');
+            if (searchInput) {
+                searchInput.focus();
+                searchInput.style.borderColor = '#4640DE';
+                searchInput.style.boxShadow = '0 0 0 2px rgba(70, 64, 222, 0.2)';
+                
+                // 3秒后恢复原样
+                setTimeout(() => {
+                    searchInput.style.borderColor = '';
+                    searchInput.style.boxShadow = '';
+                }, 3000);
+            }
+            console.log('搜索功能已激活');
+        }
+
+        // 切换筛选面板
+        function toggleFilter() {
+            alert('筛选面板功能\n\n可以通过以下方式筛选：\n• 优先级筛选\n• 时间范围筛选\n• 状态筛选\n• 负责人筛选');
+            console.log('筛选面板已打开');
+        }
+
+        // 筛选线索
+        function filterLeads(filterType) {
+            // 更新按钮样式
+            const buttons = document.querySelectorAll('#leadsFilters button');
+            buttons.forEach(btn => {
+                btn.className = 'flex-shrink-0 px-3 py-1.5 bg-gray-50 text-gray-700 rounded-full text-xs font-medium border hover:border-primary transition-colors';
+            });
+            
+            // 高亮当前选中的按钮
+            event.target.className = 'flex-shrink-0 px-3 py-1.5 bg-primary text-white rounded-full text-xs font-medium border border-primary';
+            
+            console.log('线索筛选：', filterType);
+            
+            // 显示筛选结果提示
+            const filterNames = {
+                'all': '全部线索',
+                'high-priority': '高优先级线索',
+                'today-followup': '今日跟进线索',
+                'unassigned': '待分配线索',
+                'closed': '已成交线索'
+            };
+            
+            alert(`已筛选显示：${filterNames[filterType]}`);
+        }
+
+        // 筛选客户
+        function filterCustomers(filterType) {
+            // 更新按钮样式
+            const buttons = document.querySelectorAll('#customersFilters button');
+            buttons.forEach(btn => {
+                btn.className = 'flex-shrink-0 px-3 py-1.5 bg-gray-50 text-gray-700 rounded-full text-xs font-medium border hover:border-primary transition-colors';
+            });
+            
+            // 高亮当前选中的按钮
+            event.target.className = 'flex-shrink-0 px-3 py-1.5 bg-primary text-white rounded-full text-xs font-medium border border-primary';
+            
+            console.log('客户筛选：', filterType);
+            
+            // 显示筛选结果提示
+            const filterNames = {
+                'all': '全部客户',
+                'vip': 'VIP客户',
+                'active': '活跃客户',
+                'inactive': '沉睡客户',
+                'high-value': '高价值客户',
+                'recent-purchase': '近期购买客户'
+            };
+            
+            alert(`已筛选显示：${filterNames[filterType]}`);
+        }
+
+        // 显示线索分析详情
+        function showLeadsAnalysisDetail() {
+            alert('🎯 AI线索分析详情\n\n高优先级跟进建议：\n\n1. 李先生 (成交概率: 85%)\n   • 已浏览产品页面3次\n   • 询问过价格信息\n   • 建议今日内电话跟进\n\n2. 张总 (成交概率: 90%)\n   • 已预约试驾\n   • 多次咨询配置详情\n   • 建议准备报价方案\n\n3. 王女士 (成交概率: 75%)\n   • 关注竞品对比\n   • 价格敏感\n   • 建议提供优惠方案');
+            console.log('显示线索分析详情');
+        }
+
+        // 显示客户洞察
+        function showCustomerInsights() {
+            alert('👥 AI客户洞察报告\n\n客户概况：\n• 本月新增VIP客户：3位\n• 客户满意度：95%\n• 平均客单价：¥285,000\n\n重点维护客户：\n• 王女士 - 高价值客户，建议专属服务\n• 李总 - 转介绍潜力大，建议定期回访\n• 张先生 - 复购意向强，建议推荐新品\n\n行动建议：\n• 加强VIP客户专属服务\n• 提升客户转介绍率\n• 优化客户体验流程');
+            console.log('显示客户洞察');
+        }
+
+        // 标签页切换功能
+        function switchTab(tab) {
+            currentTab = tab;  // 更新当前选中的tab
+            
+            const leadsTab = document.getElementById('leadsTab');
+            const customersTab = document.getElementById('customersTab');
+            const leadsFilters = document.getElementById('leadsFilters');
+            const customersFilters = document.getElementById('customersFilters');
+            const leadsAI = document.getElementById('leadsAI');
+            const customersAI = document.getElementById('customersAI');
+            const leadsList = document.getElementById('leadsList');
+            const customersList = document.getElementById('customersList');
+            const addLeadBtn = document.getElementById('addLeadBtn');
+
+            if (tab === 'leads') {
+                // 激活线索标签
+                leadsTab.className = 'flex-1 h-full flex items-center justify-center text-xs font-bold text-white shadow-sm transition-all duration-300 rounded-[20px]';
+                leadsTab.style.background = '#4640DE';
+                customersTab.className = 'flex-1 h-full flex items-center justify-center text-xs font-medium text-gray-400 hover:text-gray-600 transition-all rounded-[20px]';
+                customersTab.style.background = 'transparent';
+                
+                // 显示线索相关内容
+                leadsFilters.className = 'flex space-x-2 overflow-x-auto scrollbar-hide';
+                customersFilters.className = 'hidden flex space-x-2 overflow-x-auto scrollbar-hide';
+                leadsAI.className = 'bg-primary rounded-xl p-4 text-white border border-primary/20 shadow-sm';
+                customersAI.className = 'hidden bg-primary rounded-xl p-4 text-white border border-primary/20 shadow-sm';
+                leadsList.className = 'px-4 pb-4 pt-4 space-y-3';
+                customersList.className = 'hidden px-4 pb-4 pt-4 space-y-3';
+                addLeadBtn.className = 'fixed bottom-20 right-4 w-14 h-14 bg-primary text-white rounded-full shadow-lg border border-primary/20 flex items-center justify-center hover:bg-primary/90 transition-colors';
+                
+                // 加载线索数据
+                loadLeadsData();
+            } else if (tab === 'customers') {
+                // 激活客户标签
+                customersTab.className = 'flex-1 h-full flex items-center justify-center text-xs font-bold text-white shadow-sm transition-all duration-300 rounded-[20px]';
+                customersTab.style.background = '#4640DE';
+                leadsTab.className = 'flex-1 h-full flex items-center justify-center text-xs font-medium text-gray-400 hover:text-gray-600 transition-all rounded-[20px]';
+                leadsTab.style.background = 'transparent';
+                
+                // 显示客户相关内容
+                customersFilters.className = 'flex space-x-2 overflow-x-auto scrollbar-hide';
+                leadsFilters.className = 'hidden flex space-x-2 overflow-x-auto scrollbar-hide';
+                customersAI.className = 'bg-primary rounded-xl p-4 text-white border border-primary/20 shadow-sm';
+                leadsAI.className = 'hidden bg-primary rounded-xl p-4 text-white border border-primary/20 shadow-sm';
+                customersList.className = 'px-4 pb-4 pt-4 space-y-3';
+                leadsList.className = 'hidden px-4 pb-4 pt-4 space-y-3';
+                addLeadBtn.className = 'hidden fixed bottom-20 right-4 w-14 h-14 bg-primary text-white rounded-full shadow-lg border border-primary/20 flex items-center justify-center hover:bg-primary/90 transition-colors';
+                
+                // 加载客户数据
+                loadLeadsData();
+            }
+        }
+
+        // 筛选标签点击功能
+        function setupFilterButtons() {
+            // 线索筛选按钮
+            const leadsFilterButtons = document.querySelectorAll('#leadsFilters button');
+            leadsFilterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 重置所有按钮样式
+                    leadsFilterButtons.forEach(btn => {
+                        btn.className = 'flex-shrink-0 px-3 py-1.5 bg-gray-50 text-gray-700 rounded-full text-xs font-medium border hover:border-primary transition-colors';
+                    });
+                    // 激活当前按钮
+                    this.className = 'flex-shrink-0 px-3 py-1.5 bg-primary text-white rounded-full text-xs font-medium border border-primary';
+                });
+            });
+
+            // 客户筛选按钮
+            const customersFilterButtons = document.querySelectorAll('#customersFilters button');
+            customersFilterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 重置所有按钮样式
+                    customersFilterButtons.forEach(btn => {
+                        btn.className = 'flex-shrink-0 px-3 py-1.5 bg-gray-50 text-gray-700 rounded-full text-xs font-medium border hover:border-primary transition-colors';
+                    });
+                    // 激活当前按钮
+                    this.className = 'flex-shrink-0 px-3 py-1.5 bg-primary text-white rounded-full text-xs font-medium border border-primary';
+                });
+            });
+        }
+
+        // 显示添加记录弹窗
+        function showAddRecordModal() {
+            document.getElementById('addRecordModal').classList.remove('hidden');
+        }
+
+        // 隐藏添加记录弹窗
+        function hideAddRecordModal() {
+            document.getElementById('addRecordModal').classList.add('hidden');
+            // 清空表单
+            const titleInput = document.getElementById('recordTitle');
+            const contentInput = document.getElementById('recordContent');
+            if (titleInput) titleInput.value = '';
+            if (contentInput) contentInput.value = '';
+        }
+
+        // 保存记录
+        function saveRecord() {
+            const titleInput = document.getElementById('recordTitle');
+            const contentInput = document.getElementById('recordContent');
+            
+            if (!titleInput || !contentInput) {
+                alert('记录表单元素未找到');
+                return;
+            }
+            
+            const title = titleInput.value.trim();
+            const content = contentInput.value.trim();
+            
+            if (!title || !content) {
+                alert('请填写完整的记录信息');
+                return;
+            }
+            
+            // 这里可以添加保存记录的逻辑
+            alert('记录保存成功！');
+            hideAddRecordModal();
+            
+            // 可以在这里刷新记录列表
+            console.log('记录已保存：', { title, content, timestamp: new Date().toLocaleString() });
+        }
+
+        // AI功能：刷新线索AI分析
+        async function refreshLeadsAI() {
+            const contentEl = document.getElementById('leads-ai-content');
+            contentEl.textContent = '正在重新分析线索数据...';
+            
+            try {
+                // 获取所有线索ID进行批量预测
+                const leadIds = [1, 2, 3, 4, 5]; // 示例ID
+                const predictions = await api.aiSales.batchPredict(leadIds);
+                
+                // 统计高成交概率线索
+                const highProbabilityLeads = predictions.results.filter(
+                    result => result.prediction?.success_probability > 0.8
+                ).length;
+                
+                contentEl.innerHTML = `
+                    本批分析了 <strong>${leadIds.length}</strong> 个线索：<br>
+                    • <strong class="text-green-500">${highProbabilityLeads}</strong> 个高成交概率线索 (>80%)<br>
+                    • 建议优先跟进高优先级线索<br>
+                    • 预计通过AI话术可提升 <strong class="text-green-500">25-30%</strong> 成交率
+                `;
+                
+                UI.showMessage('AI线索分析已更新', 'success');
+            } catch (error) {
+                contentEl.textContent = 'AI分析暂时不可用，请稍后重试';
+                UI.showMessage('获取AI分析失败: ' + error.message, 'error');
+            }
+        }
+        
+        // AI功能：线索成交预测
+        async function predictLeadSuccess(leadId) {
+            UI.showLoading('正在分析线索成交概率...');
+            
+            try {
+                const prediction = await api.aiSales.predict(leadId);
+                
+                const probabilityClass = prediction.success_probability > 0.8 ? 'high' :
+                                       prediction.success_probability > 0.5 ? 'medium' : 'low';
+                
+                UI.showModal(`线索 #${leadId} AI成交预测`, `
+                    <div class="space-y-4">
+                        <div class="ai-insight">
+                            <div class="ai-insight-title">成交概率分析</div>
+                            <div class="ai-insight-content text-center">
+                                <div class="ai-score ai-score-${probabilityClass} inline-block mb-4">
+                                    成交概率: ${Math.round(prediction.success_probability * 100)}%
+                                </div>
+                                <div class="text-sm">
+                                    预计成交周期: ${prediction.predicted_cycle_days || 'N/A'} 天
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ai-recommendation">
+                            <div class="ai-recommendation-title">行动建议</div>
+                            <div class="ai-recommendation-content">
+                                ${prediction.recommendations?.map(rec => `• ${rec}`).join('<br>') || '暂无具体廊议'}
+                            </div>
+                        </div>
+                    </div>
+                `, { size: 'lg' });
+                
+            } catch (error) {
+                UI.showMessage('AI预测失败: ' + error.message, 'error');
+            } finally {
+                UI.hideLoading();
+            }
+        }
+        
+        // AI功能：获取线索话术推荐
+        async function getLeadRecommendations(leadId) {
+            UI.showLoading('生成智能话术...');
+            
+            try {
+                const recommendations = await api.aiScript.recommend(leadId, 'sales');
+                
+                const scriptsList = recommendations.scripts.map(script => 
+                    `<li class="mb-2 p-3 bg-gray-50 rounded border-l-4 border-primary">${script}</li>`
+                ).join('');
+                
+                UI.showModal(`线索 #${leadId} 智能话术推荐`, `
+                    <div class="ai-recommendation">
+                        <div class="ai-recommendation-title">销售话术推荐</div>
+                        <div class="ai-recommendation-content">
+                            <ul class="list-none space-y-2">
+                                ${scriptsList}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-3 bg-blue-50 rounded">
+                        <div class="text-sm font-medium text-blue-800 mb-1">💡 使用提示</div>
+                        <div class="text-sm text-blue-700">
+                            这些话术基于线索特征和成交概率智能生成，建议结合客户具体情况使用。
+                        </div>
+                    </div>
+                `, { size: 'lg' });
+                
+            } catch (error) {
+                UI.showMessage('获取话术推荐失败: ' + error.message, 'error');
+            } finally {
+                UI.hideLoading();
+            }
+        }
+        
+        // 显示线索详细分析
+        function showLeadsAnalysisDetail() {
+            UI.showModal('AI线索分析详细报告', `
+                <div class="space-y-4">
+                    <div class="ai-recommendation">
+                        <div class="ai-recommendation-title">线索质量分析</div>
+                        <div class="ai-recommendation-content">
+                            • 高优先级线索: 3个，平均成交概率 87%<br>
+                            • 中优先级线索: 1个，平均成交概率 72%<br>
+                            • 待分配线索: 1个，需要立即处理
+                        </div>
+                    </div>
+                    <div class="ai-recommendation">
+                        <div class="ai-recommendation-title">优先级建议</div>
+                        <div class="ai-recommendation-content">
+                            1. 立即跟进张总（成交概率 90%）<br>
+                            2. 为陈小姐分配经验丰富的销售人员<br>
+                            3. 对低优先级线索制定长期跟进计划
+                        </div>
+                    </div>
+                </div>
+            `, { size: 'lg' });
+        }
+        
+        // 加载线索数据
+        async function loadLeadsData() {
+            try {
+                if (currentTab === 'leads') {
+                    // 加载线索数据
+                    const leads = await leadsManager.loadLeads();
+                    currentLeads = leads;
+                    
+                    if (currentTab === 'leads') {
+                        renderLeadsList(currentLeads);
+                    }
+                } else if (currentTab === 'customers') {
+                    // 加载客户数据
+                    const customers = await leadsManager.loadCustomers();
+                    currentCustomers = customers;
+                    
+                    if (currentTab === 'customers') {
+                        renderCustomersList(currentCustomers);
+                    }
+                }
+                
+                // 自动刷新AI分析
+                setTimeout(refreshLeadsAI, 500);
+                
+            } catch (error) {
+                console.error('加载数据失败:', error);
+                // 错误已由由由由由由由由由放UI提示
+            }
+        }
+        
+        // 渲染线索列表
+        function renderLeadsList(leads) {
+            const leadsList = document.getElementById('leadsList');
+            if (!leadsList) return;
+            
+            // 如果使用了似例数据（仮时），不渲染
+            // 实际应用中，应根据API响应体渲染
+            if (!leads || leads.length === 0) {
+                leadsList.innerHTML = '<div class="text-center py-8 text-gray-500">暂无线索数据</div>';
+                return;
+            }
+            
+            // TODO: 根据API根对应史实故第字段进行渲染
+            console.log('API响应线索数排:', leads);
+            console.log('需要根据API根对应史实故第字段来渲染线索列表');
+        }
+        
+        // 渲染客户列表
+        function renderCustomersList(customers) {
+            const customersList = document.getElementById('customersList');
+            if (!customersList) return;
+            
+            if (!customers || customers.length === 0) {
+                customersList.innerHTML = '<div class="text-center py-8 text-gray-500">暂无客户数据</div>';
+                return;
+            }
+            
+            console.log('API响应客户数据:', customers);
+            console.log('需要根据API对应的字段进行渲染客户列表');
+        }
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('页面加载完成，开始初始化所有功能...');
+            
+            // 初始化筛选按钮
+            setupFilterButtons();
+            
+            // 加载数据
+            loadLeadsData();
+            
+            // 监听数据刷新事件
+            document.addEventListener('dataRefresh', loadLeadsData);
+            
+            // 每5分钟自动刷新AI分析
+            setInterval(refreshLeadsAI, 5 * 60 * 1000);
+            
+            console.log('所有功能初始化完成！');
+        });
+
+        // 阻止弹窗内容区域点击时关闭弹窗
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.slide-up') && !e.target.closest('.modal-overlay')) {
+                e.stopPropagation();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>首页 - IntelliSHop Pro</title>
+    <link rel="stylesheet" href="../assets/global-styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 加载API客户端 -->
+    <script src="../assets/js/api-client.js"></script>
+    <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/ui-components.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4640DE',
+                        secondary: '#4ECDC4',
+                        success: '#45B7D1',
+                        warning: '#FFA726',
+                        danger: '#EF5350'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <div class="bg-white min-h-screen">
+        <!-- 顶部头部 -->
+        <div class="px-4 py-6 text-white" style="background: #4640DE;">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full border-2 border-white/20 bg-white/20 flex items-center justify-center">
+                        <span class="text-white text-sm font-medium">张</span>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-semibold">早上好，张经理</h1>
+                        <p class="text-sm text-white/80">今天是个好日子，加油！</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button class="relative p-2 bg-white/10 rounded-lg">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5z"/>
+                        </svg>
+                        <span class="absolute -top-1 -right-1 w-3 h-3 bg-danger rounded-full"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主要内容 -->
+        <div class="px-4 py-4 space-y-4">
+            <!-- AI智能提醒卡片 -->
+            <div class="rounded-xl p-4 text-white" style="background: #4640DE;">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="font-semibold">🤖 AI智能提醒</h2>
+                    <span class="text-xs bg-white/20 px-2 py-1 rounded-full">实时</span>
+                </div>
+                <p class="text-sm mb-3 text-white/90">您有3个高价值线索需要今日跟进，预计成交概率85%</p>
+                <button class="w-full py-2 bg-white/20 text-white rounded-lg text-sm font-medium hover:bg-white/30 transition-colors">
+                    立即查看
+                </button>
+            </div>
+
+            <!-- 今日数据概览 -->
+            <div class="bg-white rounded-xl p-4 shadow-sm border">
+                <h3 class="font-semibold text-gray-900 mb-4">📊 今日数据概览</h3>
+                
+                <!-- 顶部可切换标签 -->
+                <div class="mb-4">
+                    <div class="relative w-full h-8 bg-white rounded-[20px] shadow-lg flex items-center" style="box-shadow: 0px 16px 60px 0px rgba(27, 31, 68, 0.08);">
+                        <button class="flex-1 h-full flex items-center justify-center text-xs font-medium text-gray-400 hover:text-gray-600 transition-all rounded-[20px]">公司</button>
+                        <button class="flex-1 h-full flex items-center justify-center text-xs font-medium text-gray-400 hover:text-gray-600 transition-all rounded-[20px]">团队</button>
+                        <button class="flex-1 h-full flex items-center justify-center text-xs font-bold text-white shadow-sm transition-all duration-300 rounded-[20px]" style="background: #4640DE;">本人</button>
+                    </div>
+                </div>
+                
+                <!-- 四列数据展示 -->
+                <div class="flex flex-nowrap gap-3 overflow-x-auto">
+                    <!-- 新增线索 -->
+                    <div class="text-center flex-shrink-0 min-w-[80px]">
+                        <div class="text-gray-600 text-xs mb-2">新增线索</div>
+                        <div class="text-xl font-bold text-gray-900 mb-1">5</div>
+                        <div class="text-orange-500 text-xs flex items-center justify-center whitespace-nowrap">
+                            <span class="mr-1">↗</span>
+                            <span>+1</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 客户到访 -->
+                    <div class="text-center flex-shrink-0 min-w-[80px]">
+                        <div class="text-gray-600 text-xs mb-2">客户到访</div>
+                        <div class="text-xl font-bold text-gray-900 mb-1">3</div>
+                        <div class="text-gray-400 text-xs whitespace-nowrap">
+                            <span>— 持平</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 成交台数 -->
+                    <div class="text-center flex-shrink-0 min-w-[80px]">
+                        <div class="text-gray-600 text-xs mb-2">成交台数</div>
+                        <div class="text-xl font-bold text-gray-900 mb-1">1</div>
+                        <div class="text-orange-500 text-xs flex items-center justify-center whitespace-nowrap">
+                            <span class="mr-1">↗</span>
+                            <span>+1</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 销售金额 -->
+                    <div class="text-center flex-shrink-0 min-w-[80px]">
+                        <div class="text-gray-600 text-xs mb-2">销售金额</div>
+                        <div class="text-xl font-bold text-gray-900 mb-1">22.5<span class="text-xs font-normal">万</span></div>
+                        <div class="text-orange-500 text-xs flex items-center justify-center whitespace-nowrap">
+                            <span class="mr-1">↗</span>
+                            <span>+22.5万</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 快捷操作 -->
+            <div class="grid grid-cols-3 gap-4">
+                <!-- 知识库 -->
+                <a href="knowledge-base.html" class="block">
+                    <div class="bg-white rounded-[20px] p-4 shadow-sm border-0 relative hover:shadow-md transition-shadow cursor-pointer" style="height: 170px; background: #FFF4EA;">
+                        <div class="absolute top-4 left-4">
+                            <div class="w-[34px] h-[34px] rounded-full bg-white flex items-center justify-center">
+                                <span class="text-lg">📚</span>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-4 left-4">
+                            <div class="text-xs text-gray-600 mb-1">Knowledge</div>
+                            <div class="text-[17px] font-bold text-gray-900 mb-1">知识库</div>
+                            <div class="text-xs text-gray-500">产品资料库</div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- 营销话术 -->
+                <a href="ai-scripts.html" class="block">
+                    <div class="bg-white rounded-[20px] p-4 shadow-sm border-0 relative hover:shadow-md transition-shadow cursor-pointer" style="height: 170px; background: #F5EEFF;">
+                        <div class="absolute top-4 left-4">
+                            <div class="w-[34px] h-[34px] rounded-full bg-white flex items-center justify-center">
+                                <span class="text-lg">💬</span>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-4 left-4">
+                            <div class="text-xs text-gray-600 mb-1">Scripts</div>
+                            <div class="text-[17px] font-bold text-gray-900 mb-1">营销话术</div>
+                            <div class="text-xs text-gray-500">智能话术推荐</div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- 产品图册 -->
+                <a href="product-catalog.html" class="block">
+                    <div class="bg-white rounded-[20px] p-4 shadow-sm border-0 relative hover:shadow-md transition-shadow cursor-pointer" style="height: 170px; background: #E1F6FA;">
+                        <div class="absolute top-4 left-4">
+                            <div class="w-[34px] h-[34px] rounded-full bg-white flex items-center justify-center">
+                                <span class="text-lg">📖</span>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-4 left-4">
+                            <div class="text-xs text-gray-600 mb-1">Catalog</div>
+                            <div class="text-[17px] font-bold text-gray-900 mb-1">产品图册</div>
+                            <div class="text-xs text-gray-500">车型展示册</div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- 今日重要线索 -->
+            <div class="bg-white rounded-xl p-4 shadow-sm border">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-semibold text-gray-900">🎯 今日重要线索</h3>
+                    <button class="text-primary text-sm font-medium">查看全部</button>
+                </div>
+                <div class="space-y-3">
+                    <!-- 线索项 1 -->
+                    <div class="flex items-center justify-between p-3 bg-white rounded-lg border shadow-sm">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                <span class="text-blue-600 text-sm font-medium">李</span>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-900">李先生</h4>
+                                <p class="text-xs text-gray-500">宝马X5 • 预算50万</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="inline-block px-2 py-1 bg-danger/10 text-danger text-xs rounded-full">高优先级</span>
+                            <p class="text-xs text-gray-500 mt-1">成交概率: 85%</p>
+                        </div>
+                    </div>
+
+                    <!-- 线索项 2 -->
+                    <div class="flex items-center justify-between p-3 bg-white rounded-lg border shadow-sm">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center">
+                                <span class="text-pink-600 text-sm font-medium">王</span>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-900">王女士</h4>
+                                <p class="text-xs text-gray-500">奔驰C级 • 预算35万</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="inline-block px-2 py-1 bg-warning/10 text-warning text-xs rounded-full">中优先级</span>
+                            <p class="text-xs text-gray-500 mt-1">成交概率: 72%</p>
+                        </div>
+                    </div>
+
+                    <!-- 线索项 3 -->
+                    <div class="flex items-center justify-between p-3 bg-white rounded-lg border shadow-sm">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                                <span class="text-green-600 text-sm font-medium">陈</span>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-900">张总</h4>
+                                <p class="text-xs text-gray-500">奥迪A6L • 预算45万</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="inline-block px-2 py-1 bg-danger/10 text-danger text-xs rounded-full">高优先级</span>
+                            <p class="text-xs text-gray-500 mt-1">成交概率: 90%</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 业绩趋势 -->
+            <div class="bg-white rounded-xl p-4 shadow-sm border">
+                <h3 class="font-semibold text-gray-900 mb-4">📊 本月业绩趋势</h3>
+                <div class="flex items-end justify-between h-32 mb-4">
+                    <div class="flex flex-col items-center">
+                        <div class="w-6 bg-primary rounded-t" style="height: 60%"></div>
+                        <span class="text-xs text-gray-500 mt-2">周一</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-6 bg-primary rounded-t" style="height: 80%"></div>
+                        <span class="text-xs text-gray-500 mt-2">周二</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-6 bg-primary rounded-t" style="height: 45%"></div>
+                        <span class="text-xs text-gray-500 mt-2">周三</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-6 bg-primary rounded-t" style="height: 90%"></div>
+                        <span class="text-xs text-gray-500 mt-2">周四</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-6 bg-primary rounded-t" style="height: 75%"></div>
+                        <span class="text-xs text-gray-500 mt-2">周五</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-6 bg-gray-300 rounded-t" style="height: 30%"></div>
+                        <span class="text-xs text-gray-500 mt-2">周六</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-6 bg-gray-300 rounded-t" style="height: 25%"></div>
+                        <span class="text-xs text-gray-500 mt-2">周日</span>
+                    </div>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-gray-600">本月目标: 50台</span>
+                    <span class="text-primary font-medium">已完成: 32台 (64%)</span>
+                </div>
+            </div>
+
+            <!-- 预警提醒 -->
+            <div class="bg-white rounded-xl p-4 shadow-sm border">
+                <h3 class="font-semibold text-gray-900 mb-4">⚠️ 智能预警</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center p-3 bg-red-50 rounded-lg border-l-4 border-red-500">
+                        <div class="flex-shrink-0">
+                            <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-red-800">客户流失预警</p>
+                            <p class="text-xs text-red-600">3位高价值客户7天未联系</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-500">
+                        <div class="flex-shrink-0">
+                            <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-yellow-800">库存预警</p>
+                            <p class="text-xs text-yellow-600">宝马X3库存不足，仅剩2台</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 仪表板数据
+        const dashboardData = {
+            todayStats: {
+                newLeads: 5,
+                customerVisits: 3,
+                dealCount: 1,
+                salesAmount: 22.5
+            },
+            leads: [
+                { id: 1, name: '李先生', car: '宝马X5', budget: 50, priority: 'high', probability: 85 },
+                { id: 2, name: '王女士', car: '奔驰C级', budget: 35, priority: 'medium', probability: 72 },
+                { id: 3, name: '张总', car: '奥迪A6L', budget: 45, priority: 'high', probability: 90 }
+            ]
+        };
+
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // 1. 加载今日数据
+                await loadTodayStats();
+                // 2. 加载今日重要线索
+                await loadImportantLeads();
+            } catch (error) {
+                console.error('页面初始化失败:', error);
+            }
+        });
+
+        // 加载今日统计数据
+        async function loadTodayStats() {
+            try {
+                UI.showLoading();
+                
+                // 尝试从API获取数据，失败则使用本地数据
+                let stats = dashboardData.todayStats;
+                
+                try {
+                    const response = await api.analytics.getDashboard();
+                    if (response && response.data) {
+                        stats = response.data.todayStats || stats;
+                    }
+                } catch (error) {
+                    console.warn('API获取失败，使用本地数据:', error);
+                }
+
+                // 更新UI
+                updateStatsDisplay(stats);
+                
+            } catch (error) {
+                console.error('加载今日统计失败:', error);
+                UI.showMessage('加载数据失败', 'error');
+            } finally {
+                UI.hideLoading();
+            }
+        }
+
+        // 更新统计显示
+        function updateStatsDisplay(stats) {
+            const statElements = document.querySelectorAll('.text-center.flex-shrink-0');
+            
+            if (statElements.length >= 4) {
+                // 新增线索
+                statElements[0].querySelector('.text-xl').textContent = stats.newLeads || 5;
+                // 客户到访
+                statElements[1].querySelector('.text-xl').textContent = stats.customerVisits || 3;
+                // 成交台数
+                statElements[2].querySelector('.text-xl').textContent = stats.dealCount || 1;
+                // 销售金额
+                const amountEl = statElements[3].querySelector('.text-xl');
+                if (amountEl) {
+                    const amount = stats.salesAmount || 22.5;
+                    amountEl.innerHTML = `${amount}<span class="text-xs font-normal">万</span>`;
+                }
+            }
+        }
+
+        // 加载今日重要线索
+        async function loadImportantLeads() {
+            try {
+                let leads = dashboardData.leads;
+                
+                try {
+                    // 获取线索列表
+                    const response = await api.leads.list({ limit: 3 });
+                    if (response && response.data && Array.isArray(response.data)) {
+                        leads = response.data.slice(0, 3);
+                    }
+                } catch (error) {
+                    console.warn('API获取线索失败，使用本地数据:', error);
+                }
+
+                // 渲染线索
+                renderLeads(leads);
+                
+            } catch (error) {
+                console.error('加载重要线索失败:', error);
+            }
+        }
+
+        // 渲染线索列表
+        function renderLeads(leads) {
+            const container = document.querySelector('.space-y-3');
+            if (!container) return;
+
+            // 清空现有线索（保留模板）
+            const existingLeads = container.querySelectorAll('.flex.items-center.justify-between');
+            existingLeads.forEach(el => el.remove());
+
+            // 渲染新的线索
+            leads.forEach((lead, index) => {
+                const leadEl = createLeadElement(lead);
+                container.appendChild(leadEl);
+            });
+        }
+
+        // 创建线索元素
+        function createLeadElement(lead) {
+            const div = document.createElement('div');
+            div.className = 'flex items-center justify-between p-3 bg-white rounded-lg border shadow-sm';
+            
+            const priorityColor = lead.priority === 'high' ? 'danger' : 'warning';
+            const priorityText = lead.priority === 'high' ? '高优先级' : '中优先级';
+            const initials = lead.name.charAt(0);
+            const avatarBgColor = lead.priority === 'high' ? 'bg-blue-100' : 'bg-pink-100';
+            const avatarTextColor = lead.priority === 'high' ? 'text-blue-600' : 'text-pink-600';
+            
+            div.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full ${avatarBgColor} flex items-center justify-center">
+                        <span class="${avatarTextColor} text-sm font-medium">${initials}</span>
+                    </div>
+                    <div>
+                        <h4 class="font-medium text-gray-900">${lead.name}</h4>
+                        <p class="text-xs text-gray-500">${lead.car} • 预算${lead.budget}万</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <span class="inline-block px-2 py-1 bg-${priorityColor}/10 text-${priorityColor} text-xs rounded-full">${priorityText}</span>
+                    <p class="text-xs text-gray-500 mt-1">成交概率: ${lead.probability}%</p>
+                </div>
+            `;
+            
+            return div;
+        }
+
+        // 查看全部线索按钮
+        document.addEventListener('DOMContentLoaded', function() {
+            const viewAllBtn = document.querySelector('button[class*="text-primary"]');
+            if (viewAllBtn && viewAllBtn.textContent === '查看全部') {
+                viewAllBtn.onclick = () => {
+                    const url = 'leads.html';
+                    if (window.parent !== window) {
+                        window.parent.postMessage({ action: 'navigate', url: url }, '*');
+                    } else {
+                        window.location.href = url;
+                    }
+                };
+            }
+        });
+    </script>
+</body>
+</html>

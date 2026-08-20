@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>产品管理 - IntelliShop Pro</title>
+    <link rel="stylesheet" href="../assets/global-styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        accent: '#F59E0B',
+                        danger: '#EF4444',
+                        dark: '#1F2937',
+                        light: '#F9FAFB'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- 引入通用组件和API客户端 -->
+    <link rel="stylesheet" href="../assets/css/ui-components.css">
+</head>
+<body class="bg-light">
+    <!-- 页面头部 -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <button onclick="history.back()" class="mr-4 p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                    </button>
+                    <h1 class="text-2xl font-bold text-gray-900">产品管理</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="openAddProductModal()" class="btn-primary">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        新增产品
+                    </button>
+                    <button class="btn-secondary">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+                        </svg>
+                        批量导入
+                    </button>
+                    <button class="btn-secondary">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        导出数据
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- 统计卡片 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="card">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">产品总数</dt>
+                            <dd class="text-lg font-medium text-gray-900">1,247</dd>
+                        </dl>
+                    </div>
+                    <div class="flex items-center text-sm text-secondary">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path>
+                        </svg>
+                        +5.2%
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-secondary/10 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">在售产品</dt>
+                            <dd class="text-lg font-medium text-gray-900">892</dd>
+                        </dl>
+                    </div>
+                    <div class="flex items-center text-sm text-secondary">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path>
+                        </svg>
+                        +3.1%
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-accent/10 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">库存不足</dt>
+                            <dd class="text-lg font-medium text-gray-900">23</dd>
+                        </dl>
+                    </div>
+                    <div class="flex items-center text-sm text-danger">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                        需补货
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">产品分类</dt>
+                            <dd class="text-lg font-medium text-gray-900">15</dd>
+                        </dl>
+                    </div>
+                    <div class="flex items-center text-sm text-gray-500">
+                        <span>个分类</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI智能推荐区域 -->
+        <div class="card mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-primary">
+            <div class="flex items-start justify-between">
+                <div class="flex-1">
+                    <div class="flex items-center mb-3">
+                        <div class="w-8 h-8 bg-primary text-white rounded-lg flex items-center justify-center mr-3">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900">AI智能建议</h3>
+                        <span class="ml-2 px-2 py-1 bg-primary/10 text-primary text-xs rounded-full font-medium">实时更新</span>
+                    </div>
+                    <div id="product-ai-recommendations" class="text-gray-600">
+                        <div class="flex items-center">
+                            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
+                            正在分析产品数据，生成智能建议...
+                        </div>
+                    </div>
+                </div>
+                <button onclick="refreshProductAI()" class="btn btn-primary btn-sm ml-4">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    刷新建议
+                </button>
+            </div>
+        </div>
+
+        <!-- 搜索和筛选 -->
+        <div class="card mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                    <div class="relative">
+                        <input type="text" id="productSearchInput" placeholder="搜索产品名称、SKU..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent w-full sm:w-64">
+                        <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <button onclick="enableSmartSearch()" class="absolute right-2 top-1.5 px-2 py-1 bg-primary text-white text-xs rounded hover:bg-primary/90 transition-colors">
+                            AI搜索
+                        </button>
+                    </div>
+                    <select id="categoryFilter" class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <option>全部分类</option>
+                        <option>智能手机</option>
+                        <option>笔记本电脑</option>
+                        <option>平板电脑</option>
+                        <option>智能手表</option>
+                        <option>耳机音响</option>
+                    </select>
+                    <select id="statusFilter" class="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <option>全部状态</option>
+                        <option>在售</option>
+                        <option>下架</option>
+                        <option>缺货</option>
+                        <option>预售</option>
+                    </select>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="showProductInsights()" class="btn btn-secondary btn-sm mr-2">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        AI洞察
+                    </button>
+                    <button id="gridViewBtn" class="p-2 text-primary bg-primary/10 rounded-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                        </svg>
+                    </button>
+                    <button id="listViewBtn" class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 产品网格视图 -->
+        <div id="gridView" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+            <!-- 产品卡片将通过JavaScript动态生成 -->
+        </div>
+
+        <!-- 产品列表视图 -->
+        <div id="listView" class="card hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">产品</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SKU</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">分类</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">价格</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">库存</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200" id="productTable">
+                        <!-- 产品列表将通过JavaScript动态生成 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 分页 -->
+        <div class="flex items-center justify-between mt-6">
+            <div class="text-sm text-gray-700">
+                显示 <span class="font-medium">1</span> 到 <span class="font-medium">12</span> 条，共 <span class="font-medium">1,247</span> 条记录
+            </div>
+            <div class="flex space-x-2">
+                <button class="px-3 py-2 text-sm text-gray-500 hover:text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50">上一页</button>
+                <button class="px-3 py-2 text-sm bg-primary text-white rounded-lg">1</button>
+                <button class="px-3 py-2 text-sm text-gray-500 hover:text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50">2</button>
+                <button class="px-3 py-2 text-sm text-gray-500 hover:text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50">3</button>
+                <button class="px-3 py-2 text-sm text-gray-500 hover:text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50">下一页</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- 新增产品模态框 -->
+    <div id="addProductModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-screen overflow-y-auto">
+                <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900">新增产品</h3>
+                    <button onclick="closeAddProductModal()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <form class="p-6 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">产品名称 *</label>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="请输入产品名称">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">SKU *</label>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="请输入SKU">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">产品分类 *</label>
+                            <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option>选择分类</option>
+                                <option>智能手机</option>
+                                <option>笔记本电脑</option>
+                                <option>平板电脑</option>
+                                <option>智能手表</option>
+                                <option>耳机音响</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">品牌</label>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="请输入品牌">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">销售价格 *</label>
+                            <input type="number" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="0.00">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">成本价格</label>
+                            <input type="number" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="0.00">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">库存数量 *</label>
+                            <input type="number" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="0">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">最低库存</label>
+                            <input type="number" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="0">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">产品描述</label>
+                        <textarea class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent" rows="4" placeholder="请输入产品描述"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">产品图片</label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                            <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <p class="text-gray-500">点击上传或拖拽图片到此处</p>
+                            <input type="file" class="hidden" accept="image/*" multiple>
+                        </div>
+                    </div>
+                </form>
+                <div class="flex justify-end space-x-3 p-6 border-t border-gray-200">
+                    <button onclick="closeAddProductModal()" class="btn-secondary">取消</button>
+                    <button onclick="saveProduct()" class="btn-primary">保存产品</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 模拟产品数据
+        const productsData = [
+            {
+                id: 'P001',
+                name: 'iPhone 15 Pro',
+                sku: 'IP15P-256-TB',
+                category: '智能手机',
+                brand: 'Apple',
+                price: 8999,
+                cost: 6500,
+                stock: 45,
+                minStock: 10,
+                status: 'active',
+                image: 'https://via.placeholder.com/300x300?text=iPhone+15+Pro',
+                description: '全新iPhone 15 Pro，搭载A17 Pro芯片，钛金属设计'
+            },
+            {
+                id: 'P002',
+                name: 'MacBook Pro 14"',
+                sku: 'MBP14-M3-512',
+                category: '笔记本电脑',
+                brand: 'Apple',
+                price: 15999,
+                cost: 12000,
+                stock: 23,
+                minStock: 5,
+                status: 'active',
+                image: 'https://via.placeholder.com/300x300?text=MacBook+Pro',
+                description: '14英寸MacBook Pro，M3芯片，512GB存储'
+            },
+            {
+                id: 'P003',
+                name: 'iPad Air',
+                sku: 'IPA-256-SG',
+                category: '平板电脑',
+                brand: 'Apple',
+                price: 4799,
+                cost: 3500,
+                stock: 8,
+                minStock: 15,
+                status: 'low_stock',
+                image: 'https://via.placeholder.com/300x300?text=iPad+Air',
+                description: '10.9英寸iPad Air，M1芯片，256GB存储'
+            },
+            {
+                id: 'P004',
+                name: 'Apple Watch Series 9',
+                sku: 'AWS9-45-GPS',
+                category: '智能手表',
+                brand: 'Apple',
+                price: 3199,
+                cost: 2200,
+                stock: 67,
+                minStock: 20,
+                status: 'active',
+                image: 'https://via.placeholder.com/300x300?text=Apple+Watch',
+                description: '45mm Apple Watch Series 9，GPS版本'
+            },
+            {
+                id: 'P005',
+                name: 'AirPods Pro 2',
+                sku: 'APP2-USBC',
+                category: '耳机音响',
+                brand: 'Apple',
+                price: 1899,
+                cost: 1200,
+                stock: 0,
+                minStock: 30,
+                status: 'out_of_stock',
+                image: 'https://via.placeholder.com/300x300?text=AirPods+Pro',
+                description: 'AirPods Pro 第二代，USB-C充电盒'
+            },
+            {
+                id: 'P006',
+                name: 'Samsung Galaxy S24',
+                sku: 'SGS24-256-PH',
+                category: '智能手机',
+                brand: 'Samsung',
+                price: 6999,
+                cost: 5000,
+                stock: 34,
+                minStock: 15,
+                status: 'active',
+                image: 'https://via.placeholder.com/300x300?text=Galaxy+S24',
+                description: 'Samsung Galaxy S24，256GB存储，幻影紫'
+            }
+        ];
+
+        // 状态映射
+        const statusMap = {
+            'active': { text: '在售', class: 'bg-green-100 text-green-800' },
+            'inactive': { text: '下架', class: 'bg-gray-100 text-gray-800' },
+            'low_stock': { text: '库存不足', class: 'bg-yellow-100 text-yellow-800' },
+            'out_of_stock': { text: '缺货', class: 'bg-red-100 text-red-800' },
+            'pre_sale': { text: '预售', class: 'bg-blue-100 text-blue-800' }
+        };
+
+        // 当前视图模式
+        let currentView = 'grid';
+
+        // 渲染产品网格视图
+        function renderGridView(products = productsData) {
+            const gridView = document.getElementById('gridView');
+            gridView.innerHTML = products.map(product => `
+                <div class="card hover:shadow-lg transition-shadow cursor-pointer" onclick="viewProductDetail('${product.id}')">
+                    <div class="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg bg-gray-200 mb-4">
+                        <img src="${product.image}" alt="${product.name}" class="h-48 w-full object-cover object-center">
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-sm font-medium text-gray-900 truncate">${product.name}</h3>
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusMap[product.status].class}">
+                                ${statusMap[product.status].text}
+                            </span>
+                        </div>
+                        <p class="text-xs text-gray-500">SKU: ${product.sku}</p>
+                        <p class="text-xs text-gray-500">${product.category} · ${product.brand}</p>
+                        <div class="flex items-center justify-between">
+                            <p class="text-lg font-bold text-gray-900">¥${product.price.toLocaleString()}</p>
+                            <p class="text-sm text-gray-500">库存: ${product.stock}</p>
+                        </div>
+                        <div class="flex space-x-2 mt-3">
+                            <button onclick="event.stopPropagation(); editProduct('${product.id}')" class="flex-1 text-xs bg-primary text-white px-3 py-1 rounded-lg hover:bg-primary/90">编辑</button>
+                            <button onclick="event.stopPropagation(); toggleProductStatus('${product.id}')" class="flex-1 text-xs border border-gray-300 text-gray-700 px-3 py-1 rounded-lg hover:bg-gray-50">
+                                ${product.status === 'active' ? '下架' : '上架'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 渲染产品列表视图
+        function renderListView(products = productsData) {
+            const tbody = document.getElementById('productTable');
+            tbody.innerHTML = products.map(product => `
+                <tr class="hover:bg-gray-50 cursor-pointer" onclick="viewProductDetail('${product.id}')">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10">
+                                <img class="h-10 w-10 rounded-lg object-cover" src="${product.image}" alt="${product.name}">
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900">${product.name}</div>
+                                <div class="text-sm text-gray-500">${product.brand}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${product.sku}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${product.category}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">¥${product.price.toLocaleString()}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <span class="${product.stock <= product.minStock ? 'text-red-600 font-medium' : ''}">${product.stock}</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusMap[product.status].class}">
+                            ${statusMap[product.status].text}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="event.stopPropagation(); editProduct('${product.id}')" class="text-primary hover:text-primary/80 mr-3">编辑</button>
+                        <button onclick="event.stopPropagation(); toggleProductStatus('${product.id}')" class="text-gray-600 hover:text-gray-900 mr-3">
+                            ${product.status === 'active' ? '下架' : '上架'}
+                        </button>
+                        <button onclick="event.stopPropagation(); deleteProduct('${product.id}')" class="text-red-600 hover:text-red-900">删除</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // 切换视图
+        function switchView(view) {
+            currentView = view;
+            const gridView = document.getElementById('gridView');
+            const listView = document.getElementById('listView');
+            const gridBtn = document.getElementById('gridViewBtn');
+            const listBtn = document.getElementById('listViewBtn');
+
+            if (view === 'grid') {
+                gridView.classList.remove('hidden');
+                listView.classList.add('hidden');
+                gridBtn.classList.add('text-primary', 'bg-primary/10');
+                gridBtn.classList.remove('text-gray-600', 'hover:text-gray-900', 'hover:bg-gray-100');
+                listBtn.classList.remove('text-primary', 'bg-primary/10');
+                listBtn.classList.add('text-gray-600', 'hover:text-gray-900', 'hover:bg-gray-100');
+                renderGridView();
+            } else {
+                gridView.classList.add('hidden');
+                listView.classList.remove('hidden');
+                listBtn.classList.add('text-primary', 'bg-primary/10');
+                listBtn.classList.remove('text-gray-600', 'hover:text-gray-900', 'hover:bg-gray-100');
+                gridBtn.classList.remove('text-primary', 'bg-primary/10');
+                gridBtn.classList.add('text-gray-600', 'hover:text-gray-900', 'hover:bg-gray-100');
+                renderListView();
+            }
+        }
+
+        // 打开新增产品模态框
+        function openAddProductModal() {
+            document.getElementById('addProductModal').classList.remove('hidden');
+        }
+
+        // 关闭新增产品模态框
+        function closeAddProductModal() {
+            document.getElementById('addProductModal').classList.add('hidden');
+        }
+
+        // 保存产品
+        async function saveProduct() {
+            try {
+                // 收集表单数据
+                const form = document.querySelector('#addProductModal form');
+                const formData = new FormData(form);
+                
+                const productData = {
+                    name: form.querySelector('input[placeholder="请输入产品名称"]').value,
+                    sku: form.querySelector('input[placeholder="请输入SKU"]').value,
+                    categoryId: parseInt(form.querySelector('select').value) || null,
+                    brand: form.querySelector('input[placeholder="请输入品牙"]').value,
+                    price: parseFloat(form.querySelectorAll('input[type="number"]')[0].value),
+                    cost: parseFloat(form.querySelectorAll('input[type="number"]')[1].value),
+                    stock: parseInt(form.querySelectorAll('input[type="number"]')[2].value),
+                    minStock: parseInt(form.querySelectorAll('input[type="number"]')[3].value),
+                    description: form.querySelector('textarea').value
+                };
+                
+                // 验证必填字段
+                if (!productData.name || !productData.sku || !productData.price || !productData.stock) {
+                    UI.showMessage('请填写所有必填字段', 'warning');
+                    return;
+                }
+                
+                // 调用API保存产品
+                await productManager.createProduct(productData);
+                
+                // 关闭model
+                closeAddProductModal();
+                
+                // 刷新产品列表
+                setTimeout(() => loadProductsData(), 500);
+                
+            } catch (error) {
+                console.error('保存产品失败:', error);
+                UI.showMessage('保存产品失败: ' + error.message, 'error');
+            }
+        }
+
+        // 查看产品详情
+        function viewProductDetail(productId) {
+            // 跳转到产品详情页面
+            window.location.href = `product-detail.html?id=${productId}`;
+        }
+
+        // 编辑产品
+        function editProduct(productId) {
+            // 这里添加编辑逻辑
+            alert(`编辑产品: ${productId}`);
+        }
+
+        // 切换产品状态
+        async function toggleProductStatus(productId) {
+            try {
+                // 获取产品当前状态
+                const product = productsData.find(p => p.id === productId);
+                if (!product) return;
+                
+                // 切换状态
+                const newStatus = product.status === 'active' ? 'inactive' : 'active';
+                
+                // 调用API更新产品状态
+                await productManager.updateProduct(productId, { status: newStatus });
+                
+                // 刷新产品列表
+                setTimeout(() => loadProductsData(), 500);
+                
+            } catch (error) {
+                UI.showMessage('切换状态失败: ' + error.message, 'error');
+            }
+        }
+
+        // 删除产品
+        async function deleteProduct(productId) {
+            try {
+                await productManager.deleteProduct(productId);
+                
+                // 刷新产品列表
+                setTimeout(() => loadProductsData(), 500);
+                
+            } catch (error) {
+                console.error('删除产品失败:', error);
+            }
+        }
+
+        // AI功能：刷新产品AI建议
+        async function refreshProductAI() {
+            const contentEl = document.getElementById('product-ai-recommendations');
+            contentEl.innerHTML = '<div class="flex items-center"><div class="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>正在分析产品数据...</div>';
+            
+            try {
+                // 调用AI推荐接口
+                const recommendations = await productManager.getProductAIRecommendations();
+                
+                if (!recommendations || recommendations.length === 0) {
+                    contentEl.innerHTML = '<span class="text-gray-600">暂无推荐信息</span>';
+                    return;
+                }
+                
+                contentEl.innerHTML = `
+                    <div class="space-y-2">
+                        ${recommendations.map(rec => `
+                            <div class="flex items-start">
+                                <span class="mr-2 text-lg">${rec.icon}</span>
+                                <div>
+                                    <div class="font-medium text-gray-900">${rec.title}</div>
+                                    <div class="text-sm text-gray-600">${rec.message}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="flex space-x-2 mt-3">
+                        <button onclick="showLowStockProducts()" class="btn btn-danger btn-xs">查看库存不足</button>
+                        <button onclick="showTopProducts()" class="btn btn-success btn-xs">查看热销产品</button>
+                        <button onclick="showPricingInsights()" class="btn btn-secondary btn-xs">定价分析</button>
+                    </div>
+                `;
+                
+                UI.showMessage('AI建议已更新', 'success');
+                
+            } catch (error) {
+                contentEl.innerHTML = '<span class="text-red-600">AI服务暂时不可用，请稍后重试</span>';
+                UI.showMessage('获取AI建议失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 启用智能搜索
+        async function enableSmartSearch() {
+            const query = document.getElementById('productSearchInput').value;
+            if (!query.trim()) {
+                UI.showMessage('请输入搜索关键词', 'warning');
+                return;
+            }
+            
+            try {
+                // 调用搜索API
+                const results = await productManager.searchProducts(query);
+                
+                if (results && results.length > 0) {
+                    // 更新产品列表显示了您搜索的产品
+                    if (currentView === 'grid') {
+                        renderGridView(results);
+                    } else {
+                        renderListView(results);
+                    }
+                    
+                    UI.showMessage(`找到了 ${results.length} 个匹配的产品`, 'success');
+                } else {
+                    UI.showMessage('未找到匹配的产品', 'warning');
+                }
+                
+            } catch (error) {
+                UI.showMessage('智能搜索失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 显示产品洞察
+        function showProductInsights() {
+            UI.showModal('产品AI洞察', `
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <div class="text-lg font-bold text-blue-600">156</div>
+                            <div class="text-sm text-gray-600">本月新增产品</div>
+                        </div>
+                        <div class="bg-green-50 rounded-lg p-4">
+                            <div class="text-lg font-bold text-green-600">89%</div>
+                            <div class="text-sm text-gray-600">产品在售率</div>
+                        </div>
+                        <div class="bg-yellow-50 rounded-lg p-4">
+                            <div class="text-lg font-bold text-yellow-600">23</div>
+                            <div class="text-sm text-gray-600">库存预警产品</div>
+                        </div>
+                        <div class="bg-purple-50 rounded-lg p-4">
+                            <div class="text-lg font-bold text-purple-600">¥286万</div>
+                            <div class="text-sm text-gray-600">总库存价值</div>
+                        </div>
+                    </div>
+                    <div class="border-t pt-4">
+                        <h4 class="font-medium mb-3">热销产品排行</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center py-2">
+                                <span class="text-sm">1. iPhone 15 Pro Max</span>
+                                <span class="text-sm font-medium text-green-600">销量 456</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2">
+                                <span class="text-sm">2. MacBook Pro M3</span>
+                                <span class="text-sm font-medium text-green-600">销量 289</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2">
+                                <span class="text-sm">3. iPad Air</span>
+                                <span class="text-sm font-medium text-green-600">销量 234</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `, { size: 'lg' });
+        }
+        
+        // 显示库存不足产品
+        function showLowStockProducts() {
+            UI.showModal('库存不足产品', `
+                <div class="space-y-3">
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-3">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="font-medium text-red-800">iPhone 15 Pro</div>
+                                <div class="text-sm text-red-600">当前库存: 5 件，最低库存: 20 件</div>
+                            </div>
+                            <button class="btn btn-danger btn-sm">立即补货</button>
+                        </div>
+                    </div>
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-3">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="font-medium text-red-800">MacBook Air M2</div>
+                                <div class="text-sm text-red-600">当前库存: 8 件，最低库存: 15 件</div>
+                            </div>
+                            <button class="btn btn-danger btn-sm">立即补货</button>
+                        </div>
+                    </div>
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-3">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="font-medium text-red-800">Apple Watch Ultra</div>
+                                <div class="text-sm text-red-600">当前库存: 3 件，最低库存: 10 件</div>
+                            </div>
+                            <button class="btn btn-danger btn-sm">立即补货</button>
+                        </div>
+                    </div>
+                </div>
+            `, { size: 'lg' });
+        }
+        
+        // 显示热销产品
+        function showTopProducts() {
+            UI.showModal('热销产品分析', `
+                <div class="space-y-4">
+                    <div class="grid grid-cols-3 gap-4 text-center">
+                        <div class="bg-green-50 rounded-lg p-3">
+                            <div class="text-xl font-bold text-green-600">↑35%</div>
+                            <div class="text-xs text-gray-600">销量增长</div>
+                        </div>
+                        <div class="bg-blue-50 rounded-lg p-3">
+                            <div class="text-xl font-bold text-blue-600">¥1.2M</div>
+                            <div class="text-xs text-gray-600">月销售额</div>
+                        </div>
+                        <div class="bg-purple-50 rounded-lg p-3">
+                            <div class="text-xl font-bold text-purple-600">89%</div>
+                            <div class="text-xs text-gray-600">客户满意度</div>
+                        </div>
+                    </div>
+                    <div class="border-t pt-4">
+                        <h4 class="font-medium mb-3">热销趋势分析</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-center"><span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>智能手机类产品需求持续上升</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>高端产品销售表现优异</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>配件类产品有增长潜力</li>
+                            <li class="flex items-center"><span class="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>季节性产品需关注库存调整</li>
+                        </ul>
+                    </div>
+                </div>
+            `, { size: 'lg' });
+        }
+        
+        // 显示定价洞察
+        function showPricingInsights() {
+            UI.showModal('产品定价分析', `
+                <div class="space-y-4">
+                    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4">
+                        <h4 class="font-medium text-indigo-800 mb-2">AI定价建议</h4>
+                        <p class="text-sm text-indigo-700">基于市场分析和竞品对比，为您提供智能定价策略</p>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="border rounded-lg p-3">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-medium">iPhone 15 Pro Max</span>
+                                <span class="text-green-600 font-medium">建议上调5%</span>
+                            </div>
+                            <div class="text-sm text-gray-600">当前价格偏低，市场需求旺盛，建议适当调价</div>
+                        </div>
+                        <div class="border rounded-lg p-3">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-medium">MacBook Pro M3</span>
+                                <span class="text-blue-600 font-medium">价格合适</span>
+                            </div>
+                            <div class="text-sm text-gray-600">定价策略良好，与市场价格匹配</div>
+                        </div>
+                        <div class="border rounded-lg p-3">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-medium">iPad Air</span>
+                                <span class="text-orange-600 font-medium">建议下调3%</span>
+                            </div>
+                            <div class="text-sm text-gray-600">竞品价格偏低，建议适当调整增强竞争力</div>
+                        </div>
+                    </div>
+                </div>
+            `, { size: 'lg' });
+        }
+
+        // 加载产品数据
+        async function loadProductsData() {
+            try {
+                const products = await productManager.loadProducts();
+                
+                if (currentView === 'grid') {
+                    renderGridView(products);
+                } else {
+                    renderListView(products);
+                }
+                
+                // 刷新AI推荐
+                setTimeout(refreshProductAI, 500);
+                
+            } catch (error) {
+                console.error('加载产品数据失败:', error);
+            }
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 加载产品数据
+            loadProductsData();
+            
+            // 绑定视图切换事件
+            document.getElementById('gridViewBtn').addEventListener('click', () => switchView('grid'));
+            document.getElementById('listViewBtn').addEventListener('click', () => switchView('list'));
+            
+            // 绑定搜索事件
+            const searchInput = document.getElementById('productSearchInput');
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    enableSmartSearch();
+                }
+            });
+        });
+    </script>
+    
+    <!-- 引入通用JavaScript组件 -->
+    <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/api-client.js"></script>
+    <script src="../assets/js/ui-components.js"></script>
+    <script src="../assets/js/product-api.js"></script>
+</body>
+</html>

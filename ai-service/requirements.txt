@@ -1,0 +1,48 @@
+# AI服务核心依赖
+flask==2.3.2
+flask-cors==4.0.0
+flask-restful==0.3.10
+redis==4.5.5
+celery==5.3.1
+
+# 机器学习和数据分析
+scikit-learn==1.3.0
+pandas==2.0.3
+numpy==1.24.3
+joblib==1.3.1
+xgboost==1.7.6
+lightgbm==3.3.5
+
+# 自然语言处理
+jieba==0.42.1
+transformers==4.31.0
+torch==2.0.1
+sentence-transformers==2.2.2
+
+# 深度学习 (可选)
+tensorflow==2.13.0
+
+# 数据处理工具
+matplotlib==3.7.2
+seaborn==0.12.2
+plotly==5.15.0
+
+# 数据库连接
+pymysql==1.1.0
+sqlalchemy==2.0.19
+
+# API和工具类
+requests==2.31.0
+python-dotenv==1.0.0
+gunicorn==21.2.0
+supervisor==4.2.5
+
+# 日志和配置
+loguru==0.7.0
+pydantic==2.0.3
+pyyaml==6.0
+
+# 开发工具
+pytest==7.4.0
+black==23.7.0
+flake8==6.0.0

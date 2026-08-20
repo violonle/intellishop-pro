@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>产品详细配置 - 智能配置表</title>
+    <link rel="stylesheet" href="../assets/global-styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .config-table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .config-table th,
+        .config-table td {
+            border: 1px solid #e5e7eb;
+            border-top: none;
+            border-left: none;
+        }
+        
+        .config-table th:first-child,
+        .config-table td:first-child {
+            border-left: 1px solid #e5e7eb;
+        }
+        
+        .config-table tr:first-child th {
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .config-table tr:first-child th:first-child {
+            border-top-left-radius: 0.5rem;
+        }
+        
+        .config-table tr:first-child th:last-child {
+            border-top-right-radius: 0.5rem;
+        }
+        
+        .config-table tr:last-child td:first-child {
+            border-bottom-left-radius: 0.5rem;
+        }
+        
+        .config-table tr:last-child td:last-child {
+            border-bottom-right-radius: 0.5rem;
+        }
+        
+        .config-row:hover {
+            background-color: #f8fafc;
+        }
+        
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: white;
+        }
+        
+        .compare-checkbox {
+            transform: scale(1.2);
+        }
+        
+        .highlight-column {
+            background-color: #eff6ff;
+        }
+        
+        .feature-available {
+            color: #059669;
+        }
+        
+        .feature-unavailable {
+            color: #dc2626;
+        }
+        
+        .feature-optional {
+            color: #d97706;
+        }
+        
+        .price-highlight {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            font-weight: bold;
+        }
+        
+        .filter-tag {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .filter-tag.active {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .search-highlight {
+            background-color: #fef3c7;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 顶部导航 -->
+    <div class="bg-white shadow-sm border-b sticky top-0 z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <button onclick="history.back()" class="mr-4 p-2 rounded-lg hover:bg-gray-100">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                    </button>
+                    <h1 class="text-xl font-semibold text-gray-900">产品详细配置</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="exportConfig()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm">
+                        导出配置
+                    </button>
+                    <button onclick="shareConfig()" class="p-2 rounded-lg hover:bg-gray-100" title="分享">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- 筛选和搜索区域 -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <!-- 搜索框 -->
+                <div class="flex-1 max-w-md">
+                    <div class="relative">
+                        <input type="text" id="searchInput" placeholder="搜索配置项..." 
+                               class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <svg class="absolute left-3 top-2.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- 筛选标签 -->
+                <div class="flex flex-wrap gap-2">
+                    <button class="filter-tag active px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full" data-filter="all">
+                        全部配置
+                    </button>
+                    <button class="filter-tag px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full" data-filter="engine">
+                        动力系统
+                    </button>
+                    <button class="filter-tag px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full" data-filter="safety">
+                        安全配置
+                    </button>
+                    <button class="filter-tag px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full" data-filter="comfort">
+                        舒适配置
+                    </button>
+                    <button class="filter-tag px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full" data-filter="tech">
+                        科技配置
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 配置对比表格 -->
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+            <!-- 表格头部 -->
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-semibold text-gray-900">奥迪A6L 配置对比</h2>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-500">选择车型进行对比：</span>
+                        <button onclick="clearComparison()" class="text-sm text-blue-600 hover:text-blue-700">清除选择</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 表格容器 -->
+            <div class="overflow-x-auto">
+                <table class="config-table w-full">
+                    <!-- 表头 -->
+                    <thead class="sticky-header">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-sm font-medium text-gray-900 bg-gray-50 w-64">
+                                配置项目
+                            </th>
+                            <th class="px-6 py-4 text-center text-sm font-medium text-gray-900 bg-blue-50 min-w-48">
+                                <div class="space-y-2">
+                                    <input type="checkbox" class="compare-checkbox" checked>
+                                    <div class="font-semibold">A6L 45 TFSI 豪华致雅型</div>
+                                    <div class="text-xs text-gray-600">2.0T 四缸涡轮增压</div>
+                                    <div class="price-highlight px-3 py-1 rounded-full text-sm">¥41.98万</div>
+                                </div>
+                            </th>
+                            <th class="px-6 py-4 text-center text-sm font-medium text-gray-900 bg-gray-50 min-w-48">
+                                <div class="space-y-2">
+                                    <input type="checkbox" class="compare-checkbox">
+                                    <div class="font-semibold">A6L 45 TFSI 豪华动感型</div>
+                                    <div class="text-xs text-gray-600">2.0T 四缸涡轮增压</div>
+                                    <div class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm">¥44.38万</div>
+                                </div>
+                            </th>
+                            <th class="px-6 py-4 text-center text-sm font-medium text-gray-900 bg-gray-50 min-w-48">
+                                <div class="space-y-2">
+                                    <input type="checkbox" class="compare-checkbox">
+                                    <div class="font-semibold">A6L 55 TFSI quattro 豪华致雅型</div>
+                                    <div class="text-xs text-gray-600">3.0T V6涡轮增压</div>
+                                    <div class="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm">¥50.98万</div>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    
+                    <!-- 表格内容 -->
+                    <tbody id="configTableBody">
+                        <!-- 动力系统 -->
+                        <tr class="config-row" data-category="engine">
+                            <td class="px-6 py-4 font-medium text-gray-900 bg-gray-50">
+                                <div class="flex items-center">
+                                    <span class="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                                    发动机
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-center">2.0T 四缸涡轮增压</td>
+                            <td class="px-6 py-4 text-center">2.0T 四缸涡轮增压</td>
+                            <td class="px-6 py-4 text-center">3.0T V6涡轮增压</td>
+                        </tr>
+                        <tr class="config-row" data-category="engine">
+                            <td class="px-6 py-4 font-medium text-gray-900 bg-gray-50">最大功率(kW)</td>
+                            <td class="px-6 py-4 text-center">185</td>
+                            <td class="px-6 py-4 text-center">185</td>
+                            <td class="px-6 py-4 text-center">250</td>
+                        </tr>
+                        <tr class="config-row" data-category="engine">
+                            <td class="px-6 py-4 font-medium text-gray-900 bg-gray-50">最大扭矩(N·m)</td>
+                            <td class="px-6 py-4 text-center">370</td>
+                            <td class="px-6 py-4 text-center">370</td>
+                            <td class="px-6 py-4 text-center">500</td>
+                        </tr>
+                        <tr class="config-row" data-category="engine">
+                            <td class="px-6 py-4 font-medium text-gray-900 bg-gray-50">变速箱</td>
+                            <td class="px-6 py-4 text-center">7速S tronic双离合</td>
+                            <td class="px-6 py-4 text-center">7速S tronic双离合</td>
+                            <td class="px-6 py-4 text-center">8速tiptronic手自一体</td>
+                        </tr>
+                        <tr class="config-row" data-category="engine">
+                            <td class="px-6 py-4 font-medium text-gray-900 bg-gray-50">驱动方式</td>
+                            <td class="px-6 py-4 text-center">前置前驱</td>
+                            <td class="px-6 py-4 text-center">前置前驱</td>
+                            <td class="px-6 py-4 text-center">前置四驱</td>
+                        </tr>
+                        
+                        <!-- 安全配置 -->
+                        <tr class="config-row" data-category="safety">
+                            <td class="px-6 py-4 font-medium text-gray-900 bg-gray-50">
+                                <div class="flex items-center">
+                                    <span class="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
+                                    主动安全
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-center">-</td>
+                            <td class="px-6 py-4 text-center">-</td>
+                            <td class="px-6 py-4 text-center">-</td>
+                        </tr>
+                        <tr class="config-row" data-category="safety">
+                            <td class="px-6 py-4 font-medium text-gray-900 bg-gray-50">ABS防抱死</td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                        </tr>
+                        <tr class="config-row" data-category="safety">
+                            <td class="px-6 py-4 font-medium text-gray-900 bg-gray-50">ESP车身稳定系统</td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                        </tr>
+                        <tr class="config-row" data-category="safety">
+                            <td class="px-6 py-4 font-medium text-gray-900 bg-gray-50">胎压监测</td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                        </tr>
+                        <tr class="config-row" data-category="safety">
+                            <td class="px-6 py-4 font-medium text-gray-900 bg-gray-50">主动刹车系统</td>
+                            <td class="px-6 py-4 text-center"><span class="feature-unavailable">○</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                        </tr>
+                        <tr class="config-row" data-category="safety">
+                            <td class="px-6 py-4 font-medium text-gray-900 bg-gray-50">车道偏离预警</td>
+                            <td class="px-6 py-4 text-center"><span class="feature-unavailable">○</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                        </tr>
+                        
+                        <!-- 舒适配置 -->
+                        <tr class="config-row" data-category="comfort">
+                            <td class="px-6 py-4 font-medium text-gray-900 bg-gray-50">
+                                <div class="flex items-center">
+                                    <span class="w-2 h-2 bg-purple-500 rounded-full mr-3"></span>
+                                    舒适便利
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-center">-</td>
+                            <td class="px-6 py-4 text-center">-</td>
+                            <td class="px-6 py-4 text-center">-</td>
+                        </tr>
+                        <tr class="config-row" data-category="comfort">
+                            <td class="px-6 py-4 font-medium text-gray-900 bg-gray-50">真皮座椅</td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                        </tr>
+                        <tr class="config-row" data-category="comfort">
+                            <td class="px-6 py-4 font-medium text-gray-900 bg-gray-50">座椅加热</td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                        </tr>
+                        <tr class="config-row" data-category="comfort">
+                            <td class="px-6 py-4 font-medium text-gray-900 bg-gray-50">座椅通风</td>
+                            <td class="px-6 py-4 text-center"><span class="feature-unavailable">○</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-optional">◐</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                        </tr>
+                        <tr class="config-row" data-category="comfort">
+                            <td class="px-6 py-4 font-medium text-gray-900 bg-gray-50">座椅按摩</td>
+                            <td class="px-6 py-4 text-center"><span class="feature-unavailable">○</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-unavailable">○</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                        </tr>
+                        <tr class="config-row" data-category="comfort">
+                            <td class="px-6 py-4 font-medium text-gray-900 bg-gray-50">电动尾门</td>
+                            <td class="px-6 py-4 text-center"><span class="feature-unavailable">○</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                        </tr>
+                        
+                        <!-- 科技配置 -->
+                        <tr class="config-row" data-category="tech">
+                            <td class="px-6 py-4 font-medium text-gray-900 bg-gray-50">
+                                <div class="flex items-center">
+                                    <span class="w-2 h-2 bg-yellow-500 rounded-full mr-3"></span>
+                                    科技配置
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-center">-</td>
+                            <td class="px-6 py-4 text-center">-</td>
+                            <td class="px-6 py-4 text-center">-</td>
+                        </tr>
+                        <tr class="config-row" data-category="tech">
+                            <td class="px-6 py-4 font-medium text-gray-900 bg-gray-50">中控屏尺寸</td>
+                            <td class="px-6 py-4 text-center">10.1英寸</td>
+                            <td class="px-6 py-4 text-center">10.1英寸</td>
+                            <td class="px-6 py-4 text-center">10.1英寸</td>
+                        </tr>
+                        <tr class="config-row" data-category="tech">
+                            <td class="px-6 py-4 font-medium text-gray-900 bg-gray-50">导航系统</td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                        </tr>
+                        <tr class="config-row" data-category="tech">
+                            <td class="px-6 py-4 font-medium text-gray-900 bg-gray-50">语音控制</td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                        </tr>
+                        <tr class="config-row" data-category="tech">
+                            <td class="px-6 py-4 font-medium text-gray-900 bg-gray-50">手机互联</td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                        </tr>
+                        <tr class="config-row" data-category="tech">
+                            <td class="px-6 py-4 font-medium text-gray-900 bg-gray-50">无线充电</td>
+                            <td class="px-6 py-4 text-center"><span class="feature-unavailable">○</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                        </tr>
+                        <tr class="config-row" data-category="tech">
+                            <td class="px-6 py-4 font-medium text-gray-900 bg-gray-50">HUD抬头显示</td>
+                            <td class="px-6 py-4 text-center"><span class="feature-unavailable">○</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-unavailable">○</span></td>
+                            <td class="px-6 py-4 text-center"><span class="feature-available">●</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- 表格底部说明 -->
+            <div class="p-6 border-t border-gray-200 bg-gray-50">
+                <div class="flex flex-wrap items-center gap-6 text-sm">
+                    <div class="flex items-center">
+                        <span class="feature-available text-lg mr-2">●</span>
+                        <span class="text-gray-600">标准配置</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="feature-optional text-lg mr-2">◐</span>
+                        <span class="text-gray-600">选装配置</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="feature-unavailable text-lg mr-2">○</span>
+                        <span class="text-gray-600">无此配置</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="text-gray-400 mr-2">-</span>
+                        <span class="text-gray-600">分类标题</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="mt-8 flex flex-col sm:flex-row gap-4">
+            <button onclick="requestQuote()" class="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                获取报价
+            </button>
+            <button onclick="scheduleTestDrive()" class="flex-1 bg-gray-100 text-gray-700 py-3 px-6 rounded-lg hover:bg-gray-200 transition-colors font-medium">
+                预约试驾
+            </button>
+            <button onclick="contactDealer()" class="flex-1 bg-gray-100 text-gray-700 py-3 px-6 rounded-lg hover:bg-gray-200 transition-colors font-medium">
+                联系经销商
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 搜索功能
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('.config-row');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                const firstCell = row.querySelector('td');
+                
+                if (text.includes(searchTerm)) {
+                    row.style.display = '';
+                    // 高亮搜索结果
+                    if (searchTerm && firstCell) {
+                        const originalText = firstCell.innerHTML;
+                        const highlightedText = originalText.replace(
+                            new RegExp(searchTerm, 'gi'),
+                            match => `<span class="search-highlight">${match}</span>`
+                        );
+                        firstCell.innerHTML = highlightedText;
+                    }
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        // 分类筛选功能
+        document.querySelectorAll('.filter-tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                // 更新激活状态
+                document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filter = this.dataset.filter;
+                const rows = document.querySelectorAll('.config-row');
+                
+                rows.forEach(row => {
+                    if (filter === 'all' || row.dataset.category === filter) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // 对比功能
+        document.querySelectorAll('.compare-checkbox').forEach((checkbox, index) => {
+            checkbox.addEventListener('change', function() {
+                const column = index + 1; // 第一列是配置项名称
+                const cells = document.querySelectorAll(`table td:nth-child(${column + 1}), table th:nth-child(${column + 1})`);
+                
+                cells.forEach(cell => {
+                    if (this.checked) {
+                        cell.classList.add('highlight-column');
+                    } else {
+                        cell.classList.remove('highlight-column');
+                    }
+                });
+            });
+        });
+
+        // 清除对比选择
+        function clearComparison() {
+            document.querySelectorAll('.compare-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+                checkbox.dispatchEvent(new Event('change'));
+            });
+        }
+
+        // 导出配置
+        function exportConfig() {
+            alert('导出配置功能（实际项目中会生成PDF或Excel文件）');
+        }
+
+        // 分享配置
+        function shareConfig() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '奥迪A6L 配置对比',
+                    text: '查看奥迪A6L详细配置对比',
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert('链接已复制到剪贴板');
+            }
+        }
+
+        // 获取报价
+        function requestQuote() {
+            alert('获取报价功能');
+        }
+
+        // 预约试驾
+        function scheduleTestDrive() {
+            alert('预约试驾功能');
+        }
+
+        // 联系经销商
+        function contactDealer() {
+            alert('联系经销商功能');
+        }
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            // 默认选中第一个车型进行对比
+            document.querySelector('.compare-checkbox').dispatchEvent(new Event('change'));
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI话术助手 - IntelliShop Pro</title>
+    <link rel="stylesheet" href="../assets/global-styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 基础脚本 -->
+    <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/ui-components.js"></script>
+    <script src="../assets/js/api-client.js"></script>
+    
+    <!-- AI集成脚本 -->
+    <script src="../assets/js/ai-integration.js"></script>
+    <script src="../assets/js/ai-integration-quick-ref.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4640DE',
+                        secondary: '#8B5CF6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- 顶部导航 -->
+    <div class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="flex items-center justify-between px-4 py-3">
+            <div class="flex items-center space-x-3">
+                <button onclick="history.back()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                    <i class="fas fa-arrow-left text-gray-600"></i>
+                </button>
+                <h1 class="text-lg font-semibold text-gray-900">AI话术助手</h1>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button id="addScriptBtn" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors">
+                    <i class="fas fa-plus mr-1"></i>
+                    新建话术
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI智能推荐卡片 -->
+    <div class="p-4">
+        <div class="bg-gradient-to-r from-primary to-secondary rounded-xl p-6 text-white mb-4">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h2 class="text-xl font-bold mb-2">🤖 AI智能话术推荐</h2>
+                    <p class="text-white/80 text-sm">基于客户画像和场景智能推荐最佳话术</p>
+                </div>
+                <button id="aiRecommendBtn" class="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-white/30 transition-colors">
+                    <i class="fas fa-magic mr-1"></i>
+                    获取推荐
+                </button>
+            </div>
+            
+            <div id="aiRecommendation" class="bg-white/10 backdrop-blur-sm rounded-lg p-4 hidden">
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-robot text-sm"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm text-white/90 mb-2">根据当前客户"张先生"的画像分析，推荐以下话术：</p>
+                        <div class="bg-white/10 rounded-lg p-3">
+                            <p class="text-sm text-white">"张先生，我注意到您对新能源汽车的环保特性很关注。我们的Model Y不仅零排放，还能为您节省大量燃油费用。以您的用车频率，一年能节省约2万元..."</p>
+                        </div>
+                        <div class="flex items-center space-x-2 mt-3">
+                            <button class="text-xs bg-white/20 px-2 py-1 rounded">使用话术</button>
+                            <button class="text-xs bg-white/20 px-2 py-1 rounded">收藏</button>
+                            <button class="text-xs bg-white/20 px-2 py-1 rounded">分享</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 话术分类标签 -->
+    <div class="px-4 mb-4">
+        <div class="flex space-x-2 overflow-x-auto pb-2">
+            <button class="category-btn bg-primary text-white px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap" data-category="all">
+                全部
+            </button>
+            <button class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap hover:bg-gray-200 transition-colors" data-category="greeting">
+                开场白
+            </button>
+            <button class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap hover:bg-gray-200 transition-colors" data-category="introduction">
+                产品介绍
+            </button>
+            <button class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap hover:bg-gray-200 transition-colors" data-category="objection">
+                异议处理
+            </button>
+            <button class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap hover:bg-gray-200 transition-colors" data-category="closing">
+                成交话术
+            </button>
+            <button class="category-btn bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap hover:bg-gray-200 transition-colors" data-category="followup">
+                跟进话术
+            </button>
+        </div>
+    </div>
+
+    <!-- 话术列表 -->
+    <div class="px-4 pb-20">
+        <div id="scriptsList" class="space-y-3">
+            <!-- 开场白话术 -->
+            <div class="script-item bg-white rounded-xl shadow-sm border border-gray-200 p-4" data-category="greeting">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">开场白</span>
+                        <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">高转化</span>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                        <button class="p-1 hover:bg-gray-100 rounded">
+                            <i class="fas fa-heart text-gray-400 text-sm"></i>
+                        </button>
+                        <button class="p-1 hover:bg-gray-100 rounded">
+                            <i class="fas fa-share text-gray-400 text-sm"></i>
+                        </button>
+                        <button class="p-1 hover:bg-gray-100 rounded">
+                            <i class="fas fa-ellipsis-v text-gray-400 text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <h3 class="font-semibold text-gray-900 mb-2">温暖问候式开场</h3>
+                <p class="text-gray-600 text-sm mb-3 leading-relaxed">
+                    "您好！我是特斯拉的销售顾问小李。看到您对我们的车型很感兴趣，我想了解一下您目前的用车需求，这样我能为您推荐最合适的方案。请问您平时主要用车场景是什么呢？"
+                </p>
+                
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4 text-xs text-gray-500">
+                        <span><i class="fas fa-eye mr-1"></i>使用 156次</span>
+                        <span><i class="fas fa-thumbs-up mr-1"></i>成功率 78%</span>
+                        <span><i class="fas fa-clock mr-1"></i>2天前</span>
+                    </div>
+                    <button class="bg-primary text-white px-3 py-1 rounded-lg text-xs font-medium hover:bg-primary/90 transition-colors">
+                        使用话术
+                    </button>
+                </div>
+            </div>
+
+            <!-- 产品介绍话术 -->
+            <div class="script-item bg-white rounded-xl shadow-sm border border-gray-200 p-4" data-category="introduction">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">产品介绍</span>
+                        <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">AI推荐</span>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                        <button class="p-1 hover:bg-gray-100 rounded">
+                            <i class="fas fa-heart text-red-400 text-sm"></i>
+                        </button>
+                        <button class="p-1 hover:bg-gray-100 rounded">
+                            <i class="fas fa-share text-gray-400 text-sm"></i>
+                        </button>
+                        <button class="p-1 hover:bg-gray-100 rounded">
+                            <i class="fas fa-ellipsis-v text-gray-400 text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <h3 class="font-semibold text-gray-900 mb-2">Model Y 核心卖点介绍</h3>
+                <p class="text-gray-600 text-sm mb-3 leading-relaxed">
+                    "Model Y是一款完美平衡性能与实用性的SUV。它拥有540公里的超长续航，0-100km/h加速仅需5.1秒，同时还有超大的储物空间。最重要的是，它的自动驾驶功能能让您的每次出行都更安全、更轻松。"
+                </p>
+                
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4 text-xs text-gray-500">
+                        <span><i class="fas fa-eye mr-1"></i>使用 89次</span>
+                        <span><i class="fas fa-thumbs-up mr-1"></i>成功率 85%</span>
+                        <span><i class="fas fa-clock mr-1"></i>1天前</span>
+                    </div>
+                    <button class="bg-primary text-white px-3 py-1 rounded-lg text-xs font-medium hover:bg-primary/90 transition-colors">
+                        使用话术
+                    </button>
+                </div>
+            </div>
+
+            <!-- 异议处理话术 -->
+            <div class="script-item bg-white rounded-xl shadow-sm border border-gray-200 p-4" data-category="objection">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full">异议处理</span>
+                        <span class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">价格敏感</span>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                        <button class="p-1 hover:bg-gray-100 rounded">
+                            <i class="fas fa-heart text-gray-400 text-sm"></i>
+                        </button>
+                        <button class="p-1 hover:bg-gray-100 rounded">
+                            <i class="fas fa-share text-gray-400 text-sm"></i>
+                        </button>
+                        <button class="p-1 hover:bg-gray-100 rounded">
+                            <i class="fas fa-ellipsis-v text-gray-400 text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <h3 class="font-semibold text-gray-900 mb-2">价格异议处理</h3>
+                <p class="text-gray-600 text-sm mb-3 leading-relaxed">
+                    "我理解您对价格的考虑。让我们算一笔账：传统燃油车每年油费约2万元，保养费8000元，而电动车几乎零保养，电费仅需3000元。5年下来，您实际上能节省超过10万元。这样看来，特斯拉其实是更经济的选择。"
+                </p>
+                
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4 text-xs text-gray-500">
+                        <span><i class="fas fa-eye mr-1"></i>使用 234次</span>
+                        <span><i class="fas fa-thumbs-up mr-1"></i>成功率 72%</span>
+                        <span><i class="fas fa-clock mr-1"></i>3天前</span>
+                    </div>
+                    <button class="bg-primary text-white px-3 py-1 rounded-lg text-xs font-medium hover:bg-primary/90 transition-colors">
+                        使用话术
+                    </button>
+                </div>
+            </div>
+
+            <!-- 成交话术 -->
+            <div class="script-item bg-white rounded-xl shadow-sm border border-gray-200 p-4" data-category="closing">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">成交话术</span>
+                        <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">限时优惠</span>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                        <button class="p-1 hover:bg-gray-100 rounded">
+                            <i class="fas fa-heart text-gray-400 text-sm"></i>
+                        </button>
+                        <button class="p-1 hover:bg-gray-100 rounded">
+                            <i class="fas fa-share text-gray-400 text-sm"></i>
+                        </button>
+                        <button class="p-1 hover:bg-gray-100 rounded">
+                            <i class="fas fa-ellipsis-v text-gray-400 text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <h3 class="font-semibold text-gray-900 mb-2">紧迫感成交法</h3>
+                <p class="text-gray-600 text-sm mb-3 leading-relaxed">
+                    "张先生，我看得出您对Model Y很满意。现在正好有个好消息，本月底前下订的客户可以享受免费升级FSD功能，价值6.4万元。这个优惠机会不多，我建议您今天就确定下来，这样既能锁定优惠，也能更早提车。"
+                </p>
+                
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4 text-xs text-gray-500">
+                        <span><i class="fas fa-eye mr-1"></i>使用 67次</span>
+                        <span><i class="fas fa-thumbs-up mr-1"></i>成功率 91%</span>
+                        <span><i class="fas fa-clock mr-1"></i>5天前</span>
+                    </div>
+                    <button class="bg-primary text-white px-3 py-1 rounded-lg text-xs font-medium hover:bg-primary/90 transition-colors">
+                        使用话术
+                    </button>
+                </div>
+            </div>
+
+            <!-- 跟进话术 -->
+            <div class="script-item bg-white rounded-xl shadow-sm border border-gray-200 p-4" data-category="followup">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded-full">跟进话术</span>
+                        <span class="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full">温和提醒</span>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                        <button class="p-1 hover:bg-gray-100 rounded">
+                            <i class="fas fa-heart text-gray-400 text-sm"></i>
+                        </button>
+                        <button class="p-1 hover:bg-gray-100 rounded">
+                            <i class="fas fa-share text-gray-400 text-sm"></i>
+                        </button>
+                        <button class="p-1 hover:bg-gray-100 rounded">
+                            <i class="fas fa-ellipsis-v text-gray-400 text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <h3 class="font-semibold text-gray-900 mb-2">关怀式跟进</h3>
+                <p class="text-gray-600 text-sm mb-3 leading-relaxed">
+                    "张先生，您好！距离我们上次交流已经一周了，我想了解一下您和家人对Model Y的讨论结果如何？如果还有任何疑问，我随时为您解答。另外，我们下周有新车到店，如果您有时间，欢迎过来实地体验一下。"
+                </p>
+                
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4 text-xs text-gray-500">
+                        <span><i class="fas fa-eye mr-1"></i>使用 123次</span>
+                        <span><i class="fas fa-thumbs-up mr-1"></i>成功率 65%</span>
+                        <span><i class="fas fa-clock mr-1"></i>1周前</span>
+                    </div>
+                    <button class="bg-primary text-white px-3 py-1 rounded-lg text-xs font-medium hover:bg-primary/90 transition-colors">
+                        使用话术
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新建话术弹窗 -->
+    <div id="newScriptModal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0 bg-black bg-opacity-50" onclick="hideNewScriptModal()"></div>
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-xl w-full max-w-lg transform transition-all">
+                <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">新建话术</h3>
+                    <button onclick="hideNewScriptModal()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="p-6 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">话术标题</label>
+                        <input type="text" id="scriptTitle" placeholder="请输入话术标题" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">话术分类</label>
+                        <select id="scriptCategory" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors">
+                            <option value="greeting">开场白</option>
+                            <option value="introduction">产品介绍</option>
+                            <option value="objection">异议处理</option>
+                            <option value="closing">成交话术</option>
+                            <option value="followup">跟进话术</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">话术内容</label>
+                        <textarea id="scriptContent" placeholder="请输入话术内容..." rows="4"
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors resize-none"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">标签</label>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" class="tag-btn px-3 py-1 rounded-full text-sm border transition-colors" data-tag="高转化">高转化</button>
+                            <button type="button" class="tag-btn px-3 py-1 rounded-full text-sm border transition-colors" data-tag="AI推荐">AI推荐</button>
+                            <button type="button" class="tag-btn px-3 py-1 rounded-full text-sm border transition-colors" data-tag="价格敏感">价格敏感</button>
+                            <button type="button" class="tag-btn px-3 py-1 rounded-full text-sm border transition-colors" data-tag="限时优惠">限时优惠</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-3 p-6 border-t border-gray-200">
+                    <button id="cancelBtn" class="flex-1 bg-gray-100 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors">
+                        取消
+                    </button>
+                    <button id="saveScriptBtn" class="flex-1 bg-primary text-white py-3 rounded-lg font-medium hover:bg-primary/90 transition-colors">
+                        保存话术
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 成功提示 -->
+    <div id="successToast" class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-success text-white px-6 py-3 rounded-lg shadow-lg z-50 opacity-0 transition-opacity duration-300">
+        <i class="fas fa-check-circle mr-2"></i>
+        话术保存成功！
+    </div>
+
+    <script>
+        // 获取当前客户ID（从URL或localStorage）
+        function getCurrentCustomerId() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('customerId') || localStorage.getItem('current_customer_id') || 'sample_customer';
+        }
+
+        // 分类筛选功能
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // 更新按鑵状态
+                document.querySelectorAll('.category-btn').forEach(b => {
+                    b.classList.remove('bg-primary', 'text-white');
+                    b.classList.add('bg-gray-100', 'text-gray-700');
+                });
+                this.classList.remove('bg-gray-100', 'text-gray-700');
+                this.classList.add('bg-primary', 'text-white');
+                
+                // 筛选话术
+                const category = this.dataset.category;
+                const scriptItems = document.querySelectorAll('.script-item');
+                
+                scriptItems.forEach(item => {
+                    if (category === 'all' || item.dataset.category === category) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // AI推荐功能
+        document.getElementById('aiRecommendBtn').addEventListener('click', async function() {
+            const recommendation = document.getElementById('aiRecommendation');
+            
+            try {
+                // 第一次点击是获取推荐
+                if (recommendation.classList.contains('hidden')) {
+                    window.aiIntegration.showAILoading();
+                    
+                    const customerId = getCurrentCustomerId();
+                    const result = await window.aiIntegration.recommendScript(customerId, 'general');
+                    
+                    window.aiIntegration.hideAILoading();
+                    
+                    if (result.success) {
+                        // 更新推荐业务内容
+                        const scriptText = result.scripts.primary || '稍后为您推荐话术...';
+                        const successRate = result.scripts.successRate || 0;
+                        
+                        const recommendDiv = recommendation.querySelector('.bg-white\\/10.rounded-lg.p-3');
+                        if (recommendDiv) {
+                            recommendDiv.innerHTML = `<p class="text-sm text-white">${scriptText}</p>`;
+                        }
+                        
+                        recommendation.classList.remove('hidden');
+                        this.innerHTML = '<i class="fas fa-times mr-1"></i>收起推荐';
+                        
+                        window.aiIntegration.showAIMessage(`推荐成功率: ${successRate}%`, 'success');
+                    } else {
+                        window.aiIntegration.showAIMessage('获取推荐失败: ' + result.error, 'danger');
+                    }
+                } else {
+                    // 第二次点击是收起
+                    recommendation.classList.add('hidden');
+                    this.innerHTML = '<i class="fas fa-magic mr-1"></i>获取推荐';
+                }
+            } catch (err) {
+                window.aiIntegration.hideAILoading();
+                console.error('推荐话术错误:', err);
+                window.aiIntegration.showAIMessage('话术推荐出错', 'danger');
+            }
+        });
+
+        // 新建话术弹窗
+        document.getElementById('addScriptBtn').addEventListener('click', function() {
+            document.getElementById('newScriptModal').classList.remove('hidden');
+        });
+
+        document.getElementById('cancelBtn').addEventListener('click', function() {
+            hideNewScriptModal();
+        });
+
+        // 统一的隐藏新建脚本弹窗函数
+        function hideNewScriptModal() {
+            document.getElementById('newScriptModal').classList.add('hidden');
+        }
+
+        // 标签选择功能
+        document.querySelectorAll('.tag-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.classList.toggle('bg-primary');
+                this.classList.toggle('text-white');
+                this.classList.toggle('border-primary');
+                this.classList.toggle('border-gray-300');
+                this.classList.toggle('text-gray-700');
+            });
+        });
+
+        // 保存话术
+        document.getElementById('saveScriptBtn').addEventListener('click', function() {
+            const title = document.getElementById('scriptTitle').value;
+            const category = document.getElementById('scriptCategory').value;
+            const content = document.getElementById('scriptContent').value;
+            
+            if (!title.trim() || !content.trim()) {
+                alert('请填写话术标题和内容');
+                return;
+            }
+            
+            // 收集选中的标签
+            const selectedTags = Array.from(document.querySelectorAll('.tag-btn.bg-primary')).map(btn => btn.dataset.tag);
+            
+            // 模拟保存
+            console.log('保存话术:', { title, category, content, tags: selectedTags });
+            
+            // 显示成功提示
+            const toast = document.getElementById('successToast');
+            toast.classList.remove('opacity-0');
+            toast.classList.add('opacity-100');
+            
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0');
+            }, 2000);
+            
+            // 关闭弹窗
+            hideNewScriptModal();
+            
+            // 清空表单
+            document.getElementById('scriptTitle').value = '';
+            document.getElementById('scriptContent').value = '';
+            document.querySelectorAll('.tag-btn').forEach(btn => {
+                btn.classList.remove('bg-primary', 'text-white', 'border-primary');
+                btn.classList.add('border-gray-300', 'text-gray-700');
+            });
+        });
+
+        // 收藏功能
+        document.querySelectorAll('.fa-heart').forEach(heart => {
+            heart.addEventListener('click', function() {
+                this.classList.toggle('text-red-400');
+                this.classList.toggle('text-gray-400');
+            });
+        });
+
+        // 使用话术功能
+        document.querySelectorAll('.script-item button:last-child').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const scriptContent = this.closest('.script-item').querySelector('p').textContent;
+                
+                // 模拟复制到剩贴板
+                navigator.clipboard.writeText(scriptContent).then(() => {
+                    // 临时改变按鑵文字
+                    const originalText = this.textContent;
+                    this.textContent = '已复制';
+                    this.classList.add('bg-success');
+                    this.classList.remove('bg-primary');
+                    
+                    setTimeout(() => {
+                        this.textContent = originalText;
+                        this.classList.remove('bg-success');
+                        this.classList.add('bg-primary');
+                    }, 1000);
+                });
+            });
+        });
+
+        // 页面加载初始化
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('✅ AI话术页面已加载');
+            
+            // 检查AI服务
+            try {
+                const isHealthy = await window.aiIntegration.checkAIServiceHealth();
+                if (!isHealthy) {
+                    console.warn('⚠️  AI服务暂不可用');
+                }
+            } catch (err) {
+                console.error('⚠️ AI服务检查失败:', err);
+            }
+        });
+
+        // 点击弹窗外部关闭
+        document.getElementById('newScriptModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

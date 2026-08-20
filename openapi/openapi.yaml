@@ -1,0 +1,1434 @@
+openapi: 3.0.3
+info:
+  title: ShopPro 智能SCRM系统 API
+  version: 1.0.0
+  description: ShopPro 智能客户关系管理系统 RESTful API 规范 - 提供完整的客户管理、销售跟进、数据分析等功能接口
+servers:
+  - url: http://localhost:8080/api
+    description: 本地开发
+security:
+  - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    PageNo:
+      name: pageNo
+      in: query
+      schema: { type: integer, minimum: 1, default: 1, example: 1 }
+      description: 页码，最小为 1，默认 1
+    PageSize:
+      name: pageSize
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 100, default: 10, example: 10 }
+      description: 每页大小，范围 [1,100]，默认 10
+    Sort:
+      name: sort
+      in: query
+      schema: { type: string, example: "createdAt,desc" }
+    Keyword:
+      name: keyword
+      in: query
+      schema: { type: string }
+  schemas:
+    ApiResponse:
+      type: object
+      properties:
+        code: { type: integer }
+        message: { type: string }
+        data: {}
+    PageResult:
+      type: object
+      properties:
+        records:
+          type: array
+          items: { $ref: '#/components/schemas/Lead' }
+        current: { type: integer }
+        size: { type: integer }
+        total: { type: integer }
+        pages: { type: integer }
+    PageCustomerResult:
+      type: object
+      properties:
+        records:
+          type: array
+          items: { $ref: '#/components/schemas/Customer' }
+        current: { type: integer }
+        size: { type: integer }
+        total: { type: integer }
+        pages: { type: integer }
+    PageProductResult:
+      type: object
+      properties:
+        records:
+          type: array
+          items: { $ref: '#/components/schemas/Product' }
+        current: { type: integer }
+        size: { type: integer }
+        total: { type: integer }
+        pages: { type: integer }
+    PageDepartmentResult:
+      type: object
+      properties:
+        records:
+          type: array
+          items: { $ref: '#/components/schemas/Department' }
+        current: { type: integer }
+        size: { type: integer }
+        total: { type: integer }
+        pages: { type: integer }
+    PagePermissionResult:
+      type: object
+      properties:
+        records:
+          type: array
+          items: { $ref: '#/components/schemas/Permission' }
+        current: { type: integer }
+        size: { type: integer }
+        total: { type: integer }
+        pages: { type: integer }
+    PageKnowledgeResult:
+      type: object
+      properties:
+        records:
+          type: array
+          items: { $ref: '#/components/schemas/Knowledge' }
+        current: { type: integer }
+        size: { type: integer }
+        total: { type: integer }
+        pages: { type: integer }
+    PageUserResponseResult:
+      type: object
+      properties:
+        records:
+          type: array
+          items: { $ref: '#/components/schemas/UserResponse' }
+        current: { type: integer }
+        size: { type: integer }
+        total: { type: integer }
+        pages: { type: integer }
+    Lead:
+      type: object
+      required: [title, status]
+      properties:
+        id: { type: integer, format: int64 }
+        title: { type: string }
+        status: { type: string, enum: [new, contacted, qualified, won, lost] }
+        source: { type: string }
+        ownerId: { type: integer, format: int64 }
+        customerId: { type: integer, format: int64, nullable: true }
+        amount: { type: number, format: double }
+        probability: { type: number, format: float, minimum: 0, maximum: 1 }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    Customer:
+      type: object
+      required: [name]
+      properties:
+        id: { type: integer, format: int64 }
+        name: { type: string }
+        phone: { type: string, nullable: true }
+        email: { type: string, nullable: true }
+        level: { type: string, enum: [vip, high, medium, low], nullable: true }
+        status: { type: string, enum: [active, inactive], default: active }
+        tags: { type: array, items: { type: string } }
+        lastPurchaseAt: { type: string, format: date-time, nullable: true }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    Product:
+      type: object
+      required: [productName, price]
+      properties:
+        id: { type: integer, format: int64 }
+        sku: { type: string }
+        productName: { type: string }
+        categoryId: { type: integer, format: int64, nullable: true }
+        price: { type: number, format: double }
+        stock: { type: integer }
+        status: { type: string, enum: [active, inactive], default: active }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    Department:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        name: { type: string }
+        parentId: { type: integer, format: int64 }
+        managerId: { type: integer, format: int64, nullable: true }
+        description: { type: string, nullable: true }
+        code: { type: string, nullable: true }
+        phone: { type: string, nullable: true }
+        email: { type: string, nullable: true }
+        sort: { type: integer, nullable: true }
+        status: { type: integer, nullable: true }
+        level: { type: integer, nullable: true }
+        createTime: { type: string, format: date-time, nullable: true }
+        updateTime: { type: string, format: date-time, nullable: true }
+    Permission:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        name: { type: string }
+        code: { type: string }
+        displayName: { type: string, nullable: true }
+        description: { type: string, nullable: true }
+        resource: { type: string, nullable: true }
+        action: { type: string, nullable: true }
+        category: { type: string, nullable: true }
+        isSystem: { type: integer, nullable: true }
+        sortOrder: { type: integer, nullable: true }
+        status: { type: integer, nullable: true }
+        createdAt: { type: string, format: date-time, nullable: true }
+        updatedAt: { type: string, format: date-time, nullable: true }
+    Knowledge:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        categoryId: { type: integer, format: int64 }
+        title: { type: string }
+        content: { type: string }
+        tags: { type: string, nullable: true }
+        viewCount: { type: integer, nullable: true }
+        likeCount: { type: integer, nullable: true }
+        status: { type: integer }
+        createdAt: { type: string, format: date-time, nullable: true }
+        updatedAt: { type: string, format: date-time, nullable: true }
+    UserResponse:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        username: { type: string }
+        email: { type: string, nullable: true }
+        realName: { type: string, nullable: true }
+        phone: { type: string, nullable: true }
+        avatarUrl: { type: string, nullable: true }
+        role: { type: string, nullable: true }
+        status: { type: integer, nullable: true }
+        lastLoginAt: { type: string, format: date-time, nullable: true }
+        createdAt: { type: string, format: date-time, nullable: true }
+paths:
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: 用户登录
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username: { type: string }
+                password: { type: string }
+      responses:
+        '200':
+          description: 登录成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken: { type: string }
+                  refreshToken: { type: string }
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: 刷新Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken: { type: string }
+      responses:
+        '200': { description: OK }
+
+  /leads:
+    get:
+      tags: [Leads]
+      summary: 分页查询线索
+      parameters:
+        - $ref: '#/components/parameters/PageNo'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/Keyword'
+        - name: status
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageResult'
+    post:
+      tags: [Leads]
+      summary: 创建线索
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Lead' }
+      responses:
+        '201': { description: Created }
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+  /leads/{id}:
+    get:
+      tags: [Leads]
+      summary: 获取线索详情
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lead'
+        '404':
+          description: 未找到线索
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+    put:
+      tags: [Leads]
+      summary: 更新线索
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Lead' }
+      responses:
+        '200': { description: OK }
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+    delete:
+      tags: [Leads]
+      summary: 删除线索
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '204': { description: No Content }
+
+  /customers:
+    get:
+      tags: [Customers]
+      summary: 分页查询客户
+      parameters:
+        - $ref: '#/components/parameters/PageNo'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/Keyword'
+        - name: level
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageCustomerResult'
+    post:
+      tags: [Customers]
+      summary: 创建客户
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Customer' }
+      responses:
+        '201': { description: Created }
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+  /customers/{id}:
+    get:
+      tags: [Customers]
+      summary: 获取客户详情
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: OK }
+        '404':
+          description: 未找到客户
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+    put:
+      tags: [Customers]
+      summary: 更新客户
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Customer' }
+      responses:
+        '200': { description: OK }
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+    delete:
+      tags: [Customers]
+      summary: 删除客户
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '204': { description: No Content }
+
+  /products:
+    get:
+      tags: [Products]
+      summary: 分页查询产品
+      parameters:
+        - $ref: '#/components/parameters/PageNo'
+        - $ref: '#/components/parameters/PageSize'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/Keyword'
+        - name: status
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageProductResult'
+    post:
+      tags: [Products]
+      summary: 创建产品
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Product' }
+      responses:
+        '201': { description: Created }
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+  /products/{id}:
+    get:
+      tags: [Products]
+      summary: 获取产品详情
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: OK }
+        '404':
+          description: 未找到产品
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+    put:
+      tags: [Products]
+      summary: 更新产品
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Product' }
+      responses:
+        '200': { description: OK }
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+    delete:
+      tags: [Products]
+      summary: 删除产品
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '204': { description: No Content }
+
+  /departments/page:
+    get:
+      tags: [Departments]
+      summary: 分页查询部门
+      parameters:
+        - $ref: '#/components/parameters/PageNo'
+        - $ref: '#/components/parameters/PageSize'
+        - name: name
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: integer }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageDepartmentResult'
+
+  /permissions/page:
+    get:
+      tags: [Permissions]
+      summary: 分页查询权限
+      parameters:
+        - $ref: '#/components/parameters/PageNo'
+        - $ref: '#/components/parameters/PageSize'
+        - name: name
+          in: query
+          schema: { type: string }
+        - name: resource
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: integer }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PagePermissionResult'
+              example:
+                records:
+                  - id: 101
+                    name: 订单查询
+                    code: ORDER_QUERY
+                    resource: orders
+                    status: 1
+                current: 1
+                size: 10
+                total: 1
+                pages: 1
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+  /users/list:
+    get:
+      tags: [Users]
+      summary: 分页查询用户
+      parameters:
+        - $ref: '#/components/parameters/PageNo'
+        - $ref: '#/components/parameters/PageSize'
+        - name: keyword
+          in: query
+          schema: { type: string }
+        - name: roleFilter
+          in: query
+          schema: { type: integer }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageUserResponseResult'
+
+  /knowledge/page:
+    get:
+      tags: [Knowledge]
+      summary: 分页查询知识
+      parameters:
+        - $ref: '#/components/parameters/PageNo'
+        - $ref: '#/components/parameters/PageSize'
+        - name: categoryId
+          in: query
+          schema: { type: integer }
+        - name: keyword
+          in: query
+          schema: { type: string }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageKnowledgeResult'
+
+  /departments/{id}:
+    get:
+      tags: [Departments]
+      summary: 获取部门详情
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Department' }
+        '404':
+          description: 未找到部门
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+  /departments/enabled:
+    get:
+      tags: [Departments]
+      summary: 获取所有启用部门
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Department' }
+
+  /departments/root:
+    get:
+      tags: [Departments]
+      summary: 获取顶级部门列表
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Department' }
+
+  /departments/{parentId}/children:
+    get:
+      tags: [Departments]
+      summary: 获取子部门列表
+      parameters:
+        - name: parentId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Department' }
+
+  /departments/{id}/path:
+    get:
+      tags: [Departments]
+      summary: 获取部门的完整层级路径
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Department' }
+
+  /departments/{id}/full-path:
+    get:
+      tags: [Departments]
+      summary: 获取部门的完整名称路径
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: { type: string }
+
+  /departments/{id}/sub-departments:
+    get:
+      tags: [Departments]
+      summary: 获取部门的所有子部门（包括嵌套的）
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Department' }
+
+  /permissions/{id}:
+    get:
+      tags: [Permissions]
+      summary: 获取权限详情
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Permission' }
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '404':
+          description: 未找到权限
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+    put:
+      tags: [Permissions]
+      summary: 更新权限
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Permission' }
+      responses:
+        '200': { description: OK }
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+    delete:
+      tags: [Permissions]
+      summary: 删除权限
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: OK }
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+  /permissions/{id}/soft-delete:
+    post:
+      tags: [Permissions]
+      summary: 软删除权限
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: OK }
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+  /permissions/{id}/restore:
+    post:
+      tags: [Permissions]
+      summary: 恢复权限
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: OK }
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+  /permissions/{id}/enable:
+    post:
+      tags: [Permissions]
+      summary: 启用权限
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: OK }
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+  /permissions/{id}/disable:
+    post:
+      tags: [Permissions]
+      summary: 禁用权限
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: OK }
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+  /permissions/enabled:
+    get:
+      tags: [Permissions]
+      summary: 获取所有启用权限
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Permission' }
+              example:
+                - id: 101
+                  name: 订单查询
+                  code: ORDER_QUERY
+                  resource: orders
+                  status: 1
+                - id: 102
+                  name: 产品管理
+                  code: PRODUCT_MANAGE
+                  resource: products
+                  status: 1
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+  /permissions/resource/{resource}:
+    get:
+      tags: [Permissions]
+      summary: 查询指定资源的权限
+      parameters:
+        - name: resource
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Permission' }
+              example:
+                - id: 401
+                  name: 订单查询
+                  code: ORDER_QUERY
+                  resource: orders
+                  status: 1
+                - id: 402
+                  name: 订单创建
+                  code: ORDER_CREATE
+                  resource: orders
+                  status: 1
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+  /permissions/user/{userId}:
+    get:
+      tags: [Permissions]
+      summary: 查询用户拥有的权限
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Permission' }
+              example:
+                - id: 201
+                  name: 用户管理
+                  code: USER_MANAGE
+                  resource: users
+                  status: 1
+                - id: 202
+                  name: 角色分配
+                  code: ROLE_ASSIGN
+                  resource: roles
+                  status: 0
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+  /permissions/role/{roleId}:
+    get:
+      tags: [Permissions]
+      summary: 查询角色拥有的权限
+      parameters:
+        - name: roleId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Permission' }
+              example:
+                - id: 301
+                  name: 订单审批
+                  code: ORDER_APPROVE
+                  resource: orders
+                  status: 1
+                - id: 302
+                  name: 订单导出
+                  code: ORDER_EXPORT
+                  resource: orders
+                  status: 1
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+  /permissions/resources:
+    get:
+      tags: [Permissions]
+      summary: 列举所有权限资源标识
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { type: string }
+              example: [ 'orders', 'products', 'users' ]
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+  /permissions/count/enabled:
+    get:
+      tags: [Permissions]
+      summary: 统计启用的权限数量
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: integer
+              example: 42
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+  /permissions:
+    post:
+      tags: [Permissions]
+      summary: 创建权限
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Permission' }
+      responses:
+        '200': { description: OK }
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+  /permissions/code/{code}:
+    get:
+      tags: [Permissions]
+      summary: 按代码查询权限
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Permission' }
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '404':
+          description: 未找到权限
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+  /permissions/user/{userId}/check/{permissionCode}:
+    get:
+      tags: [Permissions]
+      summary: 校验用户是否拥有指定权限
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema: { type: integer }
+        - name: permissionCode
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: { type: boolean }
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+  /permissions/user/{userId}/batch-check:
+    post:
+      tags: [Permissions]
+      summary: 批量校验用户权限
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items: { type: string }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { type: boolean }
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+  /knowledge:
+    put:
+      tags: [Knowledge]
+      summary: 更新知识条目
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Knowledge' }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Knowledge' }
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+  /knowledge/{id}:
+    get:
+      tags: [Knowledge]
+      summary: 获取知识详情
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Knowledge' }
+        '404':
+          description: 未找到该知识
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+  /knowledge/category/{categoryId}:
+    get:
+      tags: [Knowledge]
+      summary: 根据分类获取知识列表
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Knowledge' }
+
+
+
+
+
+  /users/{id}:
+    get:
+      tags: [Users]
+      summary: 获取用户详情
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserResponse' }
+        '404':
+          description: 未找到用户
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+    put:
+      tags: [Users]
+      summary: 编辑用户信息
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UserResponse' }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserResponse' }
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+  /users/{id}/password:
+    put:
+      tags: [Users]
+      summary: 修改密码
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+        - name: oldPassword
+          in: query
+          required: true
+          schema: { type: string }
+        - name: newPassword
+          in: query
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: OK }
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+  /users/{id}/status:
+    put:
+      tags: [Users]
+      summary: 启用/禁用用户
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: OK }
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+  /users/{id}/reset-password:
+    post:
+      tags: [Users]
+      summary: 重置用户密码
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: OK }
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+  /users/{id}:
+    delete:
+      tags: [Users]
+      summary: 删除用户
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: OK }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+
+  /users/import:
+    post:
+      tags: [Users]
+      summary: 批量导入用户
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: string, description: CSV 内容 }
+      responses:
+        '200':
+          description: 导入成功，返回导入数量
+          content:
+            application/json:
+              schema: { type: integer }
+        '400':
+          description: 请求参数错误或 CSV 格式不正确
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }
+        '500':
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponse' }

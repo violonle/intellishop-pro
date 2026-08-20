@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>创建账户 - IntelliShop Pro</title>
+    <link rel="stylesheet" href="../assets/global-styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4640DE',
+                        secondary: '#7C3AED',
+                        grayscale: {
+                            1: '#1A1A1A',
+                            4: '#9CA3AF',
+                            white: '#FFFFFF'
+                        },
+                        lightMode: {
+                            black: '#000000',
+                            lightGrey: '#E5E7EB'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif']
+                    },
+                    borderRadius: {
+                        '30': '30px'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .shadow-s {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-white font-sans">
+
+
+    <!-- Main Content -->
+    <div class="px-6 py-4">
+        <!-- Back Button -->
+        <div class="mb-8">
+            <button class="w-12 h-12 border border-lightMode-lightGrey rounded-30 flex items-center justify-center">
+                <svg class="w-6 h-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Title Section -->
+        <div class="mb-8">
+            <h1 class="text-2xl font-semibold text-lightMode-black mb-2">创建账户</h1>
+            <p class="text-grayscale-4 text-base">请填写您的信息以创建新账户</p>
+        </div>
+
+        <!-- Registration Form -->
+        <div class="space-y-6">
+            <!-- Name Input -->
+            <div>
+                <label class="block text-sm font-medium text-grayscale-1 mb-3">姓名</label>
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        placeholder="请输入您的姓名" 
+                        class="w-full border border-lightMode-lightGrey rounded-30 bg-white px-4 py-4 text-grayscale-1 placeholder-grayscale-4 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20"
+                    >
+                </div>
+            </div>
+
+            <!-- Phone Input -->
+            <div>
+                <label class="block text-sm font-medium text-grayscale-1 mb-3">手机号</label>
+                <div class="relative">
+                    <input 
+                        type="tel" 
+                        placeholder="请输入手机号" 
+                        class="w-full border border-lightMode-lightGrey rounded-30 bg-white px-4 py-4 text-grayscale-1 placeholder-grayscale-4 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20"
+                    >
+                </div>
+            </div>
+
+            <!-- Email Input -->
+            <div>
+                <label class="block text-sm font-medium text-grayscale-1 mb-3">邮箱</label>
+                <div class="relative">
+                    <input 
+                        type="email" 
+                        placeholder="请输入邮箱地址" 
+                        class="w-full border border-lightMode-lightGrey rounded-30 bg-white px-4 py-4 text-grayscale-1 placeholder-grayscale-4 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20"
+                    >
+                </div>
+            </div>
+
+            <!-- Password Input -->
+            <div>
+                <label class="block text-sm font-medium text-grayscale-1 mb-3">密码</label>
+                <div class="relative">
+                    <input 
+                        type="password" 
+                        placeholder="请输入密码" 
+                        class="w-full border border-lightMode-lightGrey rounded-30 bg-white px-4 py-4 pr-12 text-grayscale-1 placeholder-grayscale-4 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20"
+                    >
+                    <!-- Eye icon -->
+                    <button class="absolute right-4 top-1/2 transform -translate-y-1/2">
+                        <svg class="w-5 h-5 text-grayscale-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Confirm Password Input -->
+            <div>
+                <label class="block text-sm font-medium text-grayscale-1 mb-3">确认密码</label>
+                <div class="relative">
+                    <input 
+                        type="password" 
+                        placeholder="请再次输入密码" 
+                        class="w-full border border-lightMode-lightGrey rounded-30 bg-white px-4 py-4 pr-12 text-grayscale-1 placeholder-grayscale-4 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20"
+                    >
+                    <!-- Eye icon -->
+                    <button class="absolute right-4 top-1/2 transform -translate-y-1/2">
+                        <svg class="w-5 h-5 text-grayscale-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Terms and Conditions -->
+            <div class="flex items-start gap-3">
+                <input type="checkbox" class="mt-1 w-4 h-4 text-primary border-lightMode-lightGrey rounded focus:ring-primary focus:ring-2">
+                <label class="text-sm text-grayscale-4">
+                    我同意 <a href="#" class="text-primary underline">服务条款</a> 和 <a href="#" class="text-primary underline">隐私政策</a>
+                </label>
+            </div>
+        </div>
+
+        <!-- Register Button -->
+        <button class="w-full bg-primary text-white py-4 rounded-30 font-semibold text-lg mt-8 mb-6 hover:bg-secondary transition-colors">
+            创建账户
+        </button>
+
+        <!-- Divider -->
+        <div class="flex items-center mb-6">
+            <div class="flex-1 h-px bg-lightMode-lightGrey"></div>
+            <span class="px-4 text-grayscale-4 text-sm">或注册方式</span>
+            <div class="flex-1 h-px bg-lightMode-lightGrey"></div>
+        </div>
+
+        <!-- WeChat Work Register Button -->
+        <button class="w-full bg-white border border-lightMode-lightGrey py-4 rounded-30 flex items-center justify-center gap-3 shadow-s hover:shadow-md transition-shadow mb-6">
+            <!-- WeChat Work Icon -->
+            <img src="../assets/comwechat.png" alt="企业微信" class="w-5 h-5">
+            <span class="text-grayscale-1 font-medium">使用企业微信注册</span>
+        </button>
+
+        <!-- Login Link -->
+        <div class="text-center">
+            <p class="text-sm text-grayscale-4">
+                已有账户？ 
+                <a href="login.html" class="text-primary font-medium">立即登录</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Bottom Indicator -->
+    <div class="fixed bottom-2 left-1/2 transform -translate-x-1/2">
+        <div class="w-32 h-1 bg-black rounded-full opacity-30"></div>
+    </div>
+
+    <script>
+        // Simple interaction effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click effects to buttons
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // Add ripple effect
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.width = ripple.style.height = size + 'px';
+                    ripple.style.left = x + 'px';
+                    ripple.style.top = y + 'px';
+                    ripple.classList.add('ripple');
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+
+            // Handle form validation and submission
+            const registerButton = document.querySelector('.bg-primary');
+            if (registerButton) {
+                registerButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Get form inputs
+                    const inputs = document.querySelectorAll('input[type="text"], input[type="tel"], input[type="email"], input[type="password"]');
+                    const checkbox = document.querySelector('input[type="checkbox"]');
+                    
+                    let isValid = true;
+                    let errorMessage = '';
+                    
+                    // Basic validation
+                    inputs.forEach(input => {
+                        if (!input.value.trim()) {
+                            isValid = false;
+                            errorMessage = '请填写所有必填字段';
+                            input.classList.add('border-red-500');
+                        } else {
+                            input.classList.remove('border-red-500');
+                        }
+                    });
+                    
+                    // Check if terms are accepted
+                    if (!checkbox.checked) {
+                        isValid = false;
+                        errorMessage = '请同意服务条款和隐私政策';
+                    }
+                    
+                    // Check password match
+                    const password = document.querySelector('input[placeholder="请输入密码"]');
+                    const confirmPassword = document.querySelector('input[placeholder="请再次输入密码"]');
+                    
+                    if (password.value !== confirmPassword.value) {
+                        isValid = false;
+                        errorMessage = '两次输入的密码不一致';
+                        confirmPassword.classList.add('border-red-500');
+                    }
+                    
+                    if (isValid) {
+                        console.log('Registration form submitted');
+                        // 注册成功后跳转到主应用
+                        alert('注册成功！');
+                        window.location.href = 'main-app.html';
+                    } else {
+                        alert(errorMessage);
+                    }
+                });
+            }
+
+            // Handle Google registration
+            const googleButton = document.querySelector('.bg-white.border');
+            if (googleButton) {
+                googleButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Google registration clicked');
+                });
+            }
+
+            // Handle back button
+            const backButton = document.querySelector('.border-lightMode-lightGrey');
+            if (backButton) {
+                backButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.history.back();
+                });
+            }
+
+            // Password visibility toggle
+            const eyeButtons = document.querySelectorAll('button svg');
+            eyeButtons.forEach(button => {
+                if (button.closest('button').parentElement.querySelector('input[type="password"]')) {
+                    button.closest('button').addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const input = this.parentElement.querySelector('input');
+                        if (input.type === 'password') {
+                            input.type = 'text';
+                        } else {
+                            input.type = 'password';
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
+    <style>
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    </style>
+</body>
+</html>

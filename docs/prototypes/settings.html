@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统设置 - IntelliShop Pro</title>
+    <link rel="stylesheet" href="../assets/global-styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4640DE',
+                        secondary: '#8B5CF6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- 顶部导航 -->
+    <div class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="flex items-center px-4 py-3">
+            <div class="flex items-center space-x-3">
+                <button onclick="history.back()" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                    <i class="fas fa-arrow-left text-gray-600"></i>
+                </button>
+                <h1 class="text-lg font-semibold text-gray-900">系统设置</h1>
+            </div>
+            <div class="ml-auto">
+                <button onclick="window.open('permissions-test.html','_blank')" class="px-3 py-2 bg-primary text-white rounded-lg text-sm hover:bg-primary/90">
+                    权限联调
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 用户信息卡片 -->
+    <div class="p-4">
+        <div class="bg-gradient-to-r from-primary to-secondary rounded-xl p-6 text-white mb-6">
+            <div class="flex items-center space-x-4">
+                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+                    <i class="fas fa-user text-2xl text-white"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold mb-1">张销售</h2>
+                    <p class="text-white/80 text-sm mb-2">高级销售顾问 · 北京朝阳店</p>
+                    <div class="flex items-center space-x-4 text-sm">
+                        <span class="bg-white/20 px-2 py-1 rounded-full">工号: T001</span>
+                        <span class="bg-white/20 px-2 py-1 rounded-full">入职: 2年</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 设置选项 -->
+    <div class="px-4 pb-20">
+        <!-- 个人设置 -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-4">
+            <div class="p-4 border-b border-gray-200">
+                <h3 class="font-semibold text-gray-900 flex items-center">
+                    <i class="fas fa-user-cog text-primary mr-2"></i>
+                    个人设置
+                </h3>
+            </div>
+            <div class="p-4 space-y-4">
+                <!-- 头像设置 -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-camera text-primary"></i>
+                        </div>
+                        <div>
+                            <div class="font-medium text-gray-900 text-sm">头像设置</div>
+                            <div class="text-gray-500 text-xs">点击更换个人头像</div>
+                        </div>
+                    </div>
+                    <button class="text-primary text-sm font-medium hover:text-primary/80 transition-colors">
+                        更换
+                    </button>
+                </div>
+
+                <!-- 个人信息 -->
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">姓名</label>
+                        <input type="text" value="张销售" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">手机号</label>
+                        <input type="tel" value="138****8888" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">邮箱</label>
+                        <input type="email" value="zhang@intellishop.com" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">所属门店</label>
+                        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors">
+                            <option>北京朝阳店</option>
+                            <option>北京海淀店</option>
+                            <option>上海浦东店</option>
+                            <option>深圳南山店</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 应用设置 -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-4">
+            <div class="p-4 border-b border-gray-200">
+                <h3 class="font-semibold text-gray-900 flex items-center">
+                    <i class="fas fa-cog text-primary mr-2"></i>
+                    应用设置
+                </h3>
+            </div>
+            <div class="p-4 space-y-4">
+                <!-- 主题设置 -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="font-medium text-gray-900 text-sm">深色模式</div>
+                        <div class="text-gray-500 text-xs">开启后界面将使用深色主题</div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+
+                <!-- 语言设置 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">界面语言</label>
+                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors">
+                        <option>简体中文</option>
+                        <option>繁体中文</option>
+                        <option>English</option>
+                    </select>
+                </div>
+
+                <!-- 字体大小 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">字体大小</label>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-500">小</span>
+                        <input type="range" min="12" max="18" value="14" class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider">
+                        <span class="text-sm text-gray-500">大</span>
+                    </div>
+                </div>
+
+                <!-- 自动保存 -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="font-medium text-gray-900 text-sm">自动保存</div>
+                        <div class="text-gray-500 text-xs">编辑客户信息时自动保存</div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer" checked>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 通知设置 -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-4">
+            <div class="p-4 border-b border-gray-200">
+                <h3 class="font-semibold text-gray-900 flex items-center">
+                    <i class="fas fa-bell text-primary mr-2"></i>
+                    通知设置
+                </h3>
+            </div>
+            <div class="p-4 space-y-4">
+                <!-- 推送通知 -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="font-medium text-gray-900 text-sm">推送通知</div>
+                        <div class="text-gray-500 text-xs">接收系统推送的重要消息</div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer" checked>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+
+                <!-- 声音提醒 -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="font-medium text-gray-900 text-sm">声音提醒</div>
+                        <div class="text-gray-500 text-xs">新消息到达时播放提示音</div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer" checked>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+
+                <!-- 震动提醒 -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="font-medium text-gray-900 text-sm">震动提醒</div>
+                        <div class="text-gray-500 text-xs">重要消息时设备震动提醒</div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer">
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+
+                <!-- 免打扰时间 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">免打扰时间</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <input type="time" value="22:00" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors">
+                        <input type="time" value="08:00" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 数据与隐私 -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-4">
+            <div class="p-4 border-b border-gray-200">
+                <h3 class="font-semibold text-gray-900 flex items-center">
+                    <i class="fas fa-shield-alt text-primary mr-2"></i>
+                    数据与隐私
+                </h3>
+            </div>
+            <div class="p-4 space-y-4">
+                <!-- 数据同步 -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="font-medium text-gray-900 text-sm">云端同步</div>
+                        <div class="text-gray-500 text-xs">自动同步数据到云端</div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer" checked>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+
+                <!-- 数据备份 -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="font-medium text-gray-900 text-sm">自动备份</div>
+                        <div class="text-gray-500 text-xs">每日自动备份重要数据</div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer" checked>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+
+                <!-- 使用统计 -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="font-medium text-gray-900 text-sm">使用统计</div>
+                        <div class="text-gray-500 text-xs">帮助改进产品体验</div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer" checked>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+
+                <!-- 清除缓存 -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="font-medium text-gray-900 text-sm">清除缓存</div>
+                        <div class="text-gray-500 text-xs">清理应用缓存数据</div>
+                    </div>
+                    <button class="text-danger text-sm font-medium hover:text-danger/80 transition-colors">
+                        清除
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 权限联调面板（折叠） -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-4">
+            <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+                <h3 class="font-semibold text-gray-900 flex items-center">
+                    <i class="fas fa-user-shield text-primary mr-2"></i>
+                    权限联调面板
+                </h3>
+                <button id="permPanelToggle" class="text-sm text-primary hover:text-primary/80 flex items-center">
+                    <span class="mr-1">展开</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+            <div id="permPanelBody" class="p-4 space-y-4 hidden">
+                <!-- API 地址设置 -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">API 地址</label>
+                    <div class="flex items-center space-x-2">
+                        <input id="apiUrlInput" type="text" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="例如：http://localhost:8080/api">
+                        <button id="apiUrlSaveBtn" class="px-3 py-2 bg-primary text-white rounded-lg text-sm">保存</button>
+                    </div>
+                    <div class="text-xs text-gray-500">保存后将覆盖本页请求的 API 地址</div>
+                </div>
+
+                <!-- 查询与校验 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">用户ID</label>
+                            <input id="userIdInput" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="例如：U12345">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">权限代码</label>
+                            <input id="permCodeInput" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="例如：customer.view 或用逗号分隔">
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button id="btnListEnabled" class="px-3 py-2 bg-gray-100 text-gray-800 rounded-lg text-sm hover:bg-gray-200">查询已启用权限</button>
+                            <button id="btnByUser" class="px-3 py-2 bg-gray-100 text-gray-800 rounded-lg text-sm hover:bg-gray-200">按用户查询</button>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button id="btnCheckUser" class="px-3 py-2 bg-success text-white rounded-lg text-sm hover:bg-success/90">检查用户权限</button>
+                            <button id="btnBatchCheck" class="px-3 py-2 bg-secondary text-white rounded-lg text-sm hover:bg-secondary/90">批量检查</button>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">资源</label>
+                            <input id="resourceInput" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="例如：customer">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">角色ID</label>
+                            <input id="roleIdInput" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="例如：R001">
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button id="btnByResource" class="px-3 py-2 bg-gray-100 text-gray-800 rounded-lg text-sm hover:bg-gray-200">按资源查询</button>
+                            <button id="btnByRole" class="px-3 py-2 bg-gray-100 text-gray-800 rounded-lg text-sm hover:bg-gray-200">按角色查询</button>
+                            <button id="btnCountEnabled" class="px-3 py-2 bg-gray-100 text-gray-800 rounded-lg text-sm hover:bg-gray-200">统计启用数</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 结果 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">结果输出</label>
+                    <pre id="permPanelOutput" class="bg-gray-50 border border-gray-200 rounded-lg p-3 text-xs overflow-auto max-h-64"></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- 安全设置 -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-4">
+            <div class="p-4 border-b border-gray-200">
+                <h3 class="font-semibold text-gray-900 flex items-center">
+                    <i class="fas fa-lock text-primary mr-2"></i>
+                    安全设置
+                </h3>
+            </div>
+            <div class="p-4 space-y-4">
+                <!-- 修改密码 -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="font-medium text-gray-900 text-sm">修改密码</div>
+                        <div class="text-gray-500 text-xs">定期更换密码保障账户安全</div>
+                    </div>
+                    <button class="text-primary text-sm font-medium hover:text-primary/80 transition-colors">
+                        修改
+                    </button>
+                </div>
+
+                <!-- 指纹解锁 -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="font-medium text-gray-900 text-sm">指纹解锁</div>
+                        <div class="text-gray-500 text-xs">使用指纹快速登录应用</div>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer" checked>
+                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+
+                <!-- 自动锁定 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">自动锁定</label>
+                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors">
+                        <option>立即</option>
+                        <option>1分钟</option>
+                        <option>5分钟</option>
+                        <option>15分钟</option>
+                        <option>从不</option>
+                    </select>
+                </div>
+
+                <!-- 登录记录 -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="font-medium text-gray-900 text-sm">登录记录</div>
+                        <div class="text-gray-500 text-xs">查看最近的登录活动</div>
+                    </div>
+                    <button class="text-primary text-sm font-medium hover:text-primary/80 transition-colors">
+                        查看
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 关于应用 -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-4">
+            <div class="p-4 border-b border-gray-200">
+                <h3 class="font-semibold text-gray-900 flex items-center">
+                    <i class="fas fa-info-circle text-primary mr-2"></i>
+                    关于应用
+                </h3>
+            </div>
+            <div class="p-4 space-y-4">
+                <!-- 版本信息 -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="font-medium text-gray-900 text-sm">当前版本</div>
+                        <div class="text-gray-500 text-xs">IntelliShop Pro v2.1.0</div>
+                    </div>
+                    <button class="text-primary text-sm font-medium hover:text-primary/80 transition-colors">
+                        检查更新
+                    </button>
+                </div>
+
+                <!-- 用户协议 -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="font-medium text-gray-900 text-sm">用户协议</div>
+                        <div class="text-gray-500 text-xs">查看服务条款和使用协议</div>
+                    </div>
+                    <button class="text-primary text-sm font-medium hover:text-primary/80 transition-colors">
+                        查看
+                    </button>
+                </div>
+
+                <!-- 隐私政策 -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="font-medium text-gray-900 text-sm">隐私政策</div>
+                        <div class="text-gray-500 text-xs">了解数据收集和使用政策</div>
+                    </div>
+                    <button class="text-primary text-sm font-medium hover:text-primary/80 transition-colors">
+                        查看
+                    </button>
+                </div>
+
+                <!-- 意见反馈 -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="font-medium text-gray-900 text-sm">意见反馈</div>
+                        <div class="text-gray-500 text-xs">向我们提出建议和意见</div>
+                    </div>
+                    <button class="text-primary text-sm font-medium hover:text-primary/80 transition-colors">
+                        反馈
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 退出登录 -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+            <div class="p-4">
+                <button id="logoutBtn" class="w-full bg-danger text-white py-3 rounded-lg font-medium hover:bg-danger/90 transition-colors flex items-center justify-center">
+                    <i class="fas fa-sign-out-alt mr-2"></i>
+                    退出登录
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 确认弹窗 -->
+    <div id="confirmModal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-overlay absolute inset-0 bg-black bg-opacity-50" onclick="hideConfirmModal()"></div>
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-xl w-full max-w-sm transform transition-all">
+                <div class="p-6 text-center">
+                    <div class="w-16 h-16 bg-danger/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">确认退出</h3>
+                    <p class="text-gray-600 text-sm mb-6">确定要退出当前账户吗？退出后需要重新登录。</p>
+                    
+                    <div class="flex space-x-3">
+                        <button onclick="hideConfirmModal()" class="flex-1 bg-gray-100 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors">
+                            取消
+                        </button>
+                        <button id="confirmLogoutBtn" class="flex-1 bg-danger text-white py-3 rounded-lg font-medium hover:bg-danger/90 transition-colors">
+                            确认退出
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 成功提示 -->
+    <div id="successToast" class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-success text-white px-6 py-3 rounded-lg shadow-lg z-50 opacity-0 transition-opacity duration-300">
+        <i class="fas fa-check-circle mr-2"></i>
+        <span id="toastMessage">设置已保存！</span>
+    </div>
+
+    <script>
+
+
+        // 退出登录
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            document.getElementById('confirmModal').classList.remove('hidden');
+        });
+
+        document.getElementById('confirmLogoutBtn').addEventListener('click', function() {
+            // 模拟退出登录
+            showToast('正在退出登录...');
+            
+            setTimeout(() => {
+                // 这里可以跳转到登录页面
+                window.location.href = '../index.html';
+            }, 1500);
+        });
+
+        // 统一的隐藏确认弹窗函数
+        function hideConfirmModal() {
+            document.getElementById('confirmModal').classList.add('hidden');
+        }
+
+        // 清除缓存
+        document.querySelector('.text-danger').addEventListener('click', function() {
+            if (confirm('确定要清除所有缓存数据吗？这将删除临时文件和离线数据。')) {
+                showToast('缓存清除成功！');
+            }
+        });
+
+        // 检查更新
+        document.querySelectorAll('.text-primary').forEach(btn => {
+            if (btn.textContent.trim() === '检查更新') {
+                btn.addEventListener('click', function() {
+                    showToast('正在检查更新...');
+                    
+                    setTimeout(() => {
+                        showToast('当前已是最新版本！');
+                    }, 2000);
+                });
+            }
+        });
+
+        // 修改密码
+        document.querySelectorAll('.text-primary').forEach(btn => {
+            if (btn.textContent.trim() === '修改') {
+                btn.addEventListener('click', function() {
+                    // 这里可以打开修改密码弹窗
+                    showToast('密码修改功能开发中...');
+                });
+            }
+        });
+
+        // 查看登录记录
+        document.querySelectorAll('.text-primary').forEach(btn => {
+            if (btn.textContent.trim() === '查看' && btn.previousElementSibling.querySelector('.font-medium').textContent === '登录记录') {
+                btn.addEventListener('click', function() {
+                    showToast('登录记录功能开发中...');
+                });
+            }
+        });
+
+        // 意见反馈
+        document.querySelectorAll('.text-primary').forEach(btn => {
+            if (btn.textContent.trim() === '反馈') {
+                btn.addEventListener('click', function() {
+                    showToast('意见反馈功能开发中...');
+                });
+            }
+        });
+
+        // 用户协议和隐私政策
+        document.querySelectorAll('.text-primary').forEach(btn => {
+            if (btn.textContent.trim() === '查看') {
+                btn.addEventListener('click', function() {
+                    const title = btn.previousElementSibling.querySelector('.font-medium').textContent;
+                    if (title === '用户协议' || title === '隐私政策') {
+                        showToast(`${title}功能开发中...`);
+                    }
+                });
+            }
+        });
+
+        // 更换头像
+        document.querySelectorAll('.text-primary').forEach(btn => {
+            if (btn.textContent.trim() === '更换') {
+                btn.addEventListener('click', function() {
+                    // 模拟文件选择
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = 'image/*';
+                    input.onchange = function(e) {
+                        if (e.target.files.length > 0) {
+                            showToast('头像上传成功！');
+                        }
+                    };
+                    input.click();
+                });
+            }
+        });
+
+        // 字体大小滑块
+        document.querySelector('input[type="range"]').addEventListener('input', function() {
+            const fontSize = this.value;
+            // 实时预览字体大小变化
+            document.body.style.fontSize = fontSize + 'px';
+        });
+
+        // 深色模式切换
+        document.querySelector('input[type="checkbox"]').addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark');
+                showToast('深色模式已开启');
+            } else {
+                document.body.classList.remove('dark');
+                showToast('深色模式已关闭');
+            }
+        });
+
+        // 显示提示消息
+        function showToast(message) {
+            const toast = document.getElementById('successToast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            toast.classList.remove('opacity-0');
+            toast.classList.add('opacity-100');
+            
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0');
+            }, 2000);
+        }
+
+        // 点击弹窗外部关闭
+        document.getElementById('confirmModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.add('hidden');
+            }
+        });
+
+        // 自动保存功能
+        const autoSaveInputs = document.querySelectorAll('input, select');
+        autoSaveInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                const autoSaveEnabled = document.querySelectorAll('input[type="checkbox"]')[1].checked;
+                if (autoSaveEnabled) {
+                    // 延迟保存，避免频繁操作
+                    clearTimeout(window.autoSaveTimer);
+                    window.autoSaveTimer = setTimeout(() => {
+                        showToast('设置已自动保存');
+                    }, 1000);
+                }
+            });
+        });
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 加载用户设置
+            loadUserSettings();
+        });
+
+        // 加载用户设置
+        function loadUserSettings() {
+            // 这里可以从本地存储或服务器加载用户设置
+            const savedSettings = localStorage.getItem('userSettings');
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                // 应用保存的设置
+                console.log('加载用户设置:', settings);
+            }
+        }
+
+        // 保存设置到本地存储
+        function saveSettingsToLocal() {
+            const settings = {
+                timestamp: new Date().toISOString(),
+                // 其他设置数据...
+            };
+            localStorage.setItem('userSettings', JSON.stringify(settings));
+        }
+    </script>
+
+    <style>
+        /* 自定义滑块样式 */
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #4640DE;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .slider::-moz-range-thumb {
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #4640DE;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* 深色模式样式 */
+        .dark {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+
+        .dark .bg-white {
+            background-color: #2d2d2d;
+        }
+
+        .dark .text-gray-900 {
+            color: #ffffff;
+        }
+
+        .dark .text-gray-600 {
+            color: #a0a0a0;
+        }
+
+        .dark .border-gray-200 {
+            border-color: #404040;
+        }
+    </style>
+</body>
+</html>
+
+<!-- 在底部脚本前引入 UI stub 与 api-client -->
+<script>
+window.UI = window.UI || { showLoading: () => {}, hideLoading: () => {} };
+</script>
+<script src="../assets/js/api-client.js"></script>
+
+<script>
+// 权限联调面板交互逻辑
+document.addEventListener('DOMContentLoaded', function() {
+  const panelToggle = document.getElementById('permPanelToggle');
+  const panelBody = document.getElementById('permPanelBody');
+  const output = document.getElementById('permPanelOutput');
+  const apiUrlInput = document.getElementById('apiUrlInput');
+  const apiUrlSaveBtn = document.getElementById('apiUrlSaveBtn');
+  const userIdInput = document.getElementById('userIdInput');
+  const permCodeInput = document.getElementById('permCodeInput');
+  const resourceInput = document.getElementById('resourceInput');
+  const roleIdInput = document.getElementById('roleIdInput');
+
+  if (apiUrlInput) {
+    apiUrlInput.value = localStorage.getItem('API_URL') || '';
+  }
+
+  if (panelToggle && panelBody) {
+    panelToggle.addEventListener('click', () => {
+      panelBody.classList.toggle('hidden');
+      const isHidden = panelBody.classList.contains('hidden');
+      panelToggle.querySelector('span').textContent = isHidden ? '展开' : '收起';
+      panelToggle.querySelector('i').className = isHidden ? 'fas fa-chevron-down' : 'fas fa-chevron-up';
+    });
+  }
+
+  function print(obj) {
+    output.textContent = typeof obj === 'string' ? obj : JSON.stringify(obj, null, 2);
+  }
+
+  async function safeCall(fn) {
+    try {
+      const data = await fn();
+      print(data);
+    } catch (err) {
+      print({ error: err.message || '请求失败', status: err.status || 0, data: err.data || {} });
+    }
+  }
+
+  if (apiUrlSaveBtn) {
+    apiUrlSaveBtn.addEventListener('click', () => {
+      const url = apiUrlInput.value.trim();
+      if (url) {
+        localStorage.setItem('API_URL', url);
+        window.API_URL = url;
+        print(`API_URL 已保存：${url}`);
+      } else {
+        localStorage.removeItem('API_URL');
+        delete window.API_URL;
+        print('已清除 API_URL，恢复默认地址');
+      }
+    });
+  }
+
+  document.getElementById('btnListEnabled')?.addEventListener('click', () => 
+    safeCall(() => window.api.permissions.queries.listEnabled())
+  );
+
+  document.getElementById('btnByUser')?.addEventListener('click', () => {
+    const userId = userIdInput.value.trim();
+    if (!userId) return print('请输入用户ID');
+    safeCall(() => window.api.permissions.queries.byUser(userId));
+  });
+
+  document.getElementById('btnByResource')?.addEventListener('click', () => {
+    const res = resourceInput.value.trim();
+    if (!res) return print('请输入资源');
+    safeCall(() => window.api.permissions.queries.byResource(res));
+  });
+
+  document.getElementById('btnByRole')?.addEventListener('click', () => {
+    const roleId = roleIdInput.value.trim();
+    if (!roleId) return print('请输入角色ID');
+    safeCall(() => window.api.permissions.queries.byRole(roleId));
+  });
+
+  document.getElementById('btnCountEnabled')?.addEventListener('click', () => 
+    safeCall(() => window.api.permissions.queries.countEnabled())
+  );
+
+  document.getElementById('btnCheckUser')?.addEventListener('click', () => {
+    const userId = userIdInput.value.trim();
+    const code = permCodeInput.value.trim();
+    if (!userId || !code) return print('请输入用户ID和权限代码');
+    safeCall(() => window.api.permissions.checks.checkUserPermission(userId, code));
+  });
+
+  document.getElementById('btnBatchCheck')?.addEventListener('click', () => {
+    const userId = userIdInput.value.trim();
+    const code = permCodeInput.value.trim();
+    if (!userId || !code) return print('请输入用户ID和权限代码');
+    const codes = code.split(',').map(s => s.trim()).filter(Boolean);
+    safeCall(() => window.api.permissions.checks.batchCheckUserPermissions(userId, codes));
+  });
+});
+</script>

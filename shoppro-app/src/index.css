@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+@theme {
+    --color-primary: #0055FF;
+    --color-primary-light: #3377FF;
+    --color-primary-dark: #0044CC;
+
+    --color-secondary: #FF6600;
+
+    --color-success: #10B981;
+    --color-warning: #F59E0B;
+    --color-danger: #EF4444;
+    --color-info: #3B82F6;
+
+    --radius-30: 30px;
+}
+
+/* Ported from assets/global-styles.css */
+:root {
+    /* Using these variables for fallback or other css needs */
+    --color-primary: #4640DE;
+    /* ... others ... */
+}
+
+body {
+    background-color: #F9FAFB;
+    color: #111827;
+}
+
+/* Custom Utilities porting */
+.btn {
+    @apply inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium text-sm transition-all duration-150 border border-transparent cursor-pointer select-none;
+}
+
+.btn:disabled {
+    @apply opacity-50 cursor-not-allowed;
+}
+
+.btn-primary {
+    @apply bg-primary text-white border-primary hover:bg-primary-dark hover:border-primary-dark;
+}
+
+.card {
+    @apply bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden;
+}

@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>客户管理 - IntelliShop Pro</title>
+    <link rel="stylesheet" href="../assets/global-styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 加载API客户端 -->
+    <script src="../assets/js/api-client.js"></script>
+    <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/ui-components.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4640DE',
+                        secondary: '#4ECDC4',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 卡片样式 */
+        .card {
+            @apply bg-white rounded-lg shadow-sm border border-gray-200;
+        }
+        .card-header {
+            @apply px-6 py-4 border-b border-gray-200;
+        }
+        .card-body {
+            @apply px-6 py-4;
+        }
+        
+        /* 表单样式 */
+        .form-input {
+            @apply w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary;
+        }
+        .form-label {
+            @apply block text-sm font-medium text-gray-700 mb-1;
+        }
+        
+        /* 按钮样式 */
+        .btn {
+            @apply inline-flex items-center px-4 py-2 rounded-md font-medium transition-colors duration-200;
+        }
+        .btn-primary {
+            @apply bg-primary text-white hover:bg-primary/90;
+        }
+        .btn-outline {
+            @apply bg-white text-gray-700 border border-gray-300 hover:bg-gray-50;
+        }
+        .btn-ghost {
+            @apply bg-transparent text-gray-700 hover:bg-gray-100;
+        }
+        
+        /* 徽章样式 */
+        .badge {
+            @apply inline-block px-3 py-1 rounded-full text-xs font-medium;
+        }
+        .badge-primary {
+            @apply bg-primary/10 text-primary;
+        }
+        .badge-secondary {
+            @apply bg-secondary/10 text-secondary;
+        }
+        .badge-success {
+            @apply bg-success/10 text-success;
+        }
+        .badge-warning {
+            @apply bg-warning/10 text-warning;
+        }
+        .badge-danger {
+            @apply bg-danger/10 text-danger;
+        }
+        
+        /* 针对iframe环境的适配 */
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* 隐藏在iframe中不适用的功能 */
+        .iframe-hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- 顶部导航栏 -->
+    <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- 左侧：标题和面包屑 -->
+                <div class="flex items-center space-x-4">
+                    <!-- 移除返回按钮，因为在iframe中不适用 -->
+                    <div>
+                        <h1 class="text-lg font-semibold text-gray-900">👥 客户管理</h1>
+                        <p class="text-xs text-gray-500">客户信息和关系管理</p>
+                    </div>
+                </div>
+                
+                <!-- 右侧：操作按钮 -->
+                <div class="flex items-center space-x-3">
+                    <button onclick="exportCustomers()" class="btn btn-outline">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        导出
+                    </button>
+                    <button onclick="openAddCustomerModal()" class="btn btn-primary">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        添加客户
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main class="w-full px-4 py-6">
+        <!-- 采用flex布局来正确处理其下充满iframe -->
+        <!-- 搜索和筛选区域 -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="grid grid-cols-12 gap-2">
+                    <!-- 搜索框 -->
+                    <div class="col-span-6">
+                        <div class="relative">
+                            <input type="text" id="searchInput" placeholder="搜索客户姓名、公司、电话..." 
+                                   class="form-input pl-10" onkeyup="searchCustomers()">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 状态筛选 -->
+                    <div class="col-span-3">
+                        <select id="statusFilter" class="form-input" onchange="filterCustomers()">
+                            <option value="">全部状态</option>
+                            <option value="active">活跃客户</option>
+                            <option value="potential">潜在客户</option>
+                            <option value="inactive">非活跃客户</option>
+                        </select>
+                    </div>
+                    
+                    <!-- 客户类型筛选 -->
+                    <div class="col-span-3">
+                        <select id="typeFilter" class="form-input" onchange="filterCustomers()">
+                            <option value="">全部类型</option>
+                            <option value="enterprise">企业客户</option>
+                            <option value="individual">个人客户</option>
+                            <option value="partner">合作伙伴</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 统计卡片 -->
+        <div class="grid grid-cols-4 gap-2 mb-6 overflow-x-auto">
+            <div class="card flex-shrink-0 min-w-[120px]">
+                <div class="card-body">
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mb-2">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+                        </div>
+                        <p class="text-xs text-gray-600 mb-1">总客户数</p>
+                        <p class="text-lg font-semibold text-gray-900" id="totalCustomers">1,234</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card flex-shrink-0 min-w-[120px]">
+                <div class="card-body">
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mb-2">
+                            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                            </svg>
+                        </div>
+                        <p class="text-xs text-gray-600 mb-1">活跃客户</p>
+                        <p class="text-lg font-semibold text-gray-900" id="activeCustomers">856</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card flex-shrink-0 min-w-[120px]">
+                <div class="card-body">
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center mb-2">
+                            <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <p class="text-xs text-gray-600 mb-1">潜在客户</p>
+                        <p class="text-lg font-semibold text-gray-900" id="potentialCustomers">267</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card flex-shrink-0 min-w-[120px]">
+                <div class="card-body">
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mb-2">
+                            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                            </svg>
+                        </div>
+                        <p class="text-xs text-gray-600 mb-1">本月新增</p>
+                        <p class="text-lg font-semibold text-gray-900" id="newCustomers">45</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 客户列表 -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="text-lg font-medium text-gray-900">👥 客户列表</h3>
+            </div>
+            
+            <div class="card-body p-0">
+                <!-- 表格视图 - 隐藏 -->
+                <div id="listView" class="overflow-x-auto hidden">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <input type="checkbox" id="selectAll" onchange="toggleSelectAll()" class="rounded border-gray-300 text-primary focus:ring-primary">
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">客户信息</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">联系方式</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">客户类型</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">最后联系</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customerTableBody" class="bg-white divide-y divide-gray-200">
+                            <!-- 客户数据将通过JavaScript动态加载 -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- 网格视图 - 作为DEFAULT视图 -->
+                <div id="gridView" class="p-4">
+                    <div id="customerGridContainer" class="grid grid-cols-1 gap-4">
+                        <!-- 客户卡片将通过JavaScript动态加载 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 分页 -->
+        <div class="flex items-center justify-between mt-6">
+            <div class="text-sm text-gray-700">
+                显示 <span class="font-medium">1</span> 到 <span class="font-medium">10</span> 条，共 <span class="font-medium">97</span> 条记录
+            </div>
+            <div class="flex items-center space-x-2">
+                <button class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                    上一页
+                </button>
+                <button class="px-3 py-2 text-sm font-medium text-white bg-primary border border-primary rounded-md">
+                    1
+                </button>
+                <button class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                    2
+                </button>
+                <button class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                    3
+                </button>
+                <button class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                    下一页
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- 添加客户模态框 -->
+    <div id="addCustomerModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900">添加新客户</h3>
+                </div>
+                <form id="addCustomerForm" class="p-6 space-y-4">
+                    <div>
+                        <label class="form-label">客户姓名 *</label>
+                        <input type="text" name="name" required class="form-input">
+                    </div>
+                    <div>
+                        <label class="form-label">公司名称</label>
+                        <input type="text" name="company" class="form-input">
+                    </div>
+                    <div>
+                        <label class="form-label">联系电话 *</label>
+                        <input type="tel" name="phone" required class="form-input">
+                    </div>
+                    <div>
+                        <label class="form-label">邮箱地址</label>
+                        <input type="email" name="email" class="form-input">
+                    </div>
+                    <div>
+                        <label class="form-label">客户类型</label>
+                        <select name="type" class="form-input">
+                            <option value="individual">个人客户</option>
+                            <option value="enterprise">企业客户</option>
+                            <option value="partner">合作伙伴</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">备注</label>
+                        <textarea name="notes" rows="3" class="form-input"></textarea>
+                    </div>
+                </form>
+                <div class="px-6 py-4 bg-gray-50 flex justify-end space-x-3">
+                    <button type="button" onclick="closeAddCustomerModal()" class="btn btn-ghost">取消</button>
+                    <button type="submit" form="addCustomerForm" class="btn btn-primary">添加客户</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 模拟客户数据 - 根据设计方案更新字段结构
+        const customersData = [
+            {
+                id: 1,
+                name: '李先生',
+                type: 'vip',
+                status: 'active',
+                purchaseStatus: '已购车',
+                lastContact: '1天前',
+                carModel: '宝马X5',
+                purchaseDate: '2024年1月',
+                phone: '138****8888',
+                location: '北京朝阳',
+                tags: ['满意度高', '推荐意愿强', '复购潜力'],
+                value: '高',
+                manager: '张经理',
+                avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face'
+            },
+            {
+                id: 2,
+                name: '王女士',
+                type: 'active',
+                status: 'active',
+                purchaseStatus: '已购车',
+                lastContact: '3天前',
+                carModel: '奔驰C级',
+                purchaseDate: '2023年12月',
+                phone: '139****6666',
+                location: '上海浦东',
+                tags: ['服务满意', '按时保养'],
+                value: '中',
+                manager: '李销售',
+                avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face'
+            },
+            {
+                id: 3,
+                name: '刘先生',
+                type: 'dormant',
+                status: 'inactive',
+                purchaseStatus: '已购车',
+                lastContact: '30天前',
+                carModel: '大众帕萨特',
+                purchaseDate: '2023年6月',
+                phone: '137****5555',
+                location: '广州天河',
+                tags: ['需要激活', '保养提醒'],
+                value: '待激活',
+                manager: '王顾问',
+                avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face'
+            },
+            {
+                id: 4,
+                name: '陈总',
+                type: 'vip',
+                status: 'active',
+                purchaseStatus: '已购车',
+                lastContact: '2天前',
+                carModel: '保时捷911',
+                purchaseDate: '2024年2月',
+                phone: '136****9999',
+                location: '深圳南山',
+                tags: ['极高满意', '多次购买', '推荐客户'],
+                value: '极高',
+                manager: '赵经理',
+                avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face'
+            }
+        ];
+
+        let currentView = 'grid';
+        let filteredCustomers = [...customersData];
+
+        // 页面加载完成后初始化
+        // 改进：从init应改为async函数来传递API调用
+        async function initializePage() {
+            try {
+                // 执行不供dependency的二个操作
+                loadCustomersFromAPI();
+                updateStatistics();
+            } catch (error) {
+                console.error('初始化出错:', error);
+                // 使用本地数据作为Fallback
+                renderCustomers();
+                updateStatistics();
+            }
+        }
+
+        // 改进：使用较稳健的起始化方案，適配iframe环境
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializePage);
+        } else {
+            // DOM已经准备完毕，直接执行
+            initializePage();
+        }
+        
+        // 从 API 加载客户数据
+        async function loadCustomersFromAPI() {
+            try {
+                const response = await api.customers.list();
+                if (response && response.data) {
+                    filteredCustomers = response.data;
+                    customersData = response.data;
+                    renderCustomers();
+                } else if (response) {
+                    filteredCustomers = response;
+                    customersData = response;
+                    renderCustomers();
+                }
+            } catch (error) {
+                console.error('API 错误:', error);
+                // 如果 API 失败，使用本地数据
+                renderCustomers();
+            }
+        }
+
+        // 渲染客户列表 - 始终使用卡片式
+        function renderCustomers() {
+            renderGridView();
+        }
+
+        // renderTableView 已移除 - 不再使用表格视图
+
+        // 渲染客户卡片 - 根据设计方案打起来
+        function renderGridView() {
+            const container = document.getElementById('customerGridContainer');
+            container.innerHTML = '';
+            container.className = 'grid grid-cols-1 gap-4';
+
+            filteredCustomers.forEach(customer => {
+                const card = document.createElement('div');
+                card.className = 'card border-l-4 hover:shadow-md transition-shadow cursor-pointer';
+                card.style.cursor = 'pointer';
+                card.onclick = () => navigateToCustomerDetail(customer.id);
+                
+                // 根据类型设置边框颜色
+                const borderColor = customer.type === 'vip' ? 'border-warning' : 
+                                    customer.type === 'dormant' ? 'border-gray-300' : 'border-primary';
+                card.classList.add(borderColor);
+                
+                const tagsHtml = customer.tags.map(tag => {
+                    const tagColor = tag.includes('需要') ? 'bg-gray-100 text-gray-600' : 
+                                     tag.includes('潜力') ? 'bg-warning/10 text-warning' : 
+                                     'bg-primary/10 text-primary';
+                    return `<span class="px-2 py-1 ${tagColor} text-xs rounded-full">${tag}</span>`;
+                }).join('');
+                
+                const vipBadge = customer.type === 'vip' ? `<span class="badge bg-warning/10 text-warning font-bold">VIP</span>` : '';
+                
+                card.innerHTML = `
+                    <div class="card-body p-4">
+                        <!-- 上行 -->
+                        <div class="flex items-start justify-between mb-3">
+                            <!-- 左侧: 头像和基本信息 -->
+                            <div class="flex items-start space-x-3 flex-1">
+                                <img class="h-16 w-16 rounded-full flex-shrink-0" src="${customer.avatar}" alt="${customer.name}">
+                                <div class="flex-1">
+                                    <h4 class="font-semibold text-gray-900 text-base">${customer.name}</h4>
+                                    <p class="text-sm text-gray-600">${customer.type === 'vip' ? 'VIP客户' : '客户'} · ${customer.purchaseStatus}</p>
+                                    <p class="text-xs text-gray-500">最上联系: ${customer.lastContact}</p>
+                                </div>
+                            </div>
+                            <!-- 右侧: VIP往上捀位 -->
+                            <div class="text-right flex-shrink-0">
+                                ${vipBadge}
+                                <p class="text-sm font-medium text-primary mt-2">客户价值: ${customer.value}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 中間行：车型和联系信息 -->
+                        <div class="grid grid-cols-2 gap-4 text-xs mb-3">
+                            <div class="flex">
+                                <span class="text-gray-600 font-medium w-20">购买车型:</span>
+                                <span class="text-gray-900 font-medium">${customer.carModel}</span>
+                            </div>
+                            <div class="flex">
+                                <span class="text-gray-600 font-medium w-20">购买时间:</span>
+                                <span class="text-gray-900 font-medium">${customer.purchaseDate}</span>
+                            </div>
+                            <div class="flex">
+                                <span class="text-gray-600 font-medium w-20">联系电话:</span>
+                                <span class="text-gray-900 font-medium">${customer.phone}</span>
+                            </div>
+                            <div class="flex">
+                                <span class="text-gray-600 font-medium w-20">所在地区:</span>
+                                <span class="text-gray-900 font-medium">${customer.location}</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 标签 -->
+                        <div class="flex flex-wrap gap-2 mb-3">
+                            ${tagsHtml}
+                        </div>
+                        
+                        <!-- 下行: 按钮和负责人 -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex space-x-2">
+                                <button onclick="event.stopPropagation(); viewCustomerDetail(${customer.id})" class="px-3 py-1.5 bg-primary text-white rounded-lg text-xs hover:bg-primary/90 transition-colors">客户维护</button>
+                                <button onclick="event.stopPropagation(); navigateToCustomerDetail(${customer.id})" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-xs border hover:border-primary transition-colors">查看详情</button>
+                            </div>
+                            <div class="text-xs text-gray-600">
+                                负责人: ${customer.manager}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 视图切换已移除 - 固定采用卡片式显示
+
+        // 搜索客户
+        function searchCustomers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            filteredCustomers = customersData.filter(customer => 
+                customer.name.toLowerCase().includes(searchTerm) ||
+                customer.company.toLowerCase().includes(searchTerm) ||
+                customer.phone.includes(searchTerm) ||
+                customer.email.toLowerCase().includes(searchTerm)
+            );
+            renderCustomers();
+        }
+
+        // 筛选客户
+        function filterCustomers() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const typeFilter = document.getElementById('typeFilter').value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+            filteredCustomers = customersData.filter(customer => {
+                const matchesSearch = !searchTerm || 
+                    customer.name.toLowerCase().includes(searchTerm) ||
+                    customer.company.toLowerCase().includes(searchTerm) ||
+                    customer.phone.includes(searchTerm) ||
+                    customer.email.toLowerCase().includes(searchTerm);
+                
+                const matchesStatus = !statusFilter || customer.status === statusFilter;
+                const matchesType = !typeFilter || customer.type === typeFilter;
+
+                return matchesSearch && matchesStatus && matchesType;
+            });
+
+            renderCustomers();
+        }
+
+        // 获取状态徐章样式
+        function getStatusBadgeClass(status) {
+            switch (status) {
+                case 'active': return 'badge-success';
+                case 'inactive': return 'badge-danger';
+                default: return 'badge-primary';
+            }
+        }
+
+        // 获取状态文本
+        function getStatusText(status) {
+            switch (status) {
+                case 'active': return '活跃';
+                case 'inactive': return '非活跃';
+                default: return '未知';
+            }
+        }
+
+        // 获取类型徐章样式
+        function getTypeBadgeClass(type) {
+            switch (type) {
+                case 'vip': return 'badge-warning';
+                case 'active': return 'badge-primary';
+                case 'dormant': return 'badge-gray';
+                default: return 'badge-primary';
+            }
+        }
+
+        // 获取类型文本
+        function getTypeText(type) {
+            switch (type) {
+                case 'vip': return 'VIP客户';
+                case 'active': return '活跃客户';
+                case 'dormant': return '沉睡客户';
+                default: return '未知';
+            }
+        }
+
+        // 更新统计数据
+        function updateStatistics() {
+            document.getElementById('totalCustomers').textContent = customersData.length.toLocaleString();
+            document.getElementById('activeCustomers').textContent = customersData.filter(c => c.status === 'active').length.toLocaleString();
+            document.getElementById('potentialCustomers').textContent = customersData.filter(c => c.status === 'potential').length.toLocaleString();
+            document.getElementById('newCustomers').textContent = '45'; // 模拟数据
+        }
+
+        // 全选/取消全选
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.customer-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAll.checked;
+            });
+        }
+
+        // 打开添加客户模态框
+        function openAddCustomerModal() {
+            document.getElementById('addCustomerModal').classList.remove('hidden');
+        }
+
+        // 关闭添加客户模态框
+        function closeAddCustomerModal() {
+            document.getElementById('addCustomerModal').classList.add('hidden');
+            document.getElementById('addCustomerForm').reset();
+        }
+
+        // 导航到客户详情页面 - 供卡片点击使用
+        function navigateToCustomerDetail(id) {
+            const url = `customer-detail.html?id=${id}`;
+            if (window.parent !== window) {
+                // 在iframe中，发送消息给parent
+                window.parent.postMessage({ action: 'navigate', url: url }, '*');
+            } else {
+                // 正常情况下，正常导航
+                window.location.href = url;
+            }
+        }
+        
+        // 查看客户详情
+        function viewCustomer(id) {
+            navigateToCustomerDetail(id);
+        }
+        
+        // 客户维护
+        function viewCustomerDetail(id) {
+            const customer = customersData.find(c => c.id === id);
+            if (customer) {
+                alert(`正在维护客户 ${customer.name}...`);
+                // 正式应用中可以实现特殊操作
+            }
+        }
+
+        // 编辑客户
+        function editCustomer(id) {
+            alert(`编辑客户 ID: ${id}`);
+        }
+
+        // 删除客户
+        function deleteCustomer(id) {
+            if (confirm('确定要删除这个客户吗？')) {
+                alert(`删除客户 ID: ${id}`);
+            }
+        }
+
+        // 导出客户数据
+        function exportCustomers() {
+            alert('导出客户数据功能');
+        }
+
+        // 添加客户表单提交 - 更新为API调用
+        document.getElementById('addCustomerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const customerData = Object.fromEntries(formData);
+            
+            try {
+                const response = await api.customers.create(customerData);
+                console.log('客户添加成功:', response);
+                UI.showMessage('客户添加成功！', 'success');
+                closeAddCustomerModal();
+                loadCustomersFromAPI(); // 刷新列表
+            } catch (error) {
+                console.error('API错误:', error);
+                UI.showMessage('客户添加失败：' + (error.message || error), 'error');
+            }
+        });
+
+        // 点击模态框外部关闭
+        document.getElementById('addCustomerModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAddCustomerModal();
+            }
+        });
+    </script>
+</body>
+</html>

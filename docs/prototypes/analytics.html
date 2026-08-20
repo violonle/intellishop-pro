@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据统计 - IntelliSHop Pro</title>
+    <link rel="stylesheet" href="../assets/global-styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4640DE',
+                        secondary: '#7C3AED',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                        gray: {
+                            50: '#F9FAFB',
+                            100: '#F3F4F6',
+                            200: '#E5E7EB',
+                            300: '#D1D5DB',
+                            400: '#9CA3AF',
+                            500: '#6B7280',
+                            600: '#4B5563',
+                            700: '#374151',
+                            800: '#1F2937',
+                            900: '#111827'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            -webkit-overflow-scrolling: touch;
+            overflow-x: hidden;
+        }
+        .chart-container {
+            position: relative;
+            height: 200px;
+        }
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- 顶部标题栏 -->
+    <div class="bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-10">
+        <div class="flex items-center justify-between">
+            <h1 class="text-lg font-semibold text-gray-900">数据统计</h1>
+            <div class="flex items-center space-x-3">
+                <button class="p-2 rounded-lg bg-gray-100">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                    </svg>
+                </button>
+                <button class="p-2 rounded-lg bg-gray-100">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 时间筛选 -->
+    <div class="bg-white px-4 py-3 border-b border-gray-200">
+        <div class="flex space-x-2 overflow-x-auto">
+            <button class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg text-sm whitespace-nowrap">本周</button>
+            <button class="px-4 py-2 bg-primary text-white rounded-lg text-sm whitespace-nowrap">本月</button>
+            <button class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg text-sm whitespace-nowrap">本季度</button>
+            <button class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg text-sm whitespace-nowrap">本年度</button>
+        </div>
+    </div>
+
+    <!-- 主要内容区域 -->
+    <div class="p-4 space-y-4">
+        <!-- 核心指标卡片 -->
+        <div class="grid grid-cols-2 gap-3">
+            <div class="bg-white rounded-xl p-4 shadow-sm">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm text-gray-600">总销售额</span>
+                    <span class="text-xs text-success bg-success/10 px-2 py-1 rounded-full">+12.5%</span>
+                </div>
+                <div class="text-2xl font-bold text-gray-900">¥2,847,500</div>
+                <div class="text-xs text-gray-500 mt-1">较上月增长</div>
+            </div>
+            
+            <div class="bg-white rounded-xl p-4 shadow-sm">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm text-gray-600">成交订单</span>
+                    <span class="text-xs text-success bg-success/10 px-2 py-1 rounded-full">+8.3%</span>
+                </div>
+                <div class="text-2xl font-bold text-gray-900">156</div>
+                <div class="text-xs text-gray-500 mt-1">本月成交</div>
+            </div>
+            
+            <div class="bg-white rounded-xl p-4 shadow-sm">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm text-gray-600">转化率</span>
+                    <span class="text-xs text-warning bg-warning/10 px-2 py-1 rounded-full">-2.1%</span>
+                </div>
+                <div class="text-2xl font-bold text-gray-900">23.8%</div>
+                <div class="text-xs text-gray-500 mt-1">线索转化</div>
+            </div>
+            
+            <div class="bg-white rounded-xl p-4 shadow-sm">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm text-gray-600">客单价</span>
+                    <span class="text-xs text-success bg-success/10 px-2 py-1 rounded-full">+5.7%</span>
+                </div>
+                <div class="text-2xl font-bold text-gray-900">¥18,254</div>
+                <div class="text-xs text-gray-500 mt-1">平均成交</div>
+            </div>
+        </div>
+
+        <!-- 销售趋势图表 -->
+        <div class="bg-white rounded-xl p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-1">销售趋势</h3>
+                    <div class="text-3xl font-medium text-gray-900">5,987.37</div>
+                    <div class="text-sm text-gray-500">本月销售</div>
+                </div>
+                <div class="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center">
+                    <div class="w-1 h-4 bg-white rounded"></div>
+                </div>
+            </div>
+            
+            <!-- 图例 -->
+            <div class="flex items-center space-x-6 mb-6">
+                <div class="flex items-center space-x-2">
+                    <div class="w-5 h-2 bg-blue-600 rounded"></div>
+                    <span class="text-xs text-gray-500">产品1</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <div class="w-5 h-2 bg-orange-500 rounded"></div>
+                    <span class="text-xs text-gray-500">产品2</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <div class="w-5 h-2 bg-green-500 rounded"></div>
+                    <span class="text-xs text-gray-500">产品3</span>
+                </div>
+            </div>
+            
+            <!-- 图表区域 -->
+            <div class="relative" style="height: 200px;">
+                <!-- Y轴标签 -->
+                <div class="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-500 pr-4">
+                    <span>100</span>
+                    <span>60</span>
+                    <span>20</span>
+                    <span>0</span>
+                    <span>-20</span>
+                    <span>-60</span>
+                    <span>-100</span>
+                </div>
+                
+                <!-- 图表主体 -->
+                <div class="ml-12 h-full relative border border-gray-200 rounded">
+                    <!-- 网格线 -->
+                    <div class="absolute inset-0">
+                        <div class="absolute top-0 left-0 right-0 h-px bg-gray-100"></div>
+                        <div class="absolute top-1/6 left-0 right-0 h-px bg-gray-100"></div>
+                        <div class="absolute top-2/6 left-0 right-0 h-px bg-gray-100"></div>
+                        <div class="absolute top-3/6 left-0 right-0 h-px bg-gray-100"></div>
+                        <div class="absolute top-4/6 left-0 right-0 h-px bg-gray-100"></div>
+                        <div class="absolute top-5/6 left-0 right-0 h-px bg-gray-100"></div>
+                        <div class="absolute bottom-0 left-0 right-0 h-px bg-gray-100"></div>
+                        
+                        <div class="absolute top-0 bottom-0 left-1/6 w-px bg-gray-100"></div>
+                        <div class="absolute top-0 bottom-0 left-2/6 w-px bg-gray-100"></div>
+                        <div class="absolute top-0 bottom-0 left-3/6 w-px bg-gray-100"></div>
+                        <div class="absolute top-0 bottom-0 left-4/6 w-px bg-gray-100"></div>
+                        <div class="absolute top-0 bottom-0 left-5/6 w-px bg-gray-100"></div>
+                    </div>
+                    
+                    <!-- 数据线 Product 1 (蓝色) -->
+                    <svg class="absolute inset-0 w-full h-full" viewBox="0 0 321 167">
+                        <polyline points="27,120 80,80 133,100 186,60 239,90 292,40" 
+                                  fill="none" stroke="#165BAA" stroke-width="2"/>
+                        <!-- 数据点 -->
+                        <circle cx="27" cy="120" r="3" fill="#165BAA"/>
+                        <circle cx="80" cy="80" r="3" fill="#165BAA"/>
+                        <circle cx="133" cy="100" r="3" fill="#165BAA"/>
+                        <circle cx="186" cy="60" r="3" fill="#165BAA"/>
+                        <circle cx="239" cy="90" r="3" fill="#165BAA"/>
+                        <circle cx="292" cy="40" r="3" fill="#165BAA"/>
+                    </svg>
+                    
+                    <!-- 数据线 Product 2 (橙色) -->
+                    <svg class="absolute inset-0 w-full h-full" viewBox="0 0 321 167">
+                        <polyline points="27,140 80,110 133,130 186,90 239,120 292,70" 
+                                  fill="none" stroke="#F97316" stroke-width="2"/>
+                        <!-- 数据点 -->
+                        <circle cx="27" cy="140" r="3" fill="#F97316"/>
+                        <circle cx="80" cy="110" r="3" fill="#F97316"/>
+                        <circle cx="133" cy="130" r="3" fill="#F97316"/>
+                        <circle cx="186" cy="90" r="3" fill="#F97316"/>
+                        <circle cx="239" cy="120" r="3" fill="#F97316"/>
+                        <circle cx="292" cy="70" r="3" fill="#F97316"/>
+                    </svg>
+                    
+                    <!-- 数据线 Product 3 (绿色) -->
+                    <svg class="absolute inset-0 w-full h-full" viewBox="0 0 321 167">
+                        <polyline points="27,100 80,70 133,110 186,50 239,80 292,30" 
+                                  fill="none" stroke="#10B981" stroke-width="2"/>
+                        <!-- 数据点 -->
+                        <circle cx="27" cy="100" r="3" fill="#10B981"/>
+                        <circle cx="80" cy="70" r="3" fill="#10B981"/>
+                        <circle cx="133" cy="110" r="3" fill="#10B981"/>
+                        <circle cx="186" cy="50" r="3" fill="#10B981"/>
+                        <circle cx="239" cy="80" r="3" fill="#10B981"/>
+                        <circle cx="292" cy="30" r="3" fill="#10B981"/>
+                    </svg>
+                </div>
+                
+                <!-- X轴标签 -->
+                <div class="ml-12 mt-2 flex justify-between text-xs text-gray-500">
+                    <span>1月</span>
+                    <span>2月</span>
+                    <span>3月</span>
+                    <span>4月</span>
+                    <span>5月</span>
+                    <span>6月</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 销售漏斗分析 -->
+        <div class="bg-white rounded-xl p-6 shadow-sm">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-900">线索转化漏斗</h3>
+                <span class="text-sm text-gray-500">7月1日-9月21日</span>
+            </div>
+            
+            <!-- 漏斗图 -->
+            <div class="mb-8">
+                <div class="relative flex items-center justify-center space-x-8 px-4">
+                    <!-- 触达量 -->
+                    <div class="flex flex-col items-center">
+                        <div class="w-12 h-16 sm:w-14 sm:h-18 md:w-16 md:h-20 bg-gradient-to-r from-orange-400 to-orange-500 rounded-lg flex items-center justify-center text-white shadow-lg">
+                            <div class="text-sm sm:text-base md:text-lg font-bold">975</div>
+                        </div>
+                        <div class="text-xs sm:text-sm text-gray-600 mt-2">触达量</div>
+                    </div>
+                    
+                    <!-- 响应量 -->
+                    <div class="flex flex-col items-center">
+                        <div class="w-12 h-16 sm:w-14 sm:h-18 md:w-16 md:h-20 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center text-white shadow-lg">
+                            <div class="text-sm sm:text-base md:text-lg font-bold">816</div>
+                        </div>
+                        <div class="text-xs sm:text-sm text-gray-600 mt-2">响应量</div>
+                    </div>
+                    
+                    <!-- 到店量 -->
+                    <div class="flex flex-col items-center">
+                        <div class="w-12 h-16 sm:w-14 sm:h-18 md:w-16 md:h-20 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-lg flex items-center justify-center text-white shadow-lg">
+                            <div class="text-sm sm:text-base md:text-lg font-bold">479</div>
+                        </div>
+                        <div class="text-xs sm:text-sm text-gray-600 mt-2">到店量</div>
+                    </div>
+                    
+                    <!-- 成交量 -->
+                    <div class="flex flex-col items-center">
+                        <div class="w-12 h-16 sm:w-14 sm:h-18 md:w-16 md:h-20 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center text-white shadow-lg">
+                            <div class="text-sm sm:text-base md:text-lg font-bold">203</div>
+                        </div>
+                        <div class="text-xs sm:text-sm text-gray-600 mt-2">成交量</div>
+                    </div>
+                    
+                    <!-- 百分比标签 - 绝对定位在方块间空白处 -->
+                    <div class="absolute transform -translate-y-1/2 -translate-x-1/2 bg-white bg-opacity-90 px-1 py-0.5 rounded text-xs font-medium text-gray-600 shadow-sm" style="left: 11%; top: 40%;">
+                        83.7%
+                    </div>
+                    <div class="absolute transform -translate-y-1/2 -translate-x-1/2 bg-white bg-opacity-90 px-1 py-0.5 rounded text-xs font-medium text-gray-600 shadow-sm" style="left: 38%; top: 40%;">
+                        58.7%
+                    </div>
+                    <div class="absolute transform -translate-y-1/2 -translate-x-1/2 bg-white bg-opacity-90 px-1 py-0.5 rounded text-xs font-medium text-gray-600 shadow-sm" style="left: 65%; top: 40%;">
+                        42.4%
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 统计信息 -->
+            <div class="grid grid-cols-3 gap-6 pt-6 border-t border-gray-100">
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-gray-900">20.8%</div>
+                    <div class="text-sm text-gray-500">总体转化率</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-green-600">+1.2%</div>
+                    <div class="text-sm text-gray-500">对比上月</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-gray-900">21.5%</div>
+                    <div class="text-sm text-gray-500">预计本月</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 预警中心 -->
+        <div class="bg-white rounded-xl p-4 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">预警中心</h3>
+                <span class="text-xs bg-danger text-white px-2 py-1 rounded-full">3个预警</span>
+            </div>
+            <div class="space-y-3">
+                <div class="flex items-start space-x-3 p-3 bg-danger/5 rounded-lg border-l-4 border-danger">
+                    <div class="w-2 h-2 bg-danger rounded-full mt-2"></div>
+                    <div class="flex-1">
+                        <div class="text-sm font-medium text-gray-900">客户流失风险</div>
+                        <div class="text-xs text-gray-600 mt-1">15位高价值客户超过30天未联系</div>
+                        <div class="text-xs text-danger mt-1">建议立即跟进</div>
+                    </div>
+                </div>
+                
+                <div class="flex items-start space-x-3 p-3 bg-warning/5 rounded-lg border-l-4 border-warning">
+                    <div class="w-2 h-2 bg-warning rounded-full mt-2"></div>
+                    <div class="flex-1">
+                        <div class="text-sm font-medium text-gray-900">库存预警</div>
+                        <div class="text-xs text-gray-600 mt-1">热销车型库存不足，可能影响销售</div>
+                        <div class="text-xs text-warning mt-1">建议补充库存</div>
+                    </div>
+                </div>
+                
+                <div class="flex items-start space-x-3 p-3 bg-primary/5 rounded-lg border-l-4 border-primary">
+                    <div class="w-2 h-2 bg-primary rounded-full mt-2"></div>
+                    <div class="flex-1">
+                        <div class="text-sm font-medium text-gray-900">业绩目标</div>
+                        <div class="text-xs text-gray-600 mt-1">本月完成率78%，需加速推进</div>
+                        <div class="text-xs text-primary mt-1">距离目标还差22%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 团队排行榜 -->
+        <div class="bg-white rounded-xl p-4 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">团队排行</h3>
+                <button class="text-sm text-primary">查看全部</button>
+            </div>
+            <div class="space-y-3">
+                <div class="flex items-center justify-between p-3 bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center">
+                            <span class="text-sm font-bold text-white">1</span>
+                        </div>
+                        <div>
+                            <div class="text-sm font-medium text-gray-900">张销售</div>
+                            <div class="text-xs text-gray-600">销售部</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm font-bold text-gray-900">¥485,600</div>
+                        <div class="text-xs text-success">+15.2%</div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center">
+                            <span class="text-sm font-bold text-white">2</span>
+                        </div>
+                        <div>
+                            <div class="text-sm font-medium text-gray-900">李顾问</div>
+                            <div class="text-xs text-gray-600">销售部</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm font-bold text-gray-900">¥423,800</div>
+                        <div class="text-xs text-success">+8.7%</div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-orange-400 rounded-full flex items-center justify-center">
+                            <span class="text-sm font-bold text-white">3</span>
+                        </div>
+                        <div>
+                            <div class="text-sm font-medium text-gray-900">王经理</div>
+                            <div class="text-xs text-gray-600">销售部</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm font-bold text-gray-900">¥398,200</div>
+                        <div class="text-xs text-danger">-2.3%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 客户画像分析 -->
+        <div class="bg-white rounded-xl p-4 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">客户画像分析</h3>
+                <button class="text-sm text-primary" onclick="openCustomerProfile()">查看详情</button>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600">高价值客户</span>
+                        <span class="text-sm font-medium text-gray-900">28%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-success h-2 rounded-full" style="width: 28%"></div>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600">活跃客户</span>
+                        <span class="text-sm font-medium text-gray-900">65%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-primary h-2 rounded-full" style="width: 65%"></div>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600">潜在客户</span>
+                        <span class="text-sm font-medium text-gray-900">42%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-warning h-2 rounded-full" style="width: 42%"></div>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600">流失风险</span>
+                        <span class="text-sm font-medium text-gray-900">15%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-danger h-2 rounded-full" style="width: 15%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 线索评估分析 -->
+        <div class="bg-white rounded-xl p-4 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">线索评估分析</h3>
+                <button class="text-sm text-primary" onclick="openLeadAnalysis()">详细分析</button>
+            </div>
+            <div class="space-y-4">
+                <div class="flex items-center justify-between p-3 bg-gradient-to-r from-green-50 to-green-100 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-3 h-3 bg-success rounded-full"></div>
+                        <div>
+                            <div class="text-sm font-medium text-gray-900">A级线索</div>
+                            <div class="text-xs text-gray-600">高意向度，建议优先跟进</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-lg font-bold text-gray-900">23</div>
+                        <div class="text-xs text-success">转化率85%</div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-3 h-3 bg-primary rounded-full"></div>
+                        <div>
+                            <div class="text-sm font-medium text-gray-900">B级线索</div>
+                            <div class="text-xs text-gray-600">中等意向度，持续培育</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-lg font-bold text-gray-900">47</div>
+                        <div class="text-xs text-primary">转化率45%</div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between p-3 bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-3 h-3 bg-warning rounded-full"></div>
+                        <div>
+                            <div class="text-sm font-medium text-gray-900">C级线索</div>
+                            <div class="text-xs text-gray-600">低意向度，长期跟进</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-lg font-bold text-gray-900">89</div>
+                        <div class="text-xs text-warning">转化率18%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 销售行为分析 -->
+        <div class="bg-white rounded-xl p-4 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">销售行为分析</h3>
+                <button class="text-sm text-primary" onclick="openSalesBehavior()">深度分析</button>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="text-center p-3 bg-gray-50 rounded-lg">
+                    <div class="text-2xl font-bold text-gray-900">156</div>
+                    <div class="text-sm text-gray-600">日均拜访</div>
+                    <div class="text-xs text-success mt-1">+12% 较上月</div>
+                </div>
+                <div class="text-center p-3 bg-gray-50 rounded-lg">
+                    <div class="text-2xl font-bold text-gray-900">8.5</div>
+                    <div class="text-sm text-gray-600">平均跟进天数</div>
+                    <div class="text-xs text-warning mt-1">-2天 较上月</div>
+                </div>
+                <div class="text-center p-3 bg-gray-50 rounded-lg">
+                    <div class="text-2xl font-bold text-gray-900">73%</div>
+                    <div class="text-sm text-gray-600">电话接通率</div>
+                    <div class="text-xs text-success mt-1">+5% 较上月</div>
+                </div>
+                <div class="text-center p-3 bg-gray-50 rounded-lg">
+                    <div class="text-2xl font-bold text-gray-900">4.2</div>
+                    <div class="text-sm text-gray-600">平均沟通次数</div>
+                    <div class="text-xs text-primary mt-1">持平</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 智能预警详情 -->
+        <div class="bg-white rounded-xl p-4 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">智能预警详情</h3>
+                <button class="text-sm text-primary" onclick="openAlertCenter()">预警中心</button>
+            </div>
+            <div class="space-y-3">
+                <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg border-l-4 border-red-500">
+                    <div class="flex items-center space-x-3">
+                        <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                        <div>
+                            <div class="text-sm font-medium text-gray-900">客户流失预警</div>
+                            <div class="text-xs text-gray-600">15位高价值客户超过30天未联系</div>
+                        </div>
+                    </div>
+                    <button class="text-xs bg-red-500 text-white px-3 py-1 rounded-full">立即处理</button>
+                </div>
+                
+                <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-500">
+                    <div class="flex items-center space-x-3">
+                        <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <div>
+                            <div class="text-sm font-medium text-gray-900">业绩目标预警</div>
+                            <div class="text-xs text-gray-600">本月完成率78%，需加速推进</div>
+                        </div>
+                    </div>
+                    <button class="text-xs bg-yellow-500 text-white px-3 py-1 rounded-full">查看详情</button>
+                </div>
+                
+                <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                    <div class="flex items-center space-x-3">
+                        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                        <div>
+                            <div class="text-sm font-medium text-gray-900">机会提醒</div>
+                            <div class="text-xs text-gray-600">8个高价值线索待跟进</div>
+                        </div>
+                    </div>
+                    <button class="text-xs bg-blue-500 text-white px-3 py-1 rounded-full">立即跟进</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 数据导出 -->
+        <div class="bg-white rounded-xl p-4 shadow-sm">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">数据导出</h3>
+            <div class="grid grid-cols-2 gap-3">
+                <button class="flex items-center justify-center space-x-2 p-3 border border-gray-200 rounded-lg" onclick="exportExcel()">
+                    <svg class="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <span class="text-sm text-gray-700">Excel报表</span>
+                </button>
+                
+                <button class="flex items-center justify-center space-x-2 p-3 border border-gray-200 rounded-lg" onclick="exportPDF()">
+                    <svg class="w-5 h-5 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                    <span class="text-sm text-gray-700">PDF报告</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 模拟数据加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const progressBars = document.querySelectorAll('.progress-bar');
+            progressBars.forEach((bar, index) => {
+                setTimeout(() => {
+                    bar.style.width = bar.style.width;
+                }, index * 200);
+            });
+        });
+
+        // 客户画像详情页面
+        function openCustomerProfile() {
+            // 这里可以跳转到客户画像详情页面
+            alert('正在开发客户画像详情页面...');
+            // window.location.href = 'customer-profile.html';
+        }
+
+        // 线索分析详情页面
+        function openLeadAnalysis() {
+            alert('正在开发线索评估详情页面...');
+            // window.location.href = 'lead-analysis.html';
+        }
+
+        // 销售行为分析页面
+        function openSalesBehavior() {
+            alert('正在开发销售行为分析页面...');
+            // window.location.href = 'sales-behavior.html';
+        }
+
+        // 预警中心页面
+        function openAlertCenter() {
+            alert('正在开发预警中心页面...');
+            // window.location.href = 'alert-center.html';
+        }
+
+        // 导出Excel报表
+        function exportExcel() {
+            // 模拟导出功能
+            const loadingToast = document.createElement('div');
+            loadingToast.className = 'fixed top-4 right-4 bg-primary text-white px-4 py-2 rounded-lg shadow-lg z-50';
+            loadingToast.textContent = '正在生成Excel报表...';
+            document.body.appendChild(loadingToast);
+
+            setTimeout(() => {
+                loadingToast.textContent = 'Excel报表生成成功！';
+                loadingToast.className = 'fixed top-4 right-4 bg-success text-white px-4 py-2 rounded-lg shadow-lg z-50';
+                
+                setTimeout(() => {
+                    document.body.removeChild(loadingToast);
+                }, 2000);
+            }, 1500);
+        }
+
+        // 导出PDF报告
+        function exportPDF() {
+            // 模拟导出功能
+            const loadingToast = document.createElement('div');
+            loadingToast.className = 'fixed top-4 right-4 bg-primary text-white px-4 py-2 rounded-lg shadow-lg z-50';
+            loadingToast.textContent = '正在生成PDF报告...';
+            document.body.appendChild(loadingToast);
+
+            setTimeout(() => {
+                loadingToast.textContent = 'PDF报告生成成功！';
+                loadingToast.className = 'fixed top-4 right-4 bg-success text-white px-4 py-2 rounded-lg shadow-lg z-50';
+                
+                setTimeout(() => {
+                    document.body.removeChild(loadingToast);
+                }, 2000);
+            }, 1500);
+        }
+
+        // 时间筛选功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const timeButtons = document.querySelectorAll('.bg-white .flex.space-x-2 button');
+            timeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 移除所有按钮的活跃状态
+                    timeButtons.forEach(btn => {
+                        btn.className = 'px-4 py-2 bg-gray-100 text-gray-600 rounded-lg text-sm whitespace-nowrap';
+                    });
+                    
+                    // 为当前按钮添加活跃状态
+                    this.className = 'px-4 py-2 bg-primary text-white rounded-lg text-sm whitespace-nowrap';
+                    
+                    // 模拟数据刷新
+                    const toast = document.createElement('div');
+                    toast.className = 'fixed top-4 right-4 bg-primary text-white px-4 py-2 rounded-lg shadow-lg z-50';
+                    toast.textContent = `正在加载${this.textContent}数据...`;
+                    document.body.appendChild(toast);
+                    
+                    setTimeout(() => {
+                        document.body.removeChild(toast);
+                    }, 1500);
+                });
+            });
+        });
+
+        // 预警处理功能
+        function handleAlert(type) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed top-4 right-4 bg-success text-white px-4 py-2 rounded-lg shadow-lg z-50';
+            
+            switch(type) {
+                case 'customer':
+                    toast.textContent = '已创建客户跟进任务';
+                    break;
+                case 'target':
+                    toast.textContent = '已查看业绩目标详情';
+                    break;
+                case 'opportunity':
+                    toast.textContent = '已安排线索跟进';
+                    break;
+                default:
+                    toast.textContent = '操作成功';
+            }
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                document.body.removeChild(toast);
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

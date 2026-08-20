@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shoppro.repository.UserProfileRepository">
+    
+    <select id="selectByUsername" resultType="com.shoppro.entity.UserProfile">
+        SELECT * FROM user_profiles 
+        WHERE username = #{username} AND deleted = 0
+        LIMIT 1
+    </select>
+    
+    <select id="selectByPhone" resultType="com.shoppro.entity.UserProfile">
+        SELECT * FROM user_profiles 
+        WHERE phone = #{phone} AND deleted = 0
+        LIMIT 1
+    </select>
+    
+    <select id="selectByEmail" resultType="com.shoppro.entity.UserProfile">
+        SELECT * FROM user_profiles 
+        WHERE email = #{email} AND deleted = 0
+        LIMIT 1
+    </select>
+    
+    <select id="countByUsername" resultType="long">
+        SELECT COUNT(*) FROM user_profiles 
+        WHERE username = #{username} AND deleted = 0
+    </select>
+    
+    <select id="countByPhone" resultType="long">
+        SELECT COUNT(*) FROM user_profiles 
+        WHERE phone = #{phone} AND deleted = 0
+    </select>
+    
+    <select id="countByEmail" resultType="long">
+        SELECT COUNT(*) FROM user_profiles 
+        WHERE email = #{email} AND deleted = 0
+    </select>
+    
+</mapper>

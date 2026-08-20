@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>验证码 - Rapidly</title>
+    <link rel="stylesheet" href="../assets/global-styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#4640DE',
+                'primary-dark': '#4640DE',
+                        'light-gray': '#F8F9FA',
+                        'dark-gray': '#6B7280',
+                        'light-ink': '#1F2937'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .verification-input {
+            width: 60px;
+            height: 60px;
+            border-radius: 60px;
+            border: 1px solid #E5E7EB;
+            background: #F8F9FA;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 400;
+            color: #1F2937;
+            -moz-appearance: textfield; /* Firefox */
+        }
+        
+        /* 隐藏Chrome、Safari、Edge等浏览器的上下调节按钮 */
+        .verification-input::-webkit-outer-spin-button,
+        .verification-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        .verification-input:focus {
+            outline: none;
+            border-color: #6366F1;
+            background: white;
+        }
+        
+        .verification-input.filled {
+            background: white;
+            border-color: #6366F1;
+        }
+        
+
+        
+        .button-active:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body class="bg-white min-h-screen flex flex-col">
+
+
+    <!-- Back Button -->
+    <div class="px-6 py-4">
+        <button onclick="window.history.back()" class="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors">
+            <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 px-6">
+        <!-- Title Section -->
+        <div class="slide-in mb-8">
+            <h1 class="text-3xl font-bold text-light-ink mb-3">验证码</h1>
+            <p class="text-dark-gray text-base leading-relaxed" id="phoneDisplay">
+                我们已向您的手机号码发送验证码<br>
+                (+86) 138-****-5678
+            </p>
+        </div>
+
+        <!-- Verification Code Input -->
+        <div class="slide-in mb-8" style="animation-delay: 0.1s">
+            <div class="flex justify-center space-x-4 mb-6">
+                <input type="number" class="verification-input" maxlength="1" id="code1" pattern="[0-9]" inputmode="numeric" oninput="handleInput(this, 'code2')" onkeydown="handleKeyDown(event, this)">
+                <input type="number" class="verification-input" maxlength="1" id="code2" pattern="[0-9]" inputmode="numeric" oninput="handleInput(this, 'code3')" onkeydown="handleKeyDown(event, this)">
+                <input type="number" class="verification-input" maxlength="1" id="code3" pattern="[0-9]" inputmode="numeric" oninput="handleInput(this, 'code4')" onkeydown="handleKeyDown(event, this)">
+                <input type="number" class="verification-input" maxlength="1" id="code4" pattern="[0-9]" inputmode="numeric" oninput="handleInput(this, null)" onkeydown="handleKeyDown(event, this)">
+            </div>
+            
+            <p class="text-center text-dark-gray text-sm mb-6">
+                没有收到验证码？ <button class="text-primary font-medium" onclick="resendCode()">重新发送</button>
+            </p>
+        </div>
+
+        <!-- Continue Button -->
+        <div class="slide-in mb-8" style="animation-delay: 0.2s">
+            <button 
+                id="continueBtn"
+                onclick="handleContinue()"
+                class="w-full bg-gray-200 text-gray-400 py-4 rounded-3xl font-semibold text-lg transition-all duration-200 button-active"
+                disabled
+            >
+                继续
+            </button>
+        </div>
+    </div>
+
+    <!-- Bottom Spacing for System Keyboard -->
+    <div class="pb-8"></div>
+
+    <script>
+        let currentInput = 0;
+        
+        // Display phone number from previous page
+        document.addEventListener('DOMContentLoaded', function() {
+            const phoneNumber = localStorage.getItem('phoneNumber');
+            if (phoneNumber) {
+                const formatted = `(+86) ${phoneNumber.slice(0,3)}-****-${phoneNumber.slice(-4)}`;
+                document.getElementById('phoneDisplay').innerHTML = `我们已向您的手机号码发送验证码<br>${formatted}`;
+            }
+            
+            // Focus first input
+            document.getElementById('code1').focus();
+        });
+        
+        function handleInput(input, nextInputId) {
+            // 只允许数字输入
+            input.value = input.value.replace(/[^0-9]/g, '');
+            
+            if (input.value.length === 1) {
+                input.classList.add('filled');
+                if (nextInputId) {
+                    document.getElementById(nextInputId).focus();
+                    currentInput = parseInt(nextInputId.slice(-1)) - 1;
+                } else {
+                    currentInput = 3;
+                }
+            } else {
+                input.classList.remove('filled');
+            }
+            
+            checkComplete();
+        }
+        
+        function handleKeyDown(event, input) {
+            if (event.key === 'Backspace' && input.value === '') {
+                const currentId = input.id;
+                const currentIndex = parseInt(currentId.slice(-1));
+                if (currentIndex > 1) {
+                    const prevInput = document.getElementById(`code${currentIndex - 1}`);
+                    prevInput.focus();
+                    prevInput.value = '';
+                    prevInput.classList.remove('filled');
+                    currentInput = currentIndex - 2;
+                }
+            }
+        }
+        
+
+        
+        function checkComplete() {
+            const code1 = document.getElementById('code1').value;
+            const code2 = document.getElementById('code2').value;
+            const code3 = document.getElementById('code3').value;
+            const code4 = document.getElementById('code4').value;
+            
+            const continueBtn = document.getElementById('continueBtn');
+            
+            if (code1 && code2 && code3 && code4) {
+                continueBtn.disabled = false;
+                continueBtn.classList.remove('bg-gray-200', 'text-gray-400');
+                continueBtn.classList.add('bg-primary', 'text-white');
+            } else {
+                continueBtn.disabled = true;
+                continueBtn.classList.add('bg-gray-200', 'text-gray-400');
+                continueBtn.classList.remove('bg-primary', 'text-white');
+            }
+        }
+        
+        function resendCode() {
+            // Simulate resending code
+            alert('验证码已重新发送');
+            
+            // Clear all inputs
+            ['code1', 'code2', 'code3', 'code4'].forEach(id => {
+                const input = document.getElementById(id);
+                input.value = '';
+                input.classList.remove('filled');
+            });
+            
+            document.getElementById('code1').focus();
+            currentInput = 0;
+            checkComplete();
+        }
+        
+        function handleContinue() {
+            const code1 = document.getElementById('code1').value;
+            const code2 = document.getElementById('code2').value;
+            const code3 = document.getElementById('code3').value;
+            const code4 = document.getElementById('code4').value;
+            
+            const verificationCode = code1 + code2 + code3 + code4;
+            
+            if (verificationCode.length === 4) {
+                // Store verification code and navigate to register page
+                localStorage.setItem('verificationCode', verificationCode);
+                window.location.href = 'register.html';
+            }
+        }
+    </script>
+</body>
+</html>
